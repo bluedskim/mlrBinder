@@ -5,16 +5,38 @@ package mlrbinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
 import java.nio.file.Path;
+import java.util.Random;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 
 class MlrBinderTest {
+	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
+
+  static {
+		// must set before the Logger
+		String path = MlrBinderTest.class.getClassLoader().getResource("logging.properties").getFile();
+		System.setProperty("java.util.logging.config.file", path);
+}
+
 	@Test
 	void pathTest() {
-		Path mlrPath = Path.of("mlr");
+		Path mlrPath = Path.of("mlr executable");
+		logger.info("mlrPath=" + mlrPath);
 		MlrBinder mlr = new MlrBinder().path(mlrPath);
 		assertEquals(mlrPath, mlr.getPath());
+	}
+
+	@Test
+	void flagTest() {
+		int cntOfFlags = new Random().nextInt(10);
+		logger.info("cntOfFlags=" + cntOfFlags);
+		MlrBinder mlr = new MlrBinder();
+		for(int i = 0 ; i < cntOfFlags ; i++) {
+			Flag flag = new Flag("flag" + i);
+			mlr.flag(flag);
+			assertEquals(mlr.getFlags().get(i),flag);
+		}
 	}
 }
