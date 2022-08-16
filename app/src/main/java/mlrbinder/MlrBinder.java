@@ -5,38 +5,109 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import mlrbinder.verb.Verb;
+
 public class MlrBinder {
-	private Path mlrPath;
-	public Path getPath() {
-		return mlrPath;
-	}
-
-	private List<Flag> flags = new ArrayList<>();
-	public List<Flag> getFlags() {
-		return flags;
-	}
-
-
+	/**
+	 * default constructor
+	 */
 	public MlrBinder() {
 		super();
 	}
 
-	public MlrBinder(Path mlrPath) {
+	private String mlrPath;
+
+	/**
+	 * constructor, get mlr executable path
+	 * @param mlrPath
+	 */
+	public MlrBinder(String mlrPath) {
 		this();
 		this.mlrPath = mlrPath;
 	}
 
-	public MlrBinder path(Path mlrPath) {
+	/**
+	 * set executable path then return self
+	 * @param mlrPath
+	 * @return
+	 */
+	public MlrBinder path(String mlrPath) {
 		this.mlrPath = mlrPath;
 		return this;
 	}
 
+	/**
+	 * return mlr path
+	 * @return
+	 */
+	public String getPath() {
+		return mlrPath;
+	}
+
+	/**
+	 * list of flags
+	 */
+	private List<Flag> flags = new ArrayList<>();
+
+	/**
+	 * return flag list
+	 * @return
+	 */
+	public List<Flag> getFlags() {
+		return flags;
+	}
+
+	/**
+	 * add flag
+	 * @param flag
+	 * @return
+	 */
 	public MlrBinder flag(Flag flag) {
 		flags.add(flag);
 		return this;
 	}
 
+	/**
+	 * list of verbs
+	 */
+	private List<Verb> verbs = new ArrayList<>();
+
+	/**
+	 * return list of verbs
+	 * @return
+	 */
+	public List<Verb> getVerbs() {
+		return verbs;
+	}
+
+	/**
+	 * add flag
+	 * @param verb
+	 * @return
+	 */
+	public MlrBinder verb(Verb verb) {
+		verbs.add(verb);
+		return this;
+	}
+
+	/**
+	 * list of file names
+	 */
+	private List<String> fileNames = new ArrayList<>();
+
+	/**
+	 * execute mlr then connect output stream to isr
+	 * @param isr
+	 */
 	public void run(InputStreamReader isr) {
 
+	}
+
+	/**
+	 * execute mlr then return result
+	 * @return
+	 */
+	public String run() {
+		return null;
 	}
 }

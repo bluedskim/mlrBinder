@@ -9,7 +9,10 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import mlrbinder.verb.Verb;
 
 class MlrBinderTest {
 	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
@@ -18,17 +21,18 @@ class MlrBinderTest {
 		// must set before the Logger
 		String path = MlrBinderTest.class.getClassLoader().getResource("logging.properties").getFile();
 		System.setProperty("java.util.logging.config.file", path);
-}
+	}
 
 	@Test
 	void pathTest() {
-		Path mlrPath = Path.of("mlr executable");
+		String mlrPath = "mlr executable";
 		logger.info("mlrPath=" + mlrPath);
 		MlrBinder mlr = new MlrBinder().path(mlrPath);
 		assertEquals(mlrPath, mlr.getPath());
 	}
 
 	@Test
+	@DisplayName("added flags order")
 	void flagTest() {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
