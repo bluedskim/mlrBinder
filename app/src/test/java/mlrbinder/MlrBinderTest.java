@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import mlrbinder.verb.Verb;
+
 class MlrBinderTest {
 	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
 
@@ -30,7 +32,7 @@ class MlrBinderTest {
 
 	@Test
 	@DisplayName("added flags order")
-	void flagTest() {
+	void flagsTest() {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
 		MlrBinder mlr = new MlrBinder();
@@ -38,6 +40,32 @@ class MlrBinderTest {
 			Flag flag = new Flag("flag" + i);
 			mlr.flag(flag);
 			assertEquals(mlr.getFlags().get(i),flag);
+		}
+	}
+
+	@Test
+	@DisplayName("added verbs order")
+	void verbsTest() {
+		int cntOfVerbs = new Random().nextInt(10);
+		logger.info("cntOfVerbs=" + cntOfVerbs);
+		MlrBinder mlr = new MlrBinder();
+		for(int i = 0 ; i < cntOfVerbs ; i++) {
+			Verb verb = new Verb("verb" + i);
+			mlr.verb(verb);
+			assertEquals(mlr.getVerbs().get(i), verb);
+		}
+	}
+
+	@Test
+	@DisplayName("added files order")
+	void filesTest() {
+		int cntOfFiles = new Random().nextInt(10);
+		logger.info("cntOfFiles=" + cntOfFiles);
+		MlrBinder mlr = new MlrBinder();
+		for(int i = 0 ; i < cntOfFiles ; i++) {
+			String fileName = "file" + i;
+			mlr.file(fileName);
+			assertEquals(mlr.getFileNames().get(i), fileName);
 		}
 	}
 }

@@ -6,6 +6,11 @@ import java.util.List;
 
 import mlrbinder.verb.Verb;
 
+/**
+ * Mlr(Miller) binder
+ * [Structure]
+ * The program name + Flags + Verbs + Zero or more filenames
+ */
 public class MlrBinder {
 	/**
 	 * default constructor
@@ -97,6 +102,10 @@ public class MlrBinder {
 	public MlrBinder file(String fileName) {
 		fileNames.add(fileName);
 		return this;
+	}
+
+	public List<String> getFileNames() {
+		return fileNames;
 	}
 
 	/**
