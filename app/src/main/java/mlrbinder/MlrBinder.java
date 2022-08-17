@@ -1,7 +1,6 @@
 package mlrbinder;
 
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,6 +93,11 @@ public class MlrBinder {
 	 * list of file names
 	 */
 	private List<String> fileNames = new ArrayList<>();
+
+	public MlrBinder file(String fileName) {
+		fileNames.add(fileName);
+		return this;
+	}
 
 	/**
 	 * execute mlr then connect output stream to isr

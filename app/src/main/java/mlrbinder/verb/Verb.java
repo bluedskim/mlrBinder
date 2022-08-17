@@ -9,10 +9,10 @@ public class Verb {
 	 */
 	private static final String CHAINING_ADVERB = "then";
 
-	String verb;
+	String verbName;
 
 	/**
-	 * is chaining verb
+	 * is chained verb
 	 */
 	boolean isConsecutive = false;
 
@@ -29,9 +29,14 @@ public class Verb {
 		return options;
 	}
 
+	public Verb option(Option addingOption) {
+		options.add(addingOption);
+		return this;
+	}
 
-	public Verb(String verb) {
+
+	public Verb(String verbName) {
 		super();
-		this.verb = verb;
+		this.verbName = verbName;
 	}
 }

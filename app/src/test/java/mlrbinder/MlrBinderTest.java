@@ -5,14 +5,11 @@ package mlrbinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.nio.file.Path;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import mlrbinder.verb.Verb;
 
 class MlrBinderTest {
 	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
