@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import mlrbinder.Flag;
+import mlrbinder.MlrBinder;
 import mlrbinder.Object;
 
 public class OptionTest {
@@ -28,6 +29,6 @@ public class OptionTest {
 		Object obj = new Object(objectName);
 
 		Option optionWithFlag = new Option(flag, obj);
-		assertEquals(optionWithFlag.toString(), flag.toString() + " " + obj.toString());
+		assertEquals(optionWithFlag.toString(), flag.toString() + MlrBinder.SPACER + obj.toString());
 	}
 }

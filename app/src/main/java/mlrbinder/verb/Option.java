@@ -1,6 +1,7 @@
 package mlrbinder.verb;
 
 import mlrbinder.Flag;
+import mlrbinder.MlrBinder;
 
 public class Option {
 	private Flag flag;
@@ -16,6 +17,6 @@ public class Option {
 
 	@Override
 	public String toString() {
-		return flag + (obj != null ? " " + obj : "");
+		return flag + (obj != null ? MlrBinder.SPACER + obj : "");
 	}
 }

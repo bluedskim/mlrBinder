@@ -13,6 +13,11 @@ import mlrbinder.verb.Verb;
  */
 public class MlrBinder {
 	/**
+	 * put spacer between words
+	 */
+	public static final String SPACER = " ";
+
+	/**
 	 * default constructor
 	 */
 	public MlrBinder() {

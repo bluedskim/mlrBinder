@@ -27,7 +27,7 @@ public class FlagTest {
 
 		Flag flagWithObject = flag.object(obj);
 		assertSame(flag, flagWithObject);
-		assertEquals(flag.toString(), flagName + " " + objectName);
+		assertEquals(flag.toString(), flagName + MlrBinder.SPACER + objectName);
 	}
 
 }
