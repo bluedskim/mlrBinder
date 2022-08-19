@@ -6,6 +6,7 @@ public class Flag {
 	 * --csv or -c
 	 */
 	private String flagName;
+
 	public Flag(String flagName) {
 		super();
 		this.flagName = flagName;
@@ -18,8 +19,13 @@ public class Flag {
 		return this;
 	}
 
+	public Object getObject() {
+		return obj;
+	}
+
 	@Override
 	public String toString() {
 		return flagName + " " + obj;
 	}
+
 }

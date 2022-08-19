@@ -13,4 +13,9 @@ public class Option {
 		this.flag = flag;
 		this.object = object;
 	}
+
+	@Override
+	public String toString() {
+		return null;
+	}
 }
