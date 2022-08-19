@@ -4,18 +4,18 @@ import mlrbinder.Flag;
 
 public class Option {
 	private Flag flag;
-	private Object object;
+	private Object obj;
 
 	public Option(Flag flag) {
 		this.flag = flag;
 	}
-	public Option(Flag flag, Object object) {
+	public Option(Flag flag, Object obj) {
 		this.flag = flag;
-		this.object = object;
+		this.obj = obj;
 	}
 
 	@Override
 	public String toString() {
-		return null;
+		return flag + (obj != null ? " " + obj : "");
 	}
 }

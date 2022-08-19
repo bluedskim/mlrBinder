@@ -25,7 +25,7 @@ public class Flag {
 
 	@Override
 	public String toString() {
-		return flagName + " " + obj;
+		return flagName + (obj != null ? " " + obj : "");
 	}
 
 }
