@@ -113,6 +113,26 @@ public class MlrBinder {
 		return fileNames;
 	}
 
+	@Override
+	public String toString() {
+		if(mlrPath == null) {
+			throw new IllegalArgumentException("mlrPath must not be null");
+		}
+
+		StringBuilder toStrResult = new StringBuilder();
+		toStrResult.append(mlrPath);
+		for(Flag flag : flags) {
+			toStrResult.append(SPACER);
+			toStrResult.append(flag);
+		}
+
+		for(Verb verb : verbs) {
+			toStrResult.append(SPACER);
+			toStrResult.append(verb);
+		}
+		return toStrResult.toString();
+	}
+
 	/**
 	 * execute mlr then connect output stream to isr
 	 * @param isr

@@ -4,6 +4,8 @@
 package mlrbinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
 import java.util.logging.Logger;
@@ -20,6 +22,15 @@ class MlrBinderTest {
 		// must set before the Logger
 		String path = MlrBinderTest.class.getClassLoader().getResource("logging.properties").getFile();
 		System.setProperty("java.util.logging.config.file", path);
+	}
+
+	@Test
+	@DisplayName("mlrPath not nullable test")
+	void mlrPathNotNullableTest() {
+		MlrBinder mlr = new MlrBinder();
+		assertThrows(IllegalArgumentException.class, () -> {
+			mlr.toString();
+		});
 	}
 
 	@Test
@@ -44,6 +55,22 @@ class MlrBinderTest {
 	}
 
 	@Test
+	@DisplayName("added flags then toString test")
+	void flagsToStringTest() {
+		int cntOfFlags = new Random().nextInt(10);
+		logger.info("cntOfFlags=" + cntOfFlags);
+		MlrBinder mlr = new MlrBinder("mlrPath");
+		String toStringResult = "mlrPath";
+		for(int i = 0 ; i < cntOfFlags ; i++) {
+			Flag flag = new Flag("flag" + i);
+			mlr.flag(flag);
+			toStringResult += " " + flag;
+		}
+		logger.info("mlr.toString()=" + mlr.toString());
+		assertEquals(mlr.toString(), toStringResult);
+	}
+
+	@Test
 	@DisplayName("added verbs order")
 	void verbsTest() {
 		int cntOfVerbs = new Random().nextInt(10);
@@ -57,6 +84,23 @@ class MlrBinderTest {
 	}
 
 	@Test
+	@DisplayName("added verbs then toString test")
+	void verbsToStringTest() {
+		int cntOfVerbs = new Random().nextInt(10);
+		logger.info("cntOfVerbs=" + cntOfVerbs);
+		MlrBinder mlr = new MlrBinder("mlrPath");
+		String toStringResult = "mlrPath";
+		for(int i = 0 ; i < cntOfVerbs ; i++) {
+			Verb verb = new Verb("verb" + i);
+			verb.isConsecutive(i > 0);
+			mlr.verb(verb);
+			toStringResult += " " + verb;
+		}
+		logger.info("mlr.toString()=" + mlr.toString());
+		assertEquals(mlr.toString(), toStringResult);
+	}
+
+	@Test
 	@DisplayName("added files order")
 	void filesTest() {
 		int cntOfFiles = new Random().nextInt(10);
@@ -67,5 +111,17 @@ class MlrBinderTest {
 			mlr.file(fileName);
 			assertEquals(mlr.getFileNames().get(i), fileName);
 		}
+	}
+
+	@Test
+	@DisplayName("added files then toString test")
+	void filesToStringTest() {
+		assertTrue(false);
+	}
+
+	@Test
+	@DisplayName("added files, verbs and files then toString test")
+	void flagsVerbsFilesToStringTest() {
+		assertTrue(false);
 	}
 }
