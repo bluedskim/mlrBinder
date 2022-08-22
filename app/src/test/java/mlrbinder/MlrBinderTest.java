@@ -5,7 +5,6 @@ package mlrbinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
 import java.util.logging.Logger;
@@ -13,6 +12,7 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import mlrbinder.verb.Option;
 import mlrbinder.verb.Verb;
 
 class MlrBinderTest {
@@ -116,12 +116,58 @@ class MlrBinderTest {
 	@Test
 	@DisplayName("added files then toString test")
 	void filesToStringTest() {
-		assertTrue(false);
+		int cnt = new Random().nextInt(10);
+		logger.info("cnt=" + cnt);
+		MlrBinder mlr = new MlrBinder("mlrPath");
+		String toStringResult = "mlrPath";
+		for(int i = 0 ; i < cnt ; i++) {
+			String fileName = "fileName" + i;
+			mlr.file(fileName);
+			toStringResult += " " + fileName;
+		}
+		logger.info("mlr.toString()=" + mlr.toString());
+		assertEquals(toStringResult, mlr.toString());
 	}
 
 	@Test
 	@DisplayName("added files, verbs and files then toString test")
 	void flagsVerbsFilesToStringTest() {
-		assertTrue(false);
+		int cntOfFlags = new Random().nextInt(10);
+		logger.info("cntOfFlags=" + cntOfFlags);
+		MlrBinder mlr = new MlrBinder("mlrPath");
+		String toStringResult = "mlrPath";
+		for(int i = 0 ; i < cntOfFlags ; i++) {
+			Flag flag = new Flag("--flag" + i);
+			flag.object(new Object("obj" + i));
+			mlr.flag(flag);
+			toStringResult += " " + flag;
+		}
+
+		int cntOfVerbs = new Random().nextInt(10);
+		logger.info("cntOfVerbs=" + cntOfVerbs);
+		for(int i = 0 ; i < cntOfVerbs ; i++) {
+			Verb verb = new Verb("verb" + i);
+			verb.isConsecutive(i > 0);
+			verb.option(
+				new Option(
+					new Flag("--flag" + i).object(
+						new Object("object" + i)
+					)
+				)
+			);
+			mlr.verb(verb);
+			toStringResult += " " + verb;
+		}
+
+		int cnt = new Random().nextInt(10);
+		logger.info("cnt=" + cnt);
+		for(int i = 0 ; i < cnt ; i++) {
+			String fileName = "fileName" + i;
+			mlr.file(fileName);
+			toStringResult += " " + fileName;
+		}
+
+		logger.info("mlr.toString()=" + mlr.toString());
+		assertEquals(toStringResult, mlr.toString());
 	}
 }

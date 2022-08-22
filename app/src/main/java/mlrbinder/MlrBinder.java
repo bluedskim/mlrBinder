@@ -130,6 +130,12 @@ public class MlrBinder {
 			toStrResult.append(SPACER);
 			toStrResult.append(verb);
 		}
+
+		for(String fileName : fileNames) {
+			toStrResult.append(SPACER);
+			toStrResult.append(fileName);
+		}
+
 		return toStrResult.toString();
 	}
 
