@@ -1,5 +1,8 @@
 package mlrbinder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Flag {
 	/**
 	 * starts with dash or double dash
@@ -21,6 +24,19 @@ public class Flag {
 
 	public Object getObject() {
 		return obj;
+	}
+
+	/**
+	 * to command line executable arguments list
+	 * @return
+	 */
+	public List<String> toStringList() {
+		List<String> stringList = new ArrayList<>();
+		stringList.add(flagName);
+		if(obj != null) {
+			stringList.add(obj.toString());
+		}
+		return stringList;
 	}
 
 	@Override

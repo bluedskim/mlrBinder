@@ -1,12 +1,12 @@
-# TODO
+# Miller Java Binder
 
-1. add jacoco code coverage setting.
+helps run mlr(Miller) with java.
 
-* Jacoco code coverage
+1. Jacoco code coverage
 	* ref : https://docs.gradle.org/7.4.1/userguide/jacoco_plugin.html
 	* testing
 
 		```
 		./gradlew test
-		google-chrome ./build/jacocoHtml/index.html
+		google-chrome ./app/build/jacocoHtml/index.html
 		```

@@ -18,7 +18,7 @@ import mlrbinder.verb.Verb;
 class MlrBinderTest {
 	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
 
-  static {
+	static {
 		// must set before the Logger
 		String path = MlrBinderTest.class.getClassLoader().getResource("logging.properties").getFile();
 		System.setProperty("java.util.logging.config.file", path);
@@ -34,11 +34,20 @@ class MlrBinderTest {
 	}
 
 	@Test
+	@DisplayName("mlrPath not nullable test")
+	void workingPathNullableTest() {
+		MlrBinder mlr = new MlrBinder("mlrPath");
+		assertThrows(IllegalArgumentException.class, () -> {
+			mlr.toString();
+		});
+	}
+
+	@Test
 	void pathTest() {
 		String mlrPath = "mlr executable";
 		logger.info("mlrPath=" + mlrPath);
-		MlrBinder mlr = new MlrBinder().path(mlrPath);
-		assertEquals(mlrPath, mlr.getPath());
+		MlrBinder mlr = new MlrBinder().mlrPath(mlrPath);
+		assertEquals(mlrPath, mlr.getMlrPath());
 	}
 
 	@Test
@@ -59,7 +68,7 @@ class MlrBinderTest {
 	void flagsToStringTest() {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
-		MlrBinder mlr = new MlrBinder("mlrPath");
+		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
 		for(int i = 0 ; i < cntOfFlags ; i++) {
 			Flag flag = new Flag("flag" + i);
@@ -88,7 +97,7 @@ class MlrBinderTest {
 	void verbsToStringTest() {
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
-		MlrBinder mlr = new MlrBinder("mlrPath");
+		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
 		for(int i = 0 ; i < cntOfVerbs ; i++) {
 			Verb verb = new Verb("verb" + i);
@@ -118,7 +127,7 @@ class MlrBinderTest {
 	void filesToStringTest() {
 		int cnt = new Random().nextInt(10);
 		logger.info("cnt=" + cnt);
-		MlrBinder mlr = new MlrBinder("mlrPath");
+		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
 		for(int i = 0 ; i < cnt ; i++) {
 			String fileName = "fileName" + i;
@@ -134,7 +143,7 @@ class MlrBinderTest {
 	void flagsVerbsFilesToStringTest() {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
-		MlrBinder mlr = new MlrBinder("mlrPath");
+		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
 		for(int i = 0 ; i < cntOfFlags ; i++) {
 			Flag flag = new Flag("--flag" + i);

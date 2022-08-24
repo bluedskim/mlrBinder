@@ -1,8 +1,10 @@
 package mlrbinder;
 
+import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import mlrbinder.verb.Verb;
 
@@ -16,6 +18,15 @@ public class MlrBinder {
 	 * put spacer between words
 	 */
 	public static final String SPACER = " ";
+	private final ProcessBuilder processBuilder = new ProcessBuilder();
+
+	private static Logger logger = Logger.getLogger(MlrBinder.class.getName());
+
+	static {
+		// must set before the Logger
+		String path = MlrBinder.class.getClassLoader().getResource("logging.properties").getFile();
+		System.setProperty("java.util.logging.config.file", path);
+	}
 
 	/**
 	 * default constructor
@@ -36,11 +47,21 @@ public class MlrBinder {
 	}
 
 	/**
+	 * constructor, get mlr executable path
+	 * @param mlrPath
+	 */
+	public MlrBinder(String mlrPath, String workingPath) {
+		this();
+		this.mlrPath = mlrPath;
+		this.workingPath = workingPath;
+	}
+
+	/**
 	 * set executable path then return self
 	 * @param mlrPath
 	 * @return
 	 */
-	public MlrBinder path(String mlrPath) {
+	public MlrBinder mlrPath(String mlrPath) {
 		this.mlrPath = mlrPath;
 		return this;
 	}
@@ -49,8 +70,20 @@ public class MlrBinder {
 	 * return mlr path
 	 * @return
 	 */
-	public String getPath() {
+	public String getMlrPath() {
 		return mlrPath;
+	}
+
+	String workingPath;
+
+	/**
+	 * set executable path then return self
+	 * @param mlrPath
+	 * @return
+	 */
+	public MlrBinder workingPath(String workingPath) {
+		this.workingPath = workingPath;
+		return this;
 	}
 
 	/**
@@ -119,6 +152,10 @@ public class MlrBinder {
 			throw new IllegalArgumentException("mlrPath must not be null");
 		}
 
+		if(workingPath == null) {
+			throw new IllegalArgumentException("workingPath must not be null");
+		}
+
 		StringBuilder toStrResult = new StringBuilder();
 		toStrResult.append(mlrPath);
 		for(Flag flag : flags) {
@@ -152,6 +189,12 @@ public class MlrBinder {
 	 * @return
 	 */
 	public String run() {
+		List<String> executableAndArgs = new ArrayList<>();
+		executableAndArgs.add(mlrPath);
+		//executableAndArgs.addAll(args);
+		logger.info("executable and args=" + executableAndArgs);
+		processBuilder.directory(new File(workingPath));
+		processBuilder.command(executableAndArgs);
 		return null;
 	}
 }
