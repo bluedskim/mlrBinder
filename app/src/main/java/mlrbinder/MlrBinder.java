@@ -191,10 +191,23 @@ public class MlrBinder {
 	public String run() {
 		List<String> executableAndArgs = new ArrayList<>();
 		executableAndArgs.add(mlrPath);
-		//executableAndArgs.addAll(args);
-		logger.info("executable and args=" + executableAndArgs);
+		executableAndArgs.addAll(getArgs());
+		//logger.info("executable and args=" + executableAndArgs);
 		processBuilder.directory(new File(workingPath));
 		processBuilder.command(executableAndArgs);
+		//logger.info("processBuilder=" + processBuilder);
 		return null;
+	}
+
+	/**
+	 * return args as string list
+	 * @return
+	 */
+	private List<String> getArgs() {
+		List<String> argList = new ArrayList<>();
+		flags.stream().forEach(f -> argList.addAll(f.toStringList()));
+		verbs.stream().forEach(v -> argList.addAll(v.toStringList()));
+		argList.addAll(fileNames);
+		return argList;
 	}
 }

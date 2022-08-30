@@ -179,4 +179,9 @@ class MlrBinderTest {
 		logger.info("mlr.toString()=" + mlr.toString());
 		assertEquals(toStringResult, mlr.toString());
 	}
+
+	@Test
+	public void runTest() {
+		//TODO 테스트해야
+	}
 }
