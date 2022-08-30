@@ -1,6 +1,7 @@
 package mlrbinder.verb;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import mlrbinder.MlrBinder;
@@ -9,14 +10,18 @@ public class Verb {
 	/**
 	 * verbs can be chained with CHAINING_ADVERB
 	 */
-	private static final String CHAINING_ADVERB = "then";
+	public static final String CHAINING_ADVERB = "then";
 
 	String verbName;
 
 	/**
 	 * is chained verb
 	 */
-	boolean isConsecutive = false;
+	private boolean isConsecutive = false;
+
+	public boolean isConsecutive() {
+		return isConsecutive;
+	}
 
 	/**
 	 * flag list
@@ -59,5 +64,18 @@ public class Verb {
 	public Verb isConsecutive(boolean isConsecutive) {
 		this.isConsecutive = isConsecutive;
 		return this;
+	}
+
+	/**
+	 * to command line executable arguments list
+	 */
+	public List<String> toStringList() {
+		List<String> stringList = new ArrayList<>();
+		if(isConsecutive) {
+			stringList.add(CHAINING_ADVERB);
+		}
+		stringList.add(verbName);
+		options.stream().forEach(o -> stringList.addAll(o.toStringList()));
+		return stringList;
 	}
 }
