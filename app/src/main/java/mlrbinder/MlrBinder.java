@@ -1,7 +1,9 @@
 package mlrbinder;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,7 +20,7 @@ public class MlrBinder {
 	 * put spacer between words
 	 */
 	public static final String SPACER = " ";
-	private final ProcessBuilder processBuilder = new ProcessBuilder();
+	private ProcessBuilder processBuilder;
 
 	private static Logger logger = Logger.getLogger(MlrBinder.class.getName());
 
@@ -28,11 +30,24 @@ public class MlrBinder {
 		System.setProperty("java.util.logging.config.file", path);
 	}
 
+	Integer exitCode;
+	String stdErr;
+
 	/**
 	 * default constructor
 	 */
 	public MlrBinder() {
 		super();
+		processBuilder = new ProcessBuilder();
+	}
+
+	/**
+	 * constructor, get ProcessBuilder
+	 * @param mlrPath
+	 */
+	public MlrBinder(ProcessBuilder processBuilder) {
+		this();
+		this.processBuilder = processBuilder;
 	}
 
 	private String mlrPath;
@@ -84,6 +99,17 @@ public class MlrBinder {
 	public MlrBinder workingPath(String workingPath) {
 		this.workingPath = workingPath;
 		return this;
+	}
+
+	private File redirectOutputFile;
+
+	public MlrBinder redirectOutputFile(File redirectOutputFile) {
+		this.redirectOutputFile = redirectOutputFile;
+		return this;
+	}
+
+	public File getRedirectOutputFile() {
+		return redirectOutputFile;
 	}
 
 	/**
@@ -187,8 +213,11 @@ public class MlrBinder {
 	/**
 	 * execute mlr then return result
 	 * @return
+	 * @throws IOException
+	 * @throws InterruptedException
 	 */
-	public String run() {
+	public String run() throws IOException, InterruptedException {
+		String stdOut = null;
 		List<String> executableAndArgs = new ArrayList<>();
 		executableAndArgs.add(mlrPath);
 		executableAndArgs.addAll(getArgs());
@@ -196,7 +225,26 @@ public class MlrBinder {
 		processBuilder.directory(new File(workingPath));
 		processBuilder.command(executableAndArgs);
 		//logger.info("processBuilder=" + processBuilder);
-		return null;
+
+		if(redirectOutputFile != null) {
+			boolean created = redirectOutputFile.createNewFile();
+			logger.info("redirectInputFile created=" + created);
+			processBuilder.redirectOutput(redirectOutputFile);
+		}
+		Process process = processBuilder.start();
+		logger.info("start process=" + process.pid());
+		exitCode = process.waitFor();
+		logger.info("exitCode=" + exitCode);
+		if(exitCode > 1) {
+			stdErr = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+			logger.info("stdErr=" + stdErr);
+			throw new RuntimeException("mlr실패 exitCode=" + exitCode + " err=" + stdErr);
+		} else {
+			stdOut = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+		}
+
+		logger.info("stdOut=" + stdOut);
+		return stdOut;
 	}
 
 	/**

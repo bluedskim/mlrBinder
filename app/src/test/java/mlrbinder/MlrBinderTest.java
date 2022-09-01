@@ -5,7 +5,16 @@ package mlrbinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -56,10 +65,10 @@ class MlrBinderTest {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
 		MlrBinder mlr = new MlrBinder();
-		for(int i = 0 ; i < cntOfFlags ; i++) {
+		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("flag" + i);
 			mlr.flag(flag);
-			assertEquals(mlr.getFlags().get(i),flag);
+			assertEquals(mlr.getFlags().get(i), flag);
 		}
 	}
 
@@ -70,7 +79,7 @@ class MlrBinderTest {
 		logger.info("cntOfFlags=" + cntOfFlags);
 		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
-		for(int i = 0 ; i < cntOfFlags ; i++) {
+		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("flag" + i);
 			mlr.flag(flag);
 			toStringResult += " " + flag;
@@ -85,7 +94,7 @@ class MlrBinderTest {
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
 		MlrBinder mlr = new MlrBinder();
-		for(int i = 0 ; i < cntOfVerbs ; i++) {
+		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
 			mlr.verb(verb);
 			assertEquals(mlr.getVerbs().get(i), verb);
@@ -99,7 +108,7 @@ class MlrBinderTest {
 		logger.info("cntOfVerbs=" + cntOfVerbs);
 		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
-		for(int i = 0 ; i < cntOfVerbs ; i++) {
+		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
 			verb.isConsecutive(i > 0);
 			mlr.verb(verb);
@@ -115,7 +124,7 @@ class MlrBinderTest {
 		int cntOfFiles = new Random().nextInt(10);
 		logger.info("cntOfFiles=" + cntOfFiles);
 		MlrBinder mlr = new MlrBinder();
-		for(int i = 0 ; i < cntOfFiles ; i++) {
+		for (int i = 0; i < cntOfFiles; i++) {
 			String fileName = "file" + i;
 			mlr.file(fileName);
 			assertEquals(mlr.getFileNames().get(i), fileName);
@@ -129,7 +138,7 @@ class MlrBinderTest {
 		logger.info("cnt=" + cnt);
 		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
-		for(int i = 0 ; i < cnt ; i++) {
+		for (int i = 0; i < cnt; i++) {
 			String fileName = "fileName" + i;
 			mlr.file(fileName);
 			toStringResult += " " + fileName;
@@ -145,7 +154,7 @@ class MlrBinderTest {
 		logger.info("cntOfFlags=" + cntOfFlags);
 		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
 		String toStringResult = "mlrPath";
-		for(int i = 0 ; i < cntOfFlags ; i++) {
+		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("--flag" + i);
 			flag.object(new Object("obj" + i));
 			mlr.flag(flag);
@@ -154,23 +163,20 @@ class MlrBinderTest {
 
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
-		for(int i = 0 ; i < cntOfVerbs ; i++) {
+		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
 			verb.isConsecutive(i > 0);
 			verb.option(
-				new Option(
-					new Flag("--flag" + i).object(
-						new Object("object" + i)
-					)
-				)
-			);
+					new Option(
+							new Flag("--flag" + i).object(
+									new Object("object" + i))));
 			mlr.verb(verb);
 			toStringResult += " " + verb;
 		}
 
 		int cnt = new Random().nextInt(10);
 		logger.info("cnt=" + cnt);
-		for(int i = 0 ; i < cnt ; i++) {
+		for (int i = 0; i < cnt; i++) {
 			String fileName = "fileName" + i;
 			mlr.file(fileName);
 			toStringResult += " " + fileName;
@@ -181,7 +187,37 @@ class MlrBinderTest {
 	}
 
 	@Test
-	public void runTest() {
-		//TODO 테스트해야
+	void runSuccess() throws IOException, InterruptedException {
+		int exitCode = 1;
+		String runResult = "결과";
+		ProcessBuilder processBuilder = getProcessBuilder(exitCode, runResult);
+
+		MlrBinder mlr = new MlrBinder(processBuilder);
+		mlr.workingPath("workingPath");
+
+		assertEquals(runResult, mlr.run());
+		verify(processBuilder).directory(any(File.class));
+		verify(processBuilder).command(any(List.class));
+	}
+
+	@Test
+	void runFail() throws IOException, InterruptedException {
+		// TODO
+	}
+
+	@Test
+	void runWithRedirectOutputFileTest() throws IOException, InterruptedException {
+		// TODO
+	}
+
+	private ProcessBuilder getProcessBuilder(int exitCode, String runResult) throws IOException, InterruptedException {
+		ProcessBuilder processBuilder = mock(ProcessBuilder.class);
+		Process process = mock(Process.class);
+		when(processBuilder.start()).thenReturn(process);
+		when(process.waitFor()).thenReturn(exitCode);
+		InputStream is = mock(InputStream.class);
+		when(process.getInputStream()).thenReturn(is);
+		when(is.readAllBytes()).thenReturn(runResult.getBytes(StandardCharsets.UTF_8));
+		return processBuilder;
 	}
 }
