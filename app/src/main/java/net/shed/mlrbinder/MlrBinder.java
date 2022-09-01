@@ -1,4 +1,4 @@
-package mlrbinder;
+package net.shed.mlrbinder;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import mlrbinder.verb.Verb;
+import net.shed.mlrbinder.verb.Verb;
 
 /**
  * Mlr(Miller) binder

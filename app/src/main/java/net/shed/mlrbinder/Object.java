@@ -1,4 +1,4 @@
-package mlrbinder;
+package net.shed.mlrbinder;
 
 /**
  * represents object of verb

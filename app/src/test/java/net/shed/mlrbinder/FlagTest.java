@@ -1,4 +1,4 @@
-package mlrbinder;
+package net.shed.mlrbinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -8,6 +8,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import net.shed.mlrbinder.Flag;
+import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Object;
 
 public class FlagTest {
 	@Test

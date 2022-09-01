@@ -1,4 +1,4 @@
-package mlrbinder.verb;
+package net.shed.mlrbinder.verb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -8,9 +8,10 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import mlrbinder.Flag;
-import mlrbinder.MlrBinder;
-import mlrbinder.Object;
+import net.shed.mlrbinder.Flag;
+import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Object;
+import net.shed.mlrbinder.verb.Option;
 
 public class OptionTest {
 	@Test

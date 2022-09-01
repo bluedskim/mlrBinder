@@ -1,4 +1,4 @@
-package mlrbinder;
+package net.shed.mlrbinder;
 
 import java.util.ArrayList;
 import java.util.List;

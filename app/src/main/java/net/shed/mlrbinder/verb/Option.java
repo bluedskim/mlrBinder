@@ -1,10 +1,10 @@
-package mlrbinder.verb;
+package net.shed.mlrbinder.verb;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mlrbinder.Flag;
-import mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Flag;
+import net.shed.mlrbinder.MlrBinder;
 
 public class Option {
 	private Flag flag;
