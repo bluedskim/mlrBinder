@@ -16,25 +16,18 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import net.shed.mlrbinder.Flag;
-import net.shed.mlrbinder.MlrBinder;
-import net.shed.mlrbinder.Object;
 import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
 
 class MlrBinderTest {
 	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
-
-	static {
-		// must set before the Logger
-		String path = MlrBinderTest.class.getClassLoader().getResource("logging.properties").getFile();
-		System.setProperty("java.util.logging.config.file", path);
-	}
 
 	@Test
 	@DisplayName("mlrPath not nullable test")
@@ -59,6 +52,7 @@ class MlrBinderTest {
 		String mlrPath = "mlr executable";
 		logger.info("mlrPath=" + mlrPath);
 		MlrBinder mlr = new MlrBinder().mlrPath(mlrPath);
+		logger.info(mlr.getMlrPath());
 		assertEquals(mlrPath, mlr.getMlrPath());
 	}
 

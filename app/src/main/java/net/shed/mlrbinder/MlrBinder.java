@@ -24,12 +24,6 @@ public class MlrBinder {
 
 	private static Logger logger = Logger.getLogger(MlrBinder.class.getName());
 
-	static {
-		// must set before the Logger
-		String path = MlrBinder.class.getClassLoader().getResource("logging.properties").getFile();
-		System.setProperty("java.util.logging.config.file", path);
-	}
-
 	Integer exitCode;
 	String stdErr;
 
