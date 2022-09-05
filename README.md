@@ -10,8 +10,8 @@ helps run mlr(Miller) with java.
 
 		```
 		./gradlew test
-		google-chrome ./app/build/jacocoHtml/index.html
-		google-chrome ./app/build/reports/tests/test/index.html
+		google-chrome ./lib/build/jacocoHtml/index.html
+		google-chrome ./lib/build/reports/tests/test/index.html
 		```
 
 ## TODO
