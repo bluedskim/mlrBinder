@@ -16,8 +16,8 @@ helps run mlr(Miller) with java.
 
 ## TODO
 
-1. logging
-	1. change default level
-	2. info to debug
-1. change to gradle library project
+1. ~~logging~~
+	1. ~~info to debug~~
+1. ~~change to gradle library project~~
 1. add MlrBinder.setRedirectOutputFile()
+1. add E2E test
