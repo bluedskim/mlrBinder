@@ -8,8 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import net.shed.mlrbinder.Flag;
-import net.shed.mlrbinder.verb.Option;
-import net.shed.mlrbinder.verb.Verb;
 
 public class VerbTest {
 
@@ -39,16 +37,19 @@ public class VerbTest {
 
 	@Test
 	public void verbWithOptionsTest() {
+		verbWithOptionsTest(true);
+		verbWithOptionsTest(false);
+	}
+
+	public void verbWithOptionsTest(boolean isConsecutive) {
 		String verbName = "verbName";
-		Verb verb = new Verb(verbName);
+		Verb verb = new Verb(verbName).isConsecutive(isConsecutive);
 		Option option1 = new Option(new Flag("flagName1"));
 		Option option2 = new Option(new Flag("flagName2"));
-		verb.option(option1);
-		verb.option(option2);
-		assertEquals("verbName " + option1 + " " + option2, verb.toString());
+		verb.option(option1).option(option2);
 
 		List<String> stringList = new ArrayList<>();
-		if(verb.isConsecutive()) {
+		if(isConsecutive) {
 			stringList.add(Verb.CHAINING_ADVERB);
 		}
 		stringList.add(verbName);
@@ -82,5 +83,18 @@ public class VerbTest {
 		verb.option(option1);
 		verb.option(option2);
 		assertEquals("then " + verbName + " " + option1 + " " + option2, verb.toString());
+	}
+
+	@Test
+	public void getOptionsTest() {
+		List<Option> options = new ArrayList<>();
+		Verb verb = new Verb(null);
+		Option option1 = new Option(new Flag("flagName1"));
+		options.add(option1);
+		verb.option(option1);
+		Option option2 = new Option(new Flag("flagName2"));
+		options.add(option2);
+		verb.option(option2);
+		assertEquals(options, verb.getOptions());
 	}
 }
