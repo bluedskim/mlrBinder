@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
 import net.shed.mlrbinder.Object;
-import net.shed.mlrbinder.verb.Option;
 
 public class OptionTest {
 	@Test
