@@ -29,6 +29,7 @@ public class FlagTest {
 		Object obj = new Object(objectName);
 
 		Flag flagWithObject = flag.object(obj);
+		assertEquals(obj, flagWithObject.getObject());
 		assertSame(flag, flagWithObject);
 		assertEquals(flag.toString(), flagName + MlrBinder.SPACER + objectName);
 	}
