@@ -74,4 +74,29 @@ public class E2Etest {
 		String runResult = mlr.run();
 		assertEquals("a,b,c\n1,2,3\n4,5,6\n9,8,7", runResult);
 	}
+
+	@Test
+	public void cutTest() throws IOException, InterruptedException {
+		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
+
+		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		.flag(new Flag("--icsv"))
+		.flag(new Flag("--ocsv"))
+		.verb(
+			new Verb("cut").option(
+				new Option(
+					new Flag("-f").object(
+						new Object("b,c")
+					)
+				)
+			)
+		)
+		.file("example.csv")
+		;
+
+		logger.info("mlr=" + mlr.toString());
+		assertEquals("mlr --icsv --ocsv cut -f b,c example.csv", mlr.toString());
+		String runResult = mlr.run();
+		assertEquals("b,c\n5,6\n2,3\n8,7", runResult);
+	}
 }
