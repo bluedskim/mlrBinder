@@ -83,7 +83,12 @@ public class E2Etest {
 		.flag(new Flag("--icsv"))
 		.flag(new Flag("--ocsv"))
 		.verb(
-			new Verb("cut").option(
+			new Verb("cut")
+			.option(
+				new Option(
+					new Flag("-o")
+				)
+			).option(
 				new Option(
 					new Flag("-f").object(
 						new Object("b,c")
@@ -95,7 +100,7 @@ public class E2Etest {
 		;
 
 		logger.info("mlr=" + mlr.toString());
-		assertEquals("mlr --icsv --ocsv cut -f b,c example.csv", mlr.toString());
+		assertEquals("mlr --icsv --ocsv cut -o -f b,c example.csv", mlr.toString());
 		String runResult = mlr.run();
 		assertEquals("b,c\n5,6\n2,3\n8,7", runResult);
 	}
