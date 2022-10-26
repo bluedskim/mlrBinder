@@ -3,9 +3,10 @@ package net.shed.mlrbinder.verb;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.MlrBinder;
 
-public class Verb {
+public class Verb implements Arg {
 	/**
 	 * verbs can be chained with CHAINING_ADVERB
 	 */
@@ -23,20 +24,20 @@ public class Verb {
 	}
 
 	/**
-	 * flag list
+	 * argument list
 	 */
-	private List<Option> options = new ArrayList<>();
+	private List<Arg> args = new ArrayList<>();
 
 	/**
 	 * return flag list
 	 * @return
 	 */
-	public List<Option> getOptions() {
-		return options;
+	public List<Arg> getOptions() {
+		return args;
 	}
 
-	public Verb option(Option addingOption) {
-		options.add(addingOption);
+	public Verb addArg(Arg arg) {
+		args.add(arg);
 		return this;
 	}
 
@@ -54,7 +55,7 @@ public class Verb {
 
 	private String optionsToString() {
 		StringBuilder concatenatedOptions = new StringBuilder();
-		for(Option option : options) {
+		for(Arg option : args) {
 			concatenatedOptions.append(MlrBinder.SPACER + option);
 		}
 		return concatenatedOptions.toString();
@@ -74,7 +75,7 @@ public class Verb {
 			stringList.add(CHAINING_ADVERB);
 		}
 		stringList.add(verbName);
-		options.stream().forEach(o -> stringList.addAll(o.toStringList()));
+		args.stream().forEach(o -> stringList.addAll(o.toStringList()));
 		return stringList;
 	}
 }

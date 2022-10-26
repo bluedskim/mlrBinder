@@ -161,7 +161,7 @@ class MlrBinderTest {
 		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
 			verb.isConsecutive(i > 0);
-			verb.option(
+			verb.addArg(
 					new Option(
 							new Flag("--flag" + i).object(
 									new Object("object" + i))));

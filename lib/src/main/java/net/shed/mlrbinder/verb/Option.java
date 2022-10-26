@@ -3,10 +3,11 @@ package net.shed.mlrbinder.verb;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
 
-public class Option {
+public class Option implements Arg {
 	private Flag flag;
 	private Object obj;
 

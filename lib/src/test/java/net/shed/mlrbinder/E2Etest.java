@@ -17,14 +17,14 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("-icsv"))
-		.flag(new Flag("-ocsv"))
+		.flag(new Flag("--icsv"))
+		.flag(new Flag("--ocsv"))
 		.verb(new Verb("cat"))
 		.file("example.csv")
 		;
 
 		logger.info("mlr=" + mlr.toString());
-		assertEquals("mlr -icsv -ocsv cat example.csv", mlr.toString());
+		assertEquals("mlr --icsv --ocsv cat example.csv", mlr.toString());
 		String runResult = mlr.run();
 		assertEquals("a,b,c\n4,5,6\n1,2,3\n9,8,7", runResult);
 	}
@@ -53,13 +53,13 @@ public class E2Etest {
 		.flag(new Flag("--csv"))
 		.verb(
 			new Verb("sort")
-			.option(
+			.addArg(
 				new Option(
 					new Flag("-f")
 					,new Object("c")
 				)
 			)
-			.option(
+			.addArg(
 				new Option(
 					new Flag("-f")
 					,new Object("a")
@@ -84,11 +84,11 @@ public class E2Etest {
 		.flag(new Flag("--ocsv"))
 		.verb(
 			new Verb("cut")
-			.option(
+			.addArg(
 				new Option(
 					new Flag("-o")
 				)
-			).option(
+			).addArg(
 				new Option(
 					new Flag("-f").object(
 						new Object("b,c")
@@ -103,5 +103,27 @@ public class E2Etest {
 		assertEquals("mlr --icsv --ocsv cut -o -f b,c example.csv", mlr.toString());
 		String runResult = mlr.run();
 		assertEquals("b,c\n5,6\n2,3\n8,7", runResult);
+	}
+
+	@Test
+	public void putTest() throws IOException, InterruptedException {
+		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
+
+		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		.flag(new Flag("--icsv"))
+		.flag(new Flag("--ocsv"))
+		.verb(
+			new Verb("put")
+			.addArg(
+				new Object("'$[[[3]]] = \"7\"'")
+			)
+		)
+		.file("example.csv")
+		;
+
+		logger.info("mlr=" + mlr.toString());
+		assertEquals("mlr --icsv --ocsv put '$[[[3]]] = \"7\"' example.csv", mlr.toString());
+		String runResult = mlr.run();
+		assertEquals("a,b,c\n4,5,7\n1,2,7\n9,8,7", runResult);
 	}
 }

@@ -3,7 +3,7 @@ package net.shed.mlrbinder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Flag {
+public class Flag implements Arg {
 	/**
 	 * starts with dash or double dash
 	 * --csv or -c

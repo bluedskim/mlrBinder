@@ -232,7 +232,7 @@ public class MlrBinder {
 		if(exitCode > 1) {
 			stdErr = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8).trim();
 			logger.info("stdErr=" + stdErr);
-			throw new RuntimeException("mlr실패 exitCode=" + exitCode + " err=" + stdErr);
+			throw new RuntimeException("failed. exitCode=" + exitCode + " err=" + stdErr);
 		} else {
 			stdOut = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
 		}
