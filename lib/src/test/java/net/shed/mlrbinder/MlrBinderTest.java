@@ -148,7 +148,7 @@ class MlrBinderTest {
 		String toStringResult = "mlrPath";
 		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("--flag" + i);
-			flag.object(new Object("obj" + i));
+			flag.objective(new Objective("obj" + i));
 			mlr.flag(flag);
 			toStringResult += " " + flag;
 		}
@@ -160,8 +160,8 @@ class MlrBinderTest {
 			verb.isConsecutive(i > 0);
 			verb.addArg(
 					new Option(
-							new Flag("--flag" + i).object(
-									new Object("object" + i))));
+							new Flag("--flag" + i).objective(
+									new Objective("object" + i))));
 			mlr.verb(verb);
 			toStringResult += " " + verb;
 		}

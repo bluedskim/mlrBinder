@@ -26,10 +26,10 @@ public class FlagTest {
 		Flag flag = new Flag(flagName);
 
 		String objectName = "objectName";
-		Object obj = new Object(objectName);
+		Objective obj = new Objective(objectName);
 
-		Flag flagWithObject = flag.object(obj);
-		assertEquals(obj, flagWithObject.getObject());
+		Flag flagWithObject = flag.objective(obj);
+		assertEquals(obj, flagWithObject.getObjective());
 		assertSame(flag, flagWithObject);
 		assertEquals(flag.toString(), flagName + MlrBinder.SPACER + objectName);
 	}
@@ -43,9 +43,9 @@ public class FlagTest {
 		stringList.add(flagName);
 
 		String objectName = "objectName";
-		Object obj = new Object(objectName);
+		Objective obj = new Objective(objectName);
 		stringList.add(objectName);
-		flag.object(obj);
+		flag.objective(obj);
 		assertEquals(stringList, flag.toStringList());
 	}
 }

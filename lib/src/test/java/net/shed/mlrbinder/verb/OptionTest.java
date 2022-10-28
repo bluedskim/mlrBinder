@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
-import net.shed.mlrbinder.Object;
+import net.shed.mlrbinder.Objective;
 
 public class OptionTest {
 	@Test
@@ -29,7 +29,7 @@ public class OptionTest {
 		Flag flag = new Flag(flagName);
 
 		String objectName = "objectName";
-		Object obj = new Object(objectName);
+		Objective obj = new Objective(objectName);
 
 		Option optionWithFlag = new Option(flag, obj);
 		assertEquals(optionWithFlag.toString(), flag.toString() + MlrBinder.SPACER + obj.toString());
@@ -48,7 +48,7 @@ public class OptionTest {
 		stringList = new ArrayList<>();
 		stringList.add(flagName);
 		String objName = "objName";
-		Object obj = new Object(objName);
+		Objective obj = new Objective(objName);
 		stringList.add(objName);
 		Option optionWithFlagAndObject = new Option(flag, obj);
 		assertEquals(stringList, optionWithFlagAndObject.toStringList());

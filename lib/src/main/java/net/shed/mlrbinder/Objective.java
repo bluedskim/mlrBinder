@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * represents object of verb
+ * represents objective of all subjective like verb
  */
-public class Object implements Arg {
+public class Objective implements Arg {
 	private String name;
 
-	public Object(String name) {
+	public Objective(String name) {
 		this.name = name;
 	}
 

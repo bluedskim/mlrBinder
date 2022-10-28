@@ -56,13 +56,13 @@ public class E2Etest {
 			.addArg(
 				new Option(
 					new Flag("-f")
-					,new Object("c")
+					,new Objective("c")
 				)
 			)
 			.addArg(
 				new Option(
 					new Flag("-f")
-					,new Object("a")
+					,new Objective("a")
 				)
 			)
 		)
@@ -90,8 +90,8 @@ public class E2Etest {
 				)
 			).addArg(
 				new Option(
-					new Flag("-f").object(
-						new Object("b,c")
+					new Flag("-f").objective(
+						new Objective("b,c")
 					)
 				)
 			)
@@ -115,7 +115,7 @@ public class E2Etest {
 		.verb(
 			new Verb("put")
 			.addArg(
-				new Object("'$[[[3]]] = \"7\"'")
+				new Objective("'$[[[3]]] = \"7\"'")
 			)
 		)
 		.file("example.csv")

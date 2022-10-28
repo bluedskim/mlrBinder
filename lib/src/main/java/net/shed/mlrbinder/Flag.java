@@ -15,14 +15,14 @@ public class Flag implements Arg {
 		this.flagName = flagName;
 	}
 
-	private Object obj;
+	private Objective obj;
 
-	public Flag object(Object obj) {
+	public Flag objective(Objective obj) {
 		this.obj = obj;
 		return this;
 	}
 
-	public Object getObject() {
+	public Objective getObjective() {
 		return obj;
 	}
 
