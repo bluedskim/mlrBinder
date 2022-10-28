@@ -23,6 +23,11 @@ dependencies {
     testImplementation "org.mockito:mockito-inline:4.7.0"
 }
 
+java {
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
+}
+
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
