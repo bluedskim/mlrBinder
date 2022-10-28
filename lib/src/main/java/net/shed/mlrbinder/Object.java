@@ -19,7 +19,7 @@ public class Object implements Arg {
 	}
 
 	@Override
-	public Collection<? extends String> toStringList() {
+	public Collection<String> toStringList() {
 		return Arrays.asList(new String[]{name});
 	}
 }

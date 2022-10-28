@@ -7,5 +7,5 @@ import java.util.Collection;
  */
 public interface Arg {
     public String toString();
-    public Collection<? extends String> toStringList();
+    public Collection<String> toStringList();
 }
