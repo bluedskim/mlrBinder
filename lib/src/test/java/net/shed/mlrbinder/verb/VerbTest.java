@@ -95,6 +95,6 @@ public class VerbTest {
 		Option option2 = new Option(new Flag("flagName2"));
 		options.add(option2);
 		verb.addArg(option2);
-		assertEquals(options, verb.getOptions());
+		assertEquals(options, verb.getArgs());
 	}
 }

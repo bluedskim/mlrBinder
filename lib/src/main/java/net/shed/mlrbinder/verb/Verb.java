@@ -32,7 +32,7 @@ public class Verb implements Arg {
 	 * return flag list
 	 * @return
 	 */
-	public List<Arg> getOptions() {
+	public List<Arg> getArgs() {
 		return args;
 	}
 
@@ -50,13 +50,13 @@ public class Verb implements Arg {
 	public String toString() {
 		return (isConsecutive ? CHAINING_ADVERB + MlrBinder.SPACER : "")
 			+ verbName
-			+ optionsToString();
+			+ toStringArgs();
 	}
 
-	private String optionsToString() {
+	private String toStringArgs() {
 		StringBuilder concatenatedOptions = new StringBuilder();
-		for(Arg option : args) {
-			concatenatedOptions.append(MlrBinder.SPACER + option);
+		for(Arg arg : args) {
+			concatenatedOptions.append(MlrBinder.SPACER + arg);
 		}
 		return concatenatedOptions.toString();
 	}
@@ -69,6 +69,7 @@ public class Verb implements Arg {
 	/**
 	 * to command line executable arguments list
 	 */
+	@Override
 	public List<String> toStringList() {
 		List<String> stringList = new ArrayList<>();
 		if(isConsecutive) {
