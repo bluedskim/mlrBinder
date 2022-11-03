@@ -2,6 +2,7 @@ package net.shed.mlrbinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -194,12 +195,7 @@ class MlrBinderTest {
 
 	@Test
 	void runFail() throws IOException, InterruptedException {
-		// TODO
-	}
-
-	@Test
-	void runWithRedirectOutputFileTest() throws IOException, InterruptedException {
-		// TODO
+		assertTrue(false);
 	}
 
 	private ProcessBuilder getProcessBuilder(int exitCode, String runResult) throws IOException, InterruptedException {
