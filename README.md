@@ -16,8 +16,19 @@ helps run mlr(Miller) with java.
 
 ## TODO
 
+### v0.01
+
 1. ~~logging~~
 	1. ~~info to debug~~
 1. ~~change to gradle library project~~
-1. add MlrBinder.setRedirectOutputFile()
-1. add E2E test
+1. ~~add E2E test~~
+
+### v0.02
+
+1. add static prebuilt object
+1. execute mlr then connect output stream to isr
+
+		public void run(InputStreamReader isr) {
+
+		}
+1. remove isConsecutive from the Verb
