@@ -9,6 +9,9 @@ public class Flag implements Arg {
 	 * --csv or -c
 	 */
 	private String flagName;
+	public static final Flag csv() {
+		return new Flag("--csv");
+	}
 
 	public Flag(String flagName) {
 		super();

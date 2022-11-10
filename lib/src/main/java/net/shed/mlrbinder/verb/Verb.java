@@ -12,6 +12,8 @@ public class Verb implements Arg {
 	 */
 	public static final String CHAINING_ADVERB = "then";
 
+	public static final Verb cat() {return new Verb("cat");}
+
 	String verbName;
 
 	/**
