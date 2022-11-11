@@ -183,7 +183,11 @@ public class MlrBinder {
 			toStrResult.append(flag);
 		}
 
-		for(Verb verb : verbs) {
+		for(int i = 0 ; i < verbs.size() ; i++) {
+			Verb verb = verbs.get(i);
+			if (i > 0) {
+				toStrResult.append(SPACER + Verb.CHAINING_ADVERB);
+			}
 			toStrResult.append(SPACER);
 			toStrResult.append(verb);
 		}

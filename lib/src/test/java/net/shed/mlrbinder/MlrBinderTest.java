@@ -75,7 +75,7 @@ class MlrBinderTest {
 		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("flag" + i);
 			mlr.flag(flag);
-			toStringResult += " " + flag;
+			toStringResult += MlrBinder.SPACER + flag;
 		}
 		logger.info("mlr.toString()=" + mlr.toString());
 		assertEquals(mlr.toString(), toStringResult);
@@ -103,9 +103,11 @@ class MlrBinderTest {
 		String toStringResult = "mlrPath";
 		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
-			verb.isConsecutive(i > 0);
 			mlr.verb(verb);
-			toStringResult += " " + verb;
+			if(i > 0) {
+				toStringResult += MlrBinder.SPACER + Verb.CHAINING_ADVERB;
+			}
+			toStringResult += MlrBinder.SPACER + verb;
 		}
 		logger.info("mlr.toString()=" + mlr.toString());
 		assertEquals(mlr.toString(), toStringResult);
@@ -134,7 +136,7 @@ class MlrBinderTest {
 		for (int i = 0; i < cnt; i++) {
 			String fileName = "fileName" + i;
 			mlr.file(fileName);
-			toStringResult += " " + fileName;
+			toStringResult += MlrBinder.SPACER + fileName;
 		}
 		logger.info("mlr.toString()=" + mlr.toString());
 		assertEquals(toStringResult, mlr.toString());
@@ -151,20 +153,25 @@ class MlrBinderTest {
 			Flag flag = new Flag("--flag" + i);
 			flag.objective(new Objective("obj" + i));
 			mlr.flag(flag);
-			toStringResult += " " + flag;
+			toStringResult += MlrBinder.SPACER + flag;
 		}
 
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
 		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
-			verb.isConsecutive(i > 0);
 			verb.addArg(
-					new Option(
-							new Flag("--flag" + i).objective(
-									new Objective("object" + i))));
+				new Option(
+						new Flag("--flag" + i).objective(
+								new Objective("object" + i)
+					)
+				)
+			);
 			mlr.verb(verb);
-			toStringResult += " " + verb;
+			if(i > 0) {
+				toStringResult += MlrBinder.SPACER + Verb.CHAINING_ADVERB;
+			}
+			toStringResult += MlrBinder.SPACER + verb;
 		}
 
 		int cnt = new Random().nextInt(10);
@@ -172,7 +179,7 @@ class MlrBinderTest {
 		for (int i = 0; i < cnt; i++) {
 			String fileName = "fileName" + i;
 			mlr.file(fileName);
-			toStringResult += " " + fileName;
+			toStringResult += MlrBinder.SPACER + fileName;
 		}
 
 		logger.info("mlr.toString()=" + mlr.toString());

@@ -15,15 +15,6 @@ public class Verb implements Arg {
 	String verbName;
 
 	/**
-	 * is chained verb
-	 */
-	private boolean isConsecutive = false;
-
-	public boolean isConsecutive() {
-		return isConsecutive;
-	}
-
-	/**
 	 * argument list
 	 */
 	private List<Arg> args = new ArrayList<>();
@@ -48,9 +39,7 @@ public class Verb implements Arg {
 
 	@Override
 	public String toString() {
-		return (isConsecutive ? CHAINING_ADVERB + MlrBinder.SPACER : "")
-			+ verbName
-			+ toStringArgs();
+		return verbName + toStringArgs();
 	}
 
 	private String toStringArgs() {
@@ -61,20 +50,12 @@ public class Verb implements Arg {
 		return concatenatedOptions.toString();
 	}
 
-	public Verb isConsecutive(boolean isConsecutive) {
-		this.isConsecutive = isConsecutive;
-		return this;
-	}
-
 	/**
 	 * to command line executable arguments list
 	 */
 	@Override
 	public List<String> toStringList() {
 		List<String> stringList = new ArrayList<>();
-		if(isConsecutive) {
-			stringList.add(CHAINING_ADVERB);
-		}
 		stringList.add(verbName);
 		args.stream().forEach(o -> stringList.addAll(o.toStringList()));
 		return stringList;
