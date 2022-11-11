@@ -25,10 +25,15 @@ helps run mlr(Miller) with java.
 
 ### v0.02
 
+1. ~~remove isConsecutive from the Verb~~
 1. add static prebuilt object
+	1. Verbs
+	1. Flags
+
+### v0.1
+
 1. execute mlr then connect output stream to isr
 
 		public void run(InputStreamReader isr) {
 
 		}
-1. remove isConsecutive from the Verb
