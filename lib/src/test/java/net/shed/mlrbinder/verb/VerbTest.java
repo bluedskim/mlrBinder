@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import net.shed.mlrbinder.Flag;
+import static net.shed.mlrbinder.verb.Verb.sort;
 
 public class VerbTest {
 
@@ -64,4 +65,10 @@ public class VerbTest {
 		verb.addArg(option2);
 		assertEquals(options, verb.getArgs());
 	}
+
+	@Test
+	public void staticSortMethodTest() {
+		Verb verb = sort();
+		assertEquals("sort", verb.toString());
+	}	
 }

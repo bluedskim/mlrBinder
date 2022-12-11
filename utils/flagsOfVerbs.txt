@@ -1,0 +1,147 @@
+-1 through -9: format the seconds using 1..9 decimal places, respectively.
+--across-records,--across-fields One is required.
+--all-matching  {regular expression}
+--all Operate on all fields in the input.
+--all              Use all available summarizers.
+--any-matching  {regular expression}
+--at-least      {comma-separated names}
+--at-most       {comma-separated names}
+--auto        Automatically computes limits, ignoring --lo and --hi.
+--auto            Automatically computes limits, ignoring --lo and --hi.
+--evar {string}       Shorthand for --explode --values ---across-records --nested-fs {string}
+--explode,--implode   One is required.
+--filename Prepend current filename to each record.
+--filenum  Prepend current filenum (1-up) to each record.
+--fill-with {filler string}  What to fill absent fields with. Defaults to
+--fill-with {filler string}  What to fill absent fields with. Defaults to the empty string.
+--fit          Rather than printing regression parameters, applies them to
+--fr {regex}   Regex for value-field names on which to compute statistics
+--fx {regex}   Inverted regex for value-field names on which to compute statistics
+--grfx {regex} Shorthand for --gr {regex} --fx {that same regex}
+--gr {regex}   Regex for optional group-by-field names
+--gx {regex}   Inverted regex for optional group-by-field names
+--hi {hi}     Histogram high value
+--hi {hi}         Upper-limit value for max-width bar: default '100.000000'.
+--ifs {field-separator character}
+--implicit-csv-header
+--implicit-tsv-header
+--ips {pair-separator character}
+--irs {record-separator character}
+--ivar {string}       Shorthand for --implode --values ---across-records --nested-fs {string}
+--jvstack Produce multi-line JSON output.
+--lk|--left-keep-field-names {a,b,c} If supplied, this means keep only the specified field
+--lo {lo}     Histogram low value
+--lo {lo}         Lower-limit value for min-width bar: default '0.000000'.
+--lp {text}  Additional prefix for non-join output field names from
+--micros Input numbers are treated as microseconds since the epoch.
+--millis Input numbers are treated as milliseconds since the epoch.
+--min         Print top smallest values; default is top largest values.
+--nanos  Input numbers are treated as nanoseconds since the epoch.
+--nbins {n}   Number of histogram bins. Defaults to 20.
+--nested-fs {string}  Defaults to ";". Field separator for nested values.
+--nested-ps {string}  Defaults to ":". Pair separator for nested key-value pairs.
+--no-implicit-csv-header
+--no-implicit-tsv-header
+--no-jvstack Produce single-line JSON output per record (default).
+--none-matching {regular expression}
+--np         Do not emit paired records
+--prefix {p} Specify filename prefix; default "split".
+--prepipex {command} Likewise.
+--prepipe {command} As in main input options; see mlr --help for details.
+--repifs
+--rp {text}  Additional prefix for non-join output field names from
+--start {value} (default 1) Inclusive start value.
+--step {value} (default 1) Step value.
+--stop {value} (default 100) Inclusive stop value.
+--suffix {s} Specify filename suffix; default is from mlr output format, e.g. "csv".
+--ul         Emit unpaired records from the left file
+--ur         Emit unpaired records from the right file(s)
+--values,--pairs      One is required.
+--which-are     {comma-separated names}
+-D Like -d but with output all on one line.
+-D Like -d but with output all on one line.
+-E Echo DSL expression before printing parse-tree
+-E Echo DSL expression before printing parse-tree
+-F           Computes integerable things (e.g. counter) in floating point.
+-F            Keep top values as floats even if they look like integers.
+-N {name}  Prepend field {name} to each record with record-counter starting at 1.
+-S          Don't infer type -- so '-v 0' would fill string 0 not int 0.
+-S and -F: There are no-ops in Miller 6 and above, since now type-inferencing is done
+-S and -F: There are no-ops in Miller 6 and above, since now type-inferencing is done
+-W Same as -w, but exit the process if there are any warnings.
+-W Same as -w, but exit the process if there are any warnings.
+-X Exit after parsing but before stream-processing. Useful with -v/-d/-D, if you
+-X Exit after parsing but before stream-processing. Useful with -v/-d/-D, if you
+-a           Append to existing file(s), if any, rather than overwriting.
+-a    Append to existing file, if any, rather than overwriting.
+-a            Output each unique record only once. Incompatible with -g.
+-a            Print all fields for top-value records; default is
+-a {delta,rsum,...} Names of steppers: comma-separated, one or more of:
+-a {linreg-ols,corr,...}  Names of accumulators: one or more of:
+-a {mean,sum,etc.} Use only the specified summarizers.
+-a {sum,count,...}  Names of accumulators. One or more of:
+-a {sum,count,...} Names of accumulators: one or more of:
+-a {x}     Put field names specified with -f after field name specified by {x},
+-a|--only-if-absent If a given record has a missing value for a given field,
+-b Decimate by printing first of every n.
+-b          Suppress counts; show only field values.
+-b          Suppress counts; show only field values.
+-b   {character}  Blank character: default '.'.
+-b {x}     Put field names specified with -f before field name specified by {x},
+-c            Produce cumulative distributions, i.e. running sums: each output
+-c            Show repeat counts in addition to unique values.
+-cr {comma-separated field names}  Case-folded lexical descending
+-c {a,b,c}  Substrings for collapse mode. All fields which have the same names
+-c   {character}  Fill character: default '*'.
+-c  {comma-separated field names}  Case-folded lexical ascending
+-d Like -p but uses a parenthesized-expression format for the AST.
+-d Like -p but uses a parenthesized-expression format for the AST.
+-d {x,y,z}   Weights for EWMA. 1 means current sample gets all weight (no
+-e Decimate by printing last of every n (default).
+-e Put specified field names at record end: default is to put them at record start.
+-e {expression} You can use this after -f to add an expression. Example use
+-e {expression} You can use this after -f to add an expression. Example use
+-f Comma-separated list of field names to flatten (default all).
+-f  Field names for fill-down.
+-f {...} Comma-separated list of field names to json-parse (default all).
+-f {...} Comma-separated list of field names to json-parse (default all).
+-f {a,b,c,d}   Value-field name-pairs on which to compute statistics.
+-f {a,b,c} Comma-separated field names for cut, e.g. a,b,c.
+-f {a,b,c} Comma-separated field names for template, e.g. a,b,c.
+-f {a,b,c} Comma-separated list of field names to unflatten (default all).
+-f {a,b,c}    Field name(s) for fraction calculation
+-f {a,b,c}    Field names for distinct count.
+-f   {a,b,c}      Field names to convert to bars.
+-f {a,b,c} Field names to reorder.
+-f {a,b,c} Specify field names to be operated on. Any other fields won't be
+-f {a,b,c}    Value-field names for histogram counts
+-f {a,b,c}    Value-field names for top counts.
+-f {a,b,c}   Value-field names on which to compute statistics
+-f {a,b,c}     Value-field names on which to compute statistics
+-f {a,b,c}  Value-field names on which to compute statistics. Requires -o.
+-f  {comma-separated field names}  Lexical ascending
+-f {field name}       Required.
+-f {field name}    Same, but take the repeat count from the specified
+-f {file name} File containing a DSL expression (see examples below). If the filename
+-f {file name} File containing a DSL expression (see examples below). If the filename
+-f {float format}   Defaults to "%f".
+-f {left file name}
+-f {name} (default "i") Field name for counters.
+-f {one or more comma-separated field names}. Required flag.
+-f {one or more comma-separated field names}. Required flag.
+-g         Do global replacement within each field name rather than
+-g {a,b,c}:  Write separate files with records having distinct values for fields named a,b,c.
+-g {a,b,c} Group-by-field names for counts, e.g. a,b,c
+-g {a,b,c} Optional: group-by-field names for samples, e.g. a,b,c.
+-g {a,b,c} Optional group-by-field names for counters, e.g. a,b,c
+-g {a,b,c} Optional group-by-field names for counts, e.g. a,b,c
+-g {a,b,c} Optional group-by-field names for decimate counts, e.g. a,b,c.
+-g {a,b,c} Optional group-by-field names for head counts, e.g. a,b,c.
+-g {a,b,c} Optional group-by-field names for head counts, e.g. a,b,c.
+-g {a,b,c} Print a gap whenever values of these fields (e.g. a,b,c) changes.
+-g {d,e,f}    Group-by-field names for uniq counts.
+-g {d,e,f}    Optional group-by-field name(s) for fraction counts
+-g {d,e,f}   Optional group-by-field names
+-g {d,e,f}     Optional group-by-field names
+-g {d,e,f}    Optional group-by-field names for top counts.
+-g {e,f,g}     Optional group-by-field names.

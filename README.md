@@ -13,6 +13,26 @@ helps run mlr(Miller) with java.
 		google-chrome ./lib/build/jacocoHtml/index.html
 		google-chrome ./lib/build/reports/tests/test/index.html
 		```
+## Examples
+
+	String runResult = new MlrBinder("mlr", workingPath)
+		.workingPath(workingPath)
+		.flag(csv())
+		.verb(
+			sort()
+				.addArg(new Flag("-n").objective("a"))
+				.addArg(new Flag("-nr").objective("b"))
+		)
+		.file("example.csv")
+		.run()
+	;
+
+	String runResult = MlrBinder
+		.csv()
+		.sort(n("a"), nr("b"))
+		.file(new File("example.csv"))
+		.run()
+	;
 
 ## TODO
 

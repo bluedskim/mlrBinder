@@ -9,6 +9,9 @@ public class Flag implements Arg {
 	 * --csv or -c
 	 */
 	private String flagName;
+	public static final Flag csv() {
+		return new Flag("--csv");
+	}
 
 	public Flag(String flagName) {
 		super();
@@ -19,6 +22,11 @@ public class Flag implements Arg {
 
 	public Flag objective(Objective obj) {
 		this.obj = obj;
+		return this;
+	}
+
+	public Flag objective(String objStr) {
+		this.obj = new Objective(objStr);
 		return this;
 	}
 

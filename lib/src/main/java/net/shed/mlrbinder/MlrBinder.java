@@ -20,18 +20,21 @@ public class MlrBinder {
 	 * put spacer between words
 	 */
 	public static final String SPACER = " ";
+	public static final String DEFAULT_MLR_PATH = "mlr";
 	private ProcessBuilder processBuilder;
 
 	private static Logger logger = Logger.getLogger(MlrBinder.class.getName());
 
 	Integer exitCode;
 	String stdErr;
+	private String mlrPath;
 
 	/**
 	 * default constructor
 	 */
 	public MlrBinder() {
 		super();
+		mlrPath = DEFAULT_MLR_PATH;
 		processBuilder = new ProcessBuilder();
 	}
 
@@ -43,8 +46,6 @@ public class MlrBinder {
 		this();
 		this.processBuilder = processBuilder;
 	}
-
-	private String mlrPath;
 
 	/**
 	 * constructor, get mlr executable path
