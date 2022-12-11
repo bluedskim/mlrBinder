@@ -25,6 +25,11 @@ public class Flag implements Arg {
 		return this;
 	}
 
+	public Flag objective(String objStr) {
+		this.obj = new Objective(objStr);
+		return this;
+	}
+
 	public Objective getObjective() {
 		return obj;
 	}
