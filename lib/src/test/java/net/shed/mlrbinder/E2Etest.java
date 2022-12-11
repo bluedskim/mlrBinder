@@ -2,6 +2,7 @@ package net.shed.mlrbinder;
 
 import static net.shed.mlrbinder.Flag.csv;
 import static net.shed.mlrbinder.verb.Verb.cat;
+import static net.shed.mlrbinder.verb.Verb.sort;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -133,7 +134,7 @@ public class E2Etest {
 	public void staticCatMethodTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder()
+		MlrBinder mlr = new MlrBinder("mlr", workingPath)
 			.workingPath(workingPath)
 			.flag(csv())
 			.verb(cat())
@@ -144,5 +145,42 @@ public class E2Etest {
 		assertEquals("mlr --csv cat example.csv", mlr.toString());
 		String runResult = mlr.run();
 		assertEquals("a,b,c\n4,5,6\n1,2,3\n9,8,7", runResult);
+	}
+
+	@Test
+	public void staticSortMethodTest() throws IOException, InterruptedException {
+		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
+
+		/*
+		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+			.workingPath(workingPath)
+			.flag(csv())
+			.verb(
+				sort()
+					.addArg(new Option(new Flag("-n"), new Objective("a")))
+					.addArg(new Option(new Flag("-nr"), new Objective("b")))
+			)
+			.file("example.csv")
+		;
+		logger.info("mlr=" + mlr.toString());
+		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
+		 */
+
+		MlrBinder mlr = new MlrBinder()
+			.workingPath(workingPath)
+			.flag(csv())
+			.verb(
+				sort(
+					new Flag("-n").objective("a")
+					,new Flag("-nr").objective("b")
+				)
+			)
+			.file("example.csv")
+		;
+		logger.info("mlr=" + mlr.toString());
+		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
+
+		String runResult = mlr.run();
+		assertEquals("a,b,c\n1,2,3\n4,5,6\n9,8,7", runResult);
 	}
 }
