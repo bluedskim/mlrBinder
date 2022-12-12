@@ -7,12 +7,7 @@ import java.util.List;
 import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.MlrBinder;
 
-public class Verb implements Arg {
-	/**
-	 * verbs can be chained with CHAINING_ADVERB
-	 */
-	public static final String CHAINING_ADVERB = "then";
-	
+public class Verb implements Arg {	
 	/**
 	 * verbs can be chained with CHAINING_ADVERB
 	 */

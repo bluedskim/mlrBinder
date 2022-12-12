@@ -105,7 +105,7 @@ class MlrBinderTest {
 			Verb verb = new Verb("verb" + i);
 			mlr.verb(verb);
 			if(i > 0) {
-				toStringResult += MlrBinder.SPACER + Verb.CHAINING_ADVERB;
+				toStringResult += MlrBinder.SPACER + MlrBinder.CHAINING_ADVERB;
 			}
 			toStringResult += MlrBinder.SPACER + verb;
 		}
@@ -169,7 +169,7 @@ class MlrBinderTest {
 			);
 			mlr.verb(verb);
 			if(i > 0) {
-				toStringResult += MlrBinder.SPACER + Verb.CHAINING_ADVERB;
+				toStringResult += MlrBinder.SPACER + MlrBinder.CHAINING_ADVERB;
 			}
 			toStringResult += MlrBinder.SPACER + verb;
 		}

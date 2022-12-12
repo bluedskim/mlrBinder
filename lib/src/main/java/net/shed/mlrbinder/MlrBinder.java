@@ -21,6 +21,11 @@ public class MlrBinder {
 	 */
 	public static final String SPACER = " ";
 	public static final String DEFAULT_MLR_PATH = "mlr";
+	/**
+	 * verbs can be chained with CHAINING_ADVERB
+	 */
+	public static final String CHAINING_ADVERB = "then";
+
 	private ProcessBuilder processBuilder;
 
 	private static Logger logger = Logger.getLogger(MlrBinder.class.getName());
@@ -187,7 +192,7 @@ public class MlrBinder {
 		for(int i = 0 ; i < verbs.size() ; i++) {
 			Verb verb = verbs.get(i);
 			if (i > 0) {
-				toStrResult.append(SPACER + Verb.CHAINING_ADVERB);
+				toStrResult.append(SPACER + CHAINING_ADVERB);
 			}
 			toStrResult.append(SPACER);
 			toStrResult.append(verb);
