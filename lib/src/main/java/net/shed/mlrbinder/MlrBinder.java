@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -128,7 +129,7 @@ public class MlrBinder {
 	/**
 	 * add flag
 	 * @param flag
-	 * @return
+	 * @return this MlrBinder
 	 */
 	public MlrBinder flag(Flag flag) {
 		flags.add(flag);
@@ -142,19 +143,19 @@ public class MlrBinder {
 
 	/**
 	 * return list of verbs
-	 * @return
+	 * @return verbs
 	 */
 	public List<Verb> getVerbs() {
 		return verbs;
 	}
 
 	/**
-	 * add flag
-	 * @param verb
-	 * @return
+	 * add verbs and return this MlrBinder
+	 * @param flag
+	 * @return this MlrBinder
 	 */
-	public MlrBinder verb(Verb verb) {
-		verbs.add(verb);
+	public MlrBinder verb(Verb... verbs) {
+		this.verbs.addAll(Arrays.asList(verbs));
 		return this;
 	}
 

@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -82,7 +83,7 @@ class MlrBinderTest {
 	}
 
 	@Test
-	@DisplayName("added verbs order")
+	@DisplayName("added verb order")
 	void verbsTest() {
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
@@ -91,6 +92,24 @@ class MlrBinderTest {
 			Verb verb = new Verb("verb" + i);
 			mlr.verb(verb);
 			assertEquals(mlr.getVerbs().get(i), verb);
+		}
+	}
+
+	@Test
+	@DisplayName("added verbs")
+	void verbsMultiTest() {
+		int cntOfVerbs = new Random().nextInt(10);
+		logger.info("cntOfVerbs=" + cntOfVerbs);
+		MlrBinder mlr = new MlrBinder();
+		List<Verb> verbs = new ArrayList<>();
+		for (int i = 0; i < cntOfVerbs; i++) {
+			verbs.add(new Verb("verb" + i));
+		}
+		mlr.verb(verbs.toArray(new Verb[0]));
+
+		for (int i = 0; i < cntOfVerbs; i++) {
+			verbs.add(new Verb("verb" + i));
+			assertEquals(mlr.getVerbs().get(i), verbs.get(i));
 		}
 	}
 
