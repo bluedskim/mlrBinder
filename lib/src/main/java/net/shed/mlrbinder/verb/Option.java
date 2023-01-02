@@ -6,15 +6,16 @@ import java.util.List;
 import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Objective;
 
 public class Option implements Arg {
 	private Flag flag;
-	private Object obj;
+	private Objective obj;
 
 	public Option(Flag flag) {
 		this.flag = flag;
 	}
-	public Option(Flag flag, Object obj) {
+	public Option(Flag flag, Objective obj) {
 		this.flag = flag;
 		this.obj = obj;
 	}
