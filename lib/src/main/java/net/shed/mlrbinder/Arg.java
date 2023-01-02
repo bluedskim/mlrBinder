@@ -3,7 +3,7 @@ package net.shed.mlrbinder;
 import java.util.Collection;
 
 /**
- * argument interface
+ * argument interface like verb, flag, file name
  */
 public interface Arg {
     public String toString();
