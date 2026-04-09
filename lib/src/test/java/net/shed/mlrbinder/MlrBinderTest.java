@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +27,9 @@ import org.junit.jupiter.api.Test;
 
 import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
+
+import static net.shed.mlrbinder.SortFlags.n;
+import static net.shed.mlrbinder.SortFlags.nr;
 
 class MlrBinderTest {
 	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
@@ -295,6 +299,37 @@ class MlrBinderTest {
 				.mload("one.mlr", "two.mlr")
 				.verb(new Verb("cat"));
 		assertEquals("mlr --mload one.mlr two.mlr -- cat", mlr.toString());
+	}
+
+	@Test
+	@DisplayName("fluent csv().sort(n,nr).file matches manual assembly")
+	void fluentCsvSortWithSortFlags() {
+		MlrBinder mlr = MlrBinder.csv()
+				.workDir("workingPath")
+				.sort(n("a"), nr("b"))
+				.file("example.csv");
+		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
+	}
+
+	@Test
+	@DisplayName("file(File) absolute path sets working directory to parent")
+	void fileAbsoluteSetsWorkingPathToParent() throws IOException {
+		java.nio.file.Path dir = Files.createTempDirectory("mlrbinder-filetest");
+		File csv = dir.resolve("x.csv").toFile();
+		assertTrue(csv.createNewFile());
+		csv.deleteOnExit();
+
+		MlrBinder mlr = new MlrBinder("mlr").file(csv);
+		assertEquals(dir.toFile().getPath(), mlr.workingPath);
+		assertEquals("mlr x.csv", mlr.toString());
+	}
+
+	@Test
+	@DisplayName("file(File) relative path defaults working directory to user.dir")
+	void fileRelativeDefaultsWorkingPathToUserDir() {
+		MlrBinder mlr = new MlrBinder("mlr").file(new File("sub/example.csv"));
+		assertEquals(System.getProperty("user.dir"), mlr.workingPath);
+		assertEquals("mlr sub/example.csv", mlr.toString());
 	}
 
 	private ProcessBuilder getProcessBuilder(int exitCode, String runResult) throws IOException, InterruptedException {

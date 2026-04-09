@@ -16,7 +16,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.verb.Verb;
+import net.shed.mlrbinder.verb.Verbs;
 
 /**
  * Mlr(Miller) binder
@@ -213,6 +215,58 @@ public class MlrBinder {
 	public MlrBinder file(String fileName) {
 		fileNames.add(fileName);
 		return this;
+	}
+
+	/**
+	 * Adds an input file argument. If {@link #workingPath} is not set yet: for a relative file, defaults the process
+	 * working directory to {@code user.dir}; for an absolute file, sets it to the file's parent directory (file name
+	 * only is passed to {@code mlr}, matching {@link #file(String)} with a bare name and matching working directory).
+	 */
+	public MlrBinder file(File file) {
+		Objects.requireNonNull(file, "file");
+		File absolute = file.getAbsoluteFile();
+		if (file.isAbsolute()) {
+			File parent = absolute.getParentFile();
+			if (workingPath == null) {
+				workingPath = parent != null ? parent.getPath() : System.getProperty("user.dir");
+			}
+			fileNames.add(absolute.getName());
+		} else {
+			if (workingPath == null) {
+				workingPath = System.getProperty("user.dir");
+			}
+			fileNames.add(file.getPath());
+		}
+		return this;
+	}
+
+	/**
+	 * Fluent entry: {@code mlr} on {@code PATH}, {@code --csv}, empty verbs/files until chained.
+	 */
+	public static MlrBinder csv() {
+		return new MlrBinder().flag(Flags.csv());
+	}
+
+	/**
+	 * Alias for {@link #workingPath(String)} for fluent chains.
+	 */
+	public MlrBinder workDir(String path) {
+		return workingPath(path);
+	}
+
+	/**
+	 * Sets the process working directory from {@code dir}'s path.
+	 */
+	public MlrBinder workDir(File dir) {
+		Objects.requireNonNull(dir, "dir");
+		return workingPath(dir.getPath());
+	}
+
+	/**
+	 * Appends a {@code sort} verb with the given Miller arguments (e.g. from {@link SortFlags#n} / {@link SortFlags#nr}).
+	 */
+	public MlrBinder sort(Arg... args) {
+		return verb(Verbs.sort(args));
 	}
 
 	public List<String> getFileNames() {

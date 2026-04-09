@@ -1,6 +1,8 @@
 package net.shed.mlrbinder;
 
 import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.SortFlags.n;
+import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Verbs.cat;
 import static net.shed.mlrbinder.verb.Verbs.sort;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -224,6 +226,22 @@ public class E2Etest {
 
 		String written = Files.readString(out.toPath()).trim();
 		assertEquals("a,b,c\n4,5,6\n1,2,3\n9,8,7", written);
+	}
+
+	@Test
+	public void fluentCsvSortFileTest() throws IOException, InterruptedException {
+		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
+		File example = new File(workingPath, "example.csv");
+
+		MlrBinder mlr = MlrBinder.csv()
+			.workDir(workingPath)
+			.sort(n("a"), nr("b"))
+			.file(example);
+
+		logger.info("mlr=" + mlr.toString());
+		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
+		String runResult = mlr.run();
+		assertEquals("a,b,c\n1,2,3\n4,5,6\n9,8,7", runResult);
 	}
 	}
 
