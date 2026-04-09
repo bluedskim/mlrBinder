@@ -116,8 +116,7 @@ class MlrBinderTest {
 		mlr.verb(verbs.toArray(new Verb[0]));
 
 		for (int i = 0; i < cntOfVerbs; i++) {
-			verbs.add(new Verb("verb" + i));
-			assertEquals(mlr.getVerbs().get(i), verbs.get(i));
+			assertEquals(verbs.get(i), mlr.getVerbs().get(i));
 		}
 	}
 
@@ -330,6 +329,56 @@ class MlrBinderTest {
 		MlrBinder mlr = new MlrBinder("mlr").file(new File("sub/example.csv"));
 		assertEquals(System.getProperty("user.dir"), mlr.workingPath);
 		assertEquals("mlr sub/example.csv", mlr.toString());
+	}
+
+	@Test
+	@DisplayName("workDir(File) sets working path from directory")
+	void workDirFileSetsWorkingPath() throws IOException {
+		java.nio.file.Path dir = Files.createTempDirectory("mlrbinder-workdir");
+		MlrBinder mlr = new MlrBinder("mlr").workDir(dir.toFile());
+		assertEquals(dir.toFile().getPath(), mlr.workingPath);
+	}
+
+	@Test
+	@DisplayName("getPreVerbArgs is unmodifiable")
+	void getPreVerbArgsUnmodifiable() {
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath").mfrom("a.csv");
+		assertThrows(UnsupportedOperationException.class, () -> mlr.getPreVerbArgs().add("x"));
+	}
+
+	@Test
+	@DisplayName("mfrom and mload reject null collection")
+	void mfromMloadRequireNonNull() {
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath");
+		assertThrows(NullPointerException.class, () -> mlr.mfrom((String[]) null));
+		assertThrows(NullPointerException.class, () -> mlr.mload((String[]) null));
+		assertThrows(NullPointerException.class, () -> mlr.mfrom("ok", null));
+		assertThrows(NullPointerException.class, () -> mlr.mload("ok", null));
+	}
+
+	@Test
+	@DisplayName("run(InputStreamReader) rejects null reader")
+	void runStdinRejectsNullReader() {
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath");
+		assertThrows(IllegalArgumentException.class, () -> mlr.run((InputStreamReader) null));
+	}
+
+	@Test
+	@DisplayName("run(InputStreamReader) requires working path")
+	void runStdinRequiresWorkingPath() {
+		MlrBinder mlr = new MlrBinder("mlr");
+		InputStreamReader isr = new InputStreamReader(
+				new ByteArrayInputStream("x\n".getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+		assertThrows(IllegalArgumentException.class, () -> mlr.run(isr));
+	}
+
+	@Test
+	@DisplayName("redirectOutputFile getter returns set file")
+	void redirectOutputFileGetter() throws IOException {
+		File out = File.createTempFile("mlrbinder-out", ".csv");
+		out.deleteOnExit();
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath").redirectOutputFile(out);
+		assertEquals(out, mlr.getRedirectOutputFile());
 	}
 
 	private ProcessBuilder getProcessBuilder(int exitCode, String runResult) throws IOException, InterruptedException {

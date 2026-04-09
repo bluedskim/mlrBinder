@@ -4,7 +4,9 @@ import static net.shed.mlrbinder.Flags.csv;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Verbs.cat;
+import static net.shed.mlrbinder.verb.Verbs.head;
 import static net.shed.mlrbinder.verb.Verbs.sort;
+import static net.shed.mlrbinder.verb.Verbs.tac;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -242,6 +244,40 @@ public class E2Etest {
 		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
 		String runResult = mlr.run();
 		assertEquals("a,b,c\n1,2,3\n4,5,6\n9,8,7", runResult);
+	}
+
+	@Test
+	public void chainedVerbsHeadThenTacTest() throws IOException, InterruptedException {
+		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
+
+		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+			.flag(new Flag("--csv"))
+			.verb(
+				head(new Option(new Flag("-n"), new Objective("2"))),
+				tac())
+			.file("example.csv");
+
+		logger.info("mlr=" + mlr.toString());
+		assertEquals("mlr --csv head -n 2 then tac example.csv", mlr.toString());
+		String runResult = mlr.run();
+		assertEquals("1,2,3\n4,5,6\na,b,c", runResult);
+	}
+
+	@Test
+	public void mfromMultiFileCatTest() throws IOException, InterruptedException {
+		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
+
+		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+			.flag(new Flag("--csv"))
+			.mfrom("example.csv", "example.csv")
+			.verb(cat());
+
+		logger.info("mlr=" + mlr.toString());
+		assertEquals("mlr --csv --mfrom example.csv example.csv -- cat", mlr.toString());
+		String runResult = mlr.run();
+		assertEquals(
+				"a,b,c\n4,5,6\n1,2,3\n9,8,7\na,b,c\n4,5,6\n1,2,3\n9,8,7",
+				runResult);
 	}
 	}
 

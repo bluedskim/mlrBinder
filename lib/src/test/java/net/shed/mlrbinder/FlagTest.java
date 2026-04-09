@@ -20,6 +20,14 @@ public class FlagTest {
 	}
 
 	@Test
+	@DisplayName("objective(String) wraps value like Objective constructor")
+	public void flagObjectiveString() {
+		Flag flag = new Flag("--x").objective("v");
+		assertEquals("v", flag.getObjective().toString());
+		assertEquals("--x v", flag.toString());
+	}
+
+	@Test
 	@DisplayName("constructor with object test")
 	public void flagWithObject() {
 		String flagName = "--flag";
