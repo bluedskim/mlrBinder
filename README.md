@@ -63,6 +63,23 @@ String runResult2 = new MlrBinder("mlr", workingPath)
 	.run();
 ```
 
+### Fluent entry (`MlrBinder.csv()`, `sort`, `file(File)`)
+
+`SortFlags` provides Miller `sort` key shorthands `n` / `nr` (static import recommended).
+
+```java
+import static net.shed.mlrbinder.SortFlags.n;
+import static net.shed.mlrbinder.SortFlags.nr;
+
+String runResult = MlrBinder.csv()
+	.workDir(workingPath)
+	.sort(n("a"), nr("b"))
+	.file(new File("example.csv"))
+	.run();
+```
+
+`file(File)` sets `workingPath` automatically when it is still unset: absolute file → parent directory; relative file → `user.dir`. Override anytime with `workDir(String)` or `workingPath(String)`.
+
 ## TODO
 
 ### v0.01
