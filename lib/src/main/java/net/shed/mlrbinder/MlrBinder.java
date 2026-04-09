@@ -1,8 +1,12 @@
 package net.shed.mlrbinder;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -208,11 +212,74 @@ public class MlrBinder {
 	}
 
 	/**
-	 * execute mlr then connect output stream to isr
-	 * @param isr
+	 * Run mlr with records read from {@code isr} as standard input (no input files).
+	 * Miller reads stdin when no file names are given.
+	 *
+	 * @param isr character source for stdin; must not be null
 	 */
-	public void run(InputStreamReader isr) {
+	public void run(InputStreamReader isr) throws IOException, InterruptedException {
+		if (isr == null) {
+			throw new IllegalArgumentException("isr must not be null");
+		}
+		if (workingPath == null) {
+			throw new IllegalArgumentException("workingPath must not be null");
+		}
 
+		List<String> executableAndArgs = new ArrayList<>();
+		executableAndArgs.add(mlrPath);
+		executableAndArgs.addAll(getArgs());
+		processBuilder.directory(new File(workingPath));
+		processBuilder.command(executableAndArgs);
+
+		if (redirectOutputFile != null) {
+			boolean created = redirectOutputFile.createNewFile();
+			logger.info("redirectInputFile created=" + created);
+			processBuilder.redirectOutput(redirectOutputFile);
+		}
+
+		Process process = processBuilder.start();
+		logger.info("start process=" + process.pid());
+
+		Thread stdinWriter = new Thread(() -> {
+			try (BufferedReader br = new BufferedReader(isr);
+					BufferedWriter bw = new BufferedWriter(
+							new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					bw.write(line);
+					bw.newLine();
+				}
+			} catch (IOException e) {
+				logger.warning("stdin pipe failed: " + e.getMessage());
+			}
+		}, "mlr-stdin");
+		stdinWriter.start();
+
+		Thread stdoutDrainer = null;
+		if (redirectOutputFile == null) {
+			stdoutDrainer = new Thread(() -> {
+				try {
+					process.getInputStream().transferTo(OutputStream.nullOutputStream());
+				} catch (IOException e) {
+					logger.warning("stdout drain failed: " + e.getMessage());
+				}
+			}, "mlr-stdout-drain");
+			stdoutDrainer.start();
+		}
+
+		exitCode = process.waitFor();
+		logger.info("exitCode=" + exitCode);
+
+		stdinWriter.join();
+		if (stdoutDrainer != null) {
+			stdoutDrainer.join();
+		}
+
+		if (exitCode > 1) {
+			stdErr = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+			logger.info("stdErr=" + stdErr);
+			throw new RuntimeException("failed. exitCode=" + exitCode + " err=" + stdErr);
+		}
 	}
 
 	/**

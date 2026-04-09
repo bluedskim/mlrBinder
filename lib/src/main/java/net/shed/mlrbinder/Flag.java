@@ -15,8 +15,8 @@ public class Flag implements Arg {
 	 * --csv or -c
 	 */
 	private String flagName;
-	public static final Flag csv() {
-		return new Flag("--csv");
+	public static Flag csv() {
+		return Flags.csv();
 	}
 
 	public Flag(String flagName) {

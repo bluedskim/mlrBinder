@@ -221,7 +221,25 @@ class MlrBinderTest {
 
 	@Test
 	void runFail() throws IOException, InterruptedException {
-		assertTrue(false);
+		int exitCode = 2;
+		String errMsg = "mlr: error";
+		ProcessBuilder processBuilder = mock(ProcessBuilder.class);
+		Process process = mock(Process.class);
+		when(processBuilder.start()).thenReturn(process);
+		when(process.waitFor()).thenReturn(exitCode);
+		InputStream errStream = mock(InputStream.class);
+		when(process.getErrorStream()).thenReturn(errStream);
+		when(errStream.readAllBytes()).thenReturn(errMsg.getBytes(StandardCharsets.UTF_8));
+
+		MlrBinder mlr = new MlrBinder(processBuilder);
+		mlr.workingPath("workingPath");
+
+		RuntimeException ex = assertThrows(RuntimeException.class, mlr::run);
+		assertTrue(ex.getMessage().contains("failed"));
+		assertTrue(ex.getMessage().contains(String.valueOf(exitCode)));
+		assertTrue(ex.getMessage().contains(errMsg));
+		verify(processBuilder).directory(any(File.class));
+		verify(processBuilder).command(any(List.class));
 	}
 
 	private ProcessBuilder getProcessBuilder(int exitCode, String runResult) throws IOException, InterruptedException {
