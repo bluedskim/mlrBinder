@@ -1,12 +1,17 @@
 package net.shed.mlrbinder;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import net.shed.mlrbinder.verb.Verb;
@@ -208,11 +213,112 @@ public class MlrBinder {
 	}
 
 	/**
-	 * execute mlr then connect output stream to isr
-	 * @param isr
+	 * Run mlr with data read from {@code isr} as standard input. Omit input files so Miller reads stdin.
+	 * <p>
+	 * Unlike {@link #run()}, this method returns nothing: standard output is only written when
+	 * {@link #redirectOutputFile(File)} is set. Otherwise stdout is discarded so the process does not block on a full pipe.
+	 * </p>
+	 * <p>
+	 * Input is copied line by line ({@link BufferedReader#readLine()}); platform line endings are not preserved and each
+	 * record is terminated with a Unix newline ({@code \n}) on the child stdin.
+	 * </p>
+	 *
+	 * @param isr character source for stdin; must not be null
+	 * @throws IOException if piping stdin to mlr or draining stdout fails
 	 */
-	public void run(InputStreamReader isr) {
+	public void run(InputStreamReader isr) throws IOException, InterruptedException {
+		if (isr == null) {
+			throw new IllegalArgumentException("isr must not be null");
+		}
+		if (workingPath == null) {
+			throw new IllegalArgumentException("workingPath must not be null");
+		}
 
+		List<String> executableAndArgs = new ArrayList<>();
+		executableAndArgs.add(mlrPath);
+		executableAndArgs.addAll(getArgs());
+		processBuilder.directory(new File(workingPath));
+		processBuilder.command(executableAndArgs);
+
+		if (redirectOutputFile != null) {
+			boolean created = redirectOutputFile.createNewFile();
+			logger.info("redirectOutputFile created=" + created);
+			processBuilder.redirectOutput(redirectOutputFile);
+		}
+
+		Process process = processBuilder.start();
+		logger.info("start process=" + process.pid());
+
+		AtomicReference<IOException> stdinFailure = new AtomicReference<>();
+		AtomicReference<IOException> stdoutFailure = new AtomicReference<>();
+
+		Thread stdinWriter = new Thread(() -> {
+			try (BufferedReader br = new BufferedReader(isr);
+					BufferedWriter bw = new BufferedWriter(
+							new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					bw.write(line);
+					bw.newLine();
+				}
+			} catch (IOException e) {
+				stdinFailure.set(e);
+				process.destroy();
+			}
+		}, "mlr-stdin");
+		stdinWriter.start();
+
+		Thread stdoutDrainer = null;
+		if (redirectOutputFile == null) {
+			stdoutDrainer = new Thread(() -> {
+				try {
+					process.getInputStream().transferTo(OutputStream.nullOutputStream());
+				} catch (IOException e) {
+					stdoutFailure.set(e);
+					process.destroy();
+				}
+			}, "mlr-stdout-drain");
+			stdoutDrainer.start();
+		}
+
+		try {
+			exitCode = process.waitFor();
+		} catch (InterruptedException e) {
+			process.destroyForcibly();
+			Thread.currentThread().interrupt();
+			throw e;
+		}
+		logger.info("exitCode=" + exitCode);
+
+		joinOrDestroyOnInterrupt(stdinWriter, process);
+		if (stdoutDrainer != null) {
+			joinOrDestroyOnInterrupt(stdoutDrainer, process);
+		}
+
+		IOException stdinEx = stdinFailure.get();
+		if (stdinEx != null) {
+			throw new IOException("failed to pipe stdin to mlr", stdinEx);
+		}
+		IOException stdoutEx = stdoutFailure.get();
+		if (stdoutEx != null) {
+			throw new IOException("failed to drain mlr stdout", stdoutEx);
+		}
+
+		if (exitCode > 1) {
+			stdErr = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+			logger.info("stdErr=" + stdErr);
+			throw new RuntimeException("failed. exitCode=" + exitCode + " err=" + stdErr);
+		}
+	}
+
+	private static void joinOrDestroyOnInterrupt(Thread thread, Process process) throws InterruptedException {
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			process.destroyForcibly();
+			Thread.currentThread().interrupt();
+			throw e;
+		}
 	}
 
 	/**
@@ -233,7 +339,7 @@ public class MlrBinder {
 
 		if(redirectOutputFile != null) {
 			boolean created = redirectOutputFile.createNewFile();
-			logger.info("redirectInputFile created=" + created);
+			logger.info("redirectOutputFile created=" + created);
 			processBuilder.redirectOutput(redirectOutputFile);
 		}
 		Process process = processBuilder.start();

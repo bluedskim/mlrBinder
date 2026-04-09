@@ -1,17 +1,23 @@
 package net.shed.mlrbinder;
 
-import static net.shed.mlrbinder.Flag.csv;
-import static net.shed.mlrbinder.verb.Verb.cat;
-import static net.shed.mlrbinder.verb.Verb.sort;
+import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.verb.Verbs.cat;
+import static net.shed.mlrbinder.verb.Verbs.sort;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 
 import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
+import net.shed.mlrbinder.verb.Verbs;
 
 public class E2Etest {
 	private static Logger logger = Logger.getLogger(E2Etest.class.getName());
@@ -182,5 +188,30 @@ public class E2Etest {
 
 		String runResult = mlr.run();
 		assertEquals("a,b,c\n1,2,3\n4,5,6\n9,8,7", runResult);
+	}
+
+	@Test
+	public void stdinReaderCatTest() throws IOException, InterruptedException {
+		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
+		File out = File.createTempFile("mlrbinder-stdin", ".csv");
+		out.deleteOnExit();
+
+		String stdinCsv = "a,b,c\n4,5,6\n1,2,3\n9,8,7\n";
+		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+			.flag(csv())
+			.verb(cat())
+			.redirectOutputFile(out);
+
+		mlr.run(new InputStreamReader(new ByteArrayInputStream(stdinCsv.getBytes(StandardCharsets.UTF_8)),
+				StandardCharsets.UTF_8));
+
+		String written = Files.readString(out.toPath()).trim();
+		assertEquals("a,b,c\n4,5,6\n1,2,3\n9,8,7", written);
+	}
+
+	@Test
+	public void verbsDelegatesToSameAsVerbStatic() {
+		assertEquals(Verbs.sort().toString(), Verb.sort().toString());
+		assertEquals(Verbs.cat(new Flag("-n")).toString(), Verb.cat(new Flag("-n")).toString());
 	}
 }

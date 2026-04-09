@@ -4,13 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -216,12 +220,63 @@ class MlrBinderTest {
 
 		assertEquals(runResult, mlr.run());
 		verify(processBuilder).directory(any(File.class));
-		verify(processBuilder).command(any(List.class));
+		verify(processBuilder).command(anyList());
+	}
+
+	@Test
+	void runStdinPipeFailureThrowsIOException() throws Exception {
+		ProcessBuilder processBuilder = mock(ProcessBuilder.class);
+		Process process = mock(Process.class);
+		when(processBuilder.start()).thenReturn(process);
+		when(process.pid()).thenReturn(1L);
+		when(process.waitFor()).thenReturn(0);
+		when(process.getInputStream()).thenReturn(InputStream.nullInputStream());
+		OutputStream failingStdin = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				throw new IOException("pipe failed");
+			}
+
+			@Override
+			public void write(byte[] b, int off, int len) throws IOException {
+				throw new IOException("pipe failed");
+			}
+		};
+		when(process.getOutputStream()).thenReturn(failingStdin);
+
+		MlrBinder mlr = new MlrBinder(processBuilder);
+		mlr.workingPath("workingPath");
+		mlr.verb(new Verb("cat"));
+
+		InputStreamReader isr = new InputStreamReader(
+				new ByteArrayInputStream("x\n".getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+
+		IOException ex = assertThrows(IOException.class, () -> mlr.run(isr));
+		assertTrue(ex.getMessage().contains("pipe stdin"));
+		verify(process).destroy();
 	}
 
 	@Test
 	void runFail() throws IOException, InterruptedException {
-		assertTrue(false);
+		int exitCode = 2;
+		String errMsg = "mlr: error";
+		ProcessBuilder processBuilder = mock(ProcessBuilder.class);
+		Process process = mock(Process.class);
+		when(processBuilder.start()).thenReturn(process);
+		when(process.waitFor()).thenReturn(exitCode);
+		InputStream errStream = mock(InputStream.class);
+		when(process.getErrorStream()).thenReturn(errStream);
+		when(errStream.readAllBytes()).thenReturn(errMsg.getBytes(StandardCharsets.UTF_8));
+
+		MlrBinder mlr = new MlrBinder(processBuilder);
+		mlr.workingPath("workingPath");
+
+		RuntimeException ex = assertThrows(RuntimeException.class, mlr::run);
+		assertTrue(ex.getMessage().contains("failed"));
+		assertTrue(ex.getMessage().contains(String.valueOf(exitCode)));
+		assertTrue(ex.getMessage().contains(errMsg));
+		verify(processBuilder).directory(any(File.class));
+		verify(processBuilder).command(anyList());
 	}
 
 	private ProcessBuilder getProcessBuilder(int exitCode, String runResult) throws IOException, InterruptedException {
