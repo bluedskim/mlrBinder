@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import net.shed.mlrbinder.Flag;
 import static net.shed.mlrbinder.verb.Verb.sort;
+import net.shed.mlrbinder.verb.Verbs;
 
 public class VerbTest {
 
@@ -70,5 +71,18 @@ public class VerbTest {
 	public void staticSortMethodTest() {
 		Verb verb = sort();
 		assertEquals("sort", verb.toString());
-	}	
+	}
+
+	@Test
+	public void verbsDelegatesToSameAsVerbStatic() {
+		assertEquals(Verbs.sort().toString(), Verb.sort().toString());
+		assertEquals(Verbs.cat(new Flag("-n")).toString(), Verb.cat(new Flag("-n")).toString());
+		assertEquals(Verbs.caseVerb().toString(), Verb.caseVerb().toString());
+		assertEquals(Verbs.gsub().toString(), Verb.gsub().toString());
+		assertEquals(Verbs.sparsify().toString(), Verb.sparsify().toString());
+		assertEquals(Verbs.ssub().toString(), Verb.ssub().toString());
+		assertEquals(Verbs.sub().toString(), Verb.sub().toString());
+		assertEquals(Verbs.surv().toString(), Verb.surv().toString());
+		assertEquals(Verbs.unspace().toString(), Verb.unspace().toString());
+	}
 }

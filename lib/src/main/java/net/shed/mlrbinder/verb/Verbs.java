@@ -22,6 +22,13 @@ public final class Verbs {
 		return new Verb("bootstrap", args);
 	}
 
+	/**
+	 * Miller verb {@code case} (change record key/value casing). Named {@code caseVerb} because {@code case} is a Java keyword.
+	 */
+	public static Verb caseVerb(Arg... args) {
+		return new Verb("case", args);
+	}
+
 	public static Verb cat(Arg... args) {
 		return new Verb("cat", args);
 	}
@@ -84,6 +91,10 @@ public final class Verbs {
 
 	public static Verb grep(Arg... args) {
 		return new Verb("grep", args);
+	}
+
+	public static Verb gsub(Arg... args) {
+		return new Verb("gsub", args);
 	}
 
 	public static Verb groupBy(Arg... args) {
@@ -198,6 +209,10 @@ public final class Verbs {
 		return new Verb("shuffle", args);
 	}
 
+	public static Verb sparsify(Arg... args) {
+		return new Verb("sparsify", args);
+	}
+
 	public static Verb skipTrivialRecords(Arg... args) {
 		return new Verb("skip-trivial-records", args);
 	}
@@ -214,6 +229,10 @@ public final class Verbs {
 		return new Verb("split", args);
 	}
 
+	public static Verb ssub(Arg... args) {
+		return new Verb("ssub", args);
+	}
+
 	public static Verb stats1(Arg... args) {
 		return new Verb("stats1", args);
 	}
@@ -226,8 +245,16 @@ public final class Verbs {
 		return new Verb("step", args);
 	}
 
+	public static Verb sub(Arg... args) {
+		return new Verb("sub", args);
+	}
+
 	public static Verb summary(Arg... args) {
 		return new Verb("summary", args);
+	}
+
+	public static Verb surv(Arg... args) {
+		return new Verb("surv", args);
 	}
 
 	public static Verb tac(Arg... args) {
@@ -256,6 +283,10 @@ public final class Verbs {
 
 	public static Verb uniq(Arg... args) {
 		return new Verb("uniq", args);
+	}
+
+	public static Verb unspace(Arg... args) {
+		return new Verb("unspace", args);
 	}
 
 	public static Verb unsparsify(Arg... args) {
