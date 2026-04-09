@@ -279,6 +279,24 @@ class MlrBinderTest {
 		verify(processBuilder).command(anyList());
 	}
 
+	@Test
+	@DisplayName("mfrom expands to --mfrom paths then -- before verbs")
+	void mfromPreVerbArgs() {
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath")
+				.mfrom("a.csv", "b.csv")
+				.verb(new Verb("cat"));
+		assertEquals("mlr --mfrom a.csv b.csv -- cat", mlr.toString());
+	}
+
+	@Test
+	@DisplayName("mload expands to --mload scripts then -- before verbs")
+	void mloadPreVerbArgs() {
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath")
+				.mload("one.mlr", "two.mlr")
+				.verb(new Verb("cat"));
+		assertEquals("mlr --mload one.mlr two.mlr -- cat", mlr.toString());
+	}
+
 	private ProcessBuilder getProcessBuilder(int exitCode, String runResult) throws IOException, InterruptedException {
 		ProcessBuilder processBuilder = mock(ProcessBuilder.class);
 		Process process = mock(Process.class);

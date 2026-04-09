@@ -11,9 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
@@ -21,6 +24,20 @@ import net.shed.mlrbinder.verb.Verbs;
 
 public class E2Etest {
 	private static Logger logger = Logger.getLogger(E2Etest.class.getName());
+
+	static boolean mlrOnPath() {
+		try {
+			Process p = new ProcessBuilder("mlr", "--version").redirectErrorStream(true).start();
+			boolean finished = p.waitFor(10, TimeUnit.SECONDS);
+			return finished && p.exitValue() == 0;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Nested
+	@EnabledIf("net.shed.mlrbinder.E2Etest#mlrOnPath")
+	class MlrIntegration {
 	@Test
 	public void multiFlagTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
@@ -207,6 +224,7 @@ public class E2Etest {
 
 		String written = Files.readString(out.toPath()).trim();
 		assertEquals("a,b,c\n4,5,6\n1,2,3\n9,8,7", written);
+	}
 	}
 
 	@Test

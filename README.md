@@ -11,7 +11,7 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 ## 범위와 한계
 
-- **거의 모든 동사**: `Verbs` / `Verb`에 Miller 동사 이름에 대응하는 팩토리가 많이 포함되어 있습니다. 전역 플래그는 `Flags`와 `Flag`로 일부를 미리 제공하며, 나머지는 `new Flag("...")`로 확장할 수 있습니다(자바독 참고).
+- **거의 모든 동사**: `Verbs` / `Verb`에 Miller 동사 이름에 대응하는 팩토리가 많이 포함되어 있습니다. **전역 플래그**는 upstream [reference-main-flag-list](https://github.com/johnkerl/miller/blob/main/docs/src/reference-main-flag-list.md)를 따라 `Flags`에 정적 팩토리로 두었으며, 갱신 시 `python3 utils/gen_flags.py`로 재생성합니다. 문서에 없는 플래그는 `Flags.raw("--name")` / `Flags.raw("--name", "value")` 또는 `new Flag("...")`로 넘깁니다. `--mfrom` / `--mload`처럼 인자 뒤에 `--`가 오는 형태는 `MlrBinder#mfrom` / `#mload`를 사용합니다.
 - **네이티브 바인딩 아님**: Miller를 JVM 안에 링크한 것이 아니라 **외부 `mlr` 실행**입니다.
 - **오류 시점**: 잘못된 조합의 일부는 `run()` / `run(InputStreamReader)` 시점에 exit code와 stderr로 드러납니다.
 
