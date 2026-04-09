@@ -7,7 +7,11 @@ import java.util.List;
 import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.MlrBinder;
 
-public class Verb implements Arg {	
+/**
+ * Miller verb segment for the command line. Static factories delegate to {@link Verbs}; add new verbs there and add a
+ * matching delegating method here so existing {@code Verb.foo()} call sites keep working.
+ */
+public class Verb implements Arg {
 	/**
 	 * verbs can be chained with CHAINING_ADVERB
 	 */

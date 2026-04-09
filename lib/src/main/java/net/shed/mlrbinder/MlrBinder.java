@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import net.shed.mlrbinder.verb.Verb;
@@ -212,10 +213,18 @@ public class MlrBinder {
 	}
 
 	/**
-	 * Run mlr with records read from {@code isr} as standard input (no input files).
-	 * Miller reads stdin when no file names are given.
+	 * Run mlr with data read from {@code isr} as standard input. Omit input files so Miller reads stdin.
+	 * <p>
+	 * Unlike {@link #run()}, this method returns nothing: standard output is only written when
+	 * {@link #redirectOutputFile(File)} is set. Otherwise stdout is discarded so the process does not block on a full pipe.
+	 * </p>
+	 * <p>
+	 * Input is copied line by line ({@link BufferedReader#readLine()}); platform line endings are not preserved and each
+	 * record is terminated with a Unix newline ({@code \n}) on the child stdin.
+	 * </p>
 	 *
 	 * @param isr character source for stdin; must not be null
+	 * @throws IOException if piping stdin to mlr or draining stdout fails
 	 */
 	public void run(InputStreamReader isr) throws IOException, InterruptedException {
 		if (isr == null) {
@@ -233,12 +242,15 @@ public class MlrBinder {
 
 		if (redirectOutputFile != null) {
 			boolean created = redirectOutputFile.createNewFile();
-			logger.info("redirectInputFile created=" + created);
+			logger.info("redirectOutputFile created=" + created);
 			processBuilder.redirectOutput(redirectOutputFile);
 		}
 
 		Process process = processBuilder.start();
 		logger.info("start process=" + process.pid());
+
+		AtomicReference<IOException> stdinFailure = new AtomicReference<>();
+		AtomicReference<IOException> stdoutFailure = new AtomicReference<>();
 
 		Thread stdinWriter = new Thread(() -> {
 			try (BufferedReader br = new BufferedReader(isr);
@@ -250,7 +262,8 @@ public class MlrBinder {
 					bw.newLine();
 				}
 			} catch (IOException e) {
-				logger.warning("stdin pipe failed: " + e.getMessage());
+				stdinFailure.set(e);
+				process.destroy();
 			}
 		}, "mlr-stdin");
 		stdinWriter.start();
@@ -261,24 +274,50 @@ public class MlrBinder {
 				try {
 					process.getInputStream().transferTo(OutputStream.nullOutputStream());
 				} catch (IOException e) {
-					logger.warning("stdout drain failed: " + e.getMessage());
+					stdoutFailure.set(e);
+					process.destroy();
 				}
 			}, "mlr-stdout-drain");
 			stdoutDrainer.start();
 		}
 
-		exitCode = process.waitFor();
+		try {
+			exitCode = process.waitFor();
+		} catch (InterruptedException e) {
+			process.destroyForcibly();
+			Thread.currentThread().interrupt();
+			throw e;
+		}
 		logger.info("exitCode=" + exitCode);
 
-		stdinWriter.join();
+		joinOrDestroyOnInterrupt(stdinWriter, process);
 		if (stdoutDrainer != null) {
-			stdoutDrainer.join();
+			joinOrDestroyOnInterrupt(stdoutDrainer, process);
+		}
+
+		IOException stdinEx = stdinFailure.get();
+		if (stdinEx != null) {
+			throw new IOException("failed to pipe stdin to mlr", stdinEx);
+		}
+		IOException stdoutEx = stdoutFailure.get();
+		if (stdoutEx != null) {
+			throw new IOException("failed to drain mlr stdout", stdoutEx);
 		}
 
 		if (exitCode > 1) {
 			stdErr = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8).trim();
 			logger.info("stdErr=" + stdErr);
 			throw new RuntimeException("failed. exitCode=" + exitCode + " err=" + stdErr);
+		}
+	}
+
+	private static void joinOrDestroyOnInterrupt(Thread thread, Process process) throws InterruptedException {
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			process.destroyForcibly();
+			Thread.currentThread().interrupt();
+			throw e;
 		}
 	}
 
@@ -300,7 +339,7 @@ public class MlrBinder {
 
 		if(redirectOutputFile != null) {
 			boolean created = redirectOutputFile.createNewFile();
-			logger.info("redirectInputFile created=" + created);
+			logger.info("redirectOutputFile created=" + created);
 			processBuilder.redirectOutput(redirectOutputFile);
 		}
 		Process process = processBuilder.start();

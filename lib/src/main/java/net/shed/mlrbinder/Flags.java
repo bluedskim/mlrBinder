@@ -2,6 +2,10 @@ package net.shed.mlrbinder;
 
 /**
  * Prebuilt {@link Flag} factories for common Miller I/O and format options (v0.02).
+ * <p>
+ * This is not an exhaustive list of Miller global flags; for anything else use {@link Flag#Flag(String)} (or add a
+ * factory here if it is widely reused).
+ * </p>
  */
 public final class Flags {
 	private Flags() {

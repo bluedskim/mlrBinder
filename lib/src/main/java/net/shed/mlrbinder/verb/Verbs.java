@@ -3,7 +3,8 @@ package net.shed.mlrbinder.verb;
 import net.shed.mlrbinder.Arg;
 
 /**
- * Prebuilt {@link Verb} factories (v0.02). Prefer importing from here for discoverability.
+ * Canonical static factories for Miller verbs (v0.02). {@link Verb}'s static methods delegate here; define each verb
+ * name in one place only.
  */
 public final class Verbs {
 	private Verbs() {
