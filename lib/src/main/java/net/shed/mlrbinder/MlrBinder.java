@@ -10,11 +10,13 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.verb.Verb;
 import net.shed.mlrbinder.verb.Verbs;
 
@@ -149,11 +151,50 @@ public class MlrBinder {
 	private List<Verb> verbs = new ArrayList<>();
 
 	/**
+	 * Tokens after global {@link Flag}s and before the first verb: used for Miller {@code --mfrom} / {@code --mload}
+	 * (each is {@code flag arg1 arg2 ... --}).
+	 */
+	private final List<String> preVerbArgs = new ArrayList<>();
+
+	/**
 	 * return list of verbs
 	 * @return verbs
 	 */
 	public List<Verb> getVerbs() {
 		return verbs;
+	}
+
+	/**
+	 * Miller {@code --mfrom} with a variable file list, terminated by {@code --} on the argv.
+	 */
+	public MlrBinder mfrom(String... paths) {
+		Objects.requireNonNull(paths, "paths");
+		preVerbArgs.add("--mfrom");
+		for (String p : paths) {
+			preVerbArgs.add(Objects.requireNonNull(p, "path"));
+		}
+		preVerbArgs.add("--");
+		return this;
+	}
+
+	/**
+	 * Miller {@code --mload} with a variable script list, terminated by {@code --} on the argv.
+	 */
+	public MlrBinder mload(String... scripts) {
+		Objects.requireNonNull(scripts, "scripts");
+		preVerbArgs.add("--mload");
+		for (String s : scripts) {
+			preVerbArgs.add(Objects.requireNonNull(s, "script"));
+		}
+		preVerbArgs.add("--");
+		return this;
+	}
+
+	/**
+	 * Arguments inserted after flags and before verbs (unmodifiable view).
+	 */
+	public List<String> getPreVerbArgs() {
+		return Collections.unmodifiableList(preVerbArgs);
 	}
 
 	/**
@@ -247,6 +288,11 @@ public class MlrBinder {
 		for(Flag flag : flags) {
 			toStrResult.append(SPACER);
 			toStrResult.append(flag);
+		}
+
+		for (String token : preVerbArgs) {
+			toStrResult.append(SPACER);
+			toStrResult.append(token);
 		}
 
 		for(int i = 0 ; i < verbs.size() ; i++) {
@@ -419,6 +465,7 @@ public class MlrBinder {
 	private List<String> getArgs() {
 		List<String> argList = new ArrayList<>();
 		flags.stream().forEach(f -> argList.addAll(f.toStringList()));
+		argList.addAll(preVerbArgs);
 		verbs.stream().forEach(v -> argList.addAll(v.toStringList()));
 		argList.addAll(fileNames);
 		return argList;

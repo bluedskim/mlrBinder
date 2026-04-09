@@ -284,6 +284,24 @@ class MlrBinderTest {
 	}
 
 	@Test
+	@DisplayName("mfrom expands to --mfrom paths then -- before verbs")
+	void mfromPreVerbArgs() {
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath")
+				.mfrom("a.csv", "b.csv")
+				.verb(new Verb("cat"));
+		assertEquals("mlr --mfrom a.csv b.csv -- cat", mlr.toString());
+	}
+
+	@Test
+	@DisplayName("mload expands to --mload scripts then -- before verbs")
+	void mloadPreVerbArgs() {
+		MlrBinder mlr = new MlrBinder("mlr", "workingPath")
+				.mload("one.mlr", "two.mlr")
+				.verb(new Verb("cat"));
+		assertEquals("mlr --mload one.mlr two.mlr -- cat", mlr.toString());
+	}
+
+	@Test
 	@DisplayName("fluent csv().sort(n,nr).file matches manual assembly")
 	void fluentCsvSortWithSortFlags() {
 		MlrBinder mlr = MlrBinder.csv()
