@@ -27,6 +27,13 @@ public class Verb implements Arg {
 		return Verbs.bootstrap(args);
 	}
 
+	/**
+	 * Delegates to {@link Verbs#caseVerb}; Miller's verb is {@code case}.
+	 */
+	public static Verb caseVerb(Arg... args) {
+		return Verbs.caseVerb(args);
+	}
+
 	public static Verb cat(Arg... args) {
 		return Verbs.cat(args);
 	}
@@ -89,6 +96,10 @@ public class Verb implements Arg {
 
 	public static Verb grep(Arg... args) {
 		return Verbs.grep(args);
+	}
+
+	public static Verb gsub(Arg... args) {
+		return Verbs.gsub(args);
 	}
 
 	public static Verb groupBy(Arg... args) {
@@ -203,6 +214,10 @@ public class Verb implements Arg {
 		return Verbs.shuffle(args);
 	}
 
+	public static Verb sparsify(Arg... args) {
+		return Verbs.sparsify(args);
+	}
+
 	public static Verb skipTrivialRecords(Arg... args) {
 		return Verbs.skipTrivialRecords(args);
 	}
@@ -219,6 +234,10 @@ public class Verb implements Arg {
 		return Verbs.split(args);
 	}
 
+	public static Verb ssub(Arg... args) {
+		return Verbs.ssub(args);
+	}
+
 	public static Verb stats1(Arg... args) {
 		return Verbs.stats1(args);
 	}
@@ -231,8 +250,16 @@ public class Verb implements Arg {
 		return Verbs.step(args);
 	}
 
+	public static Verb sub(Arg... args) {
+		return Verbs.sub(args);
+	}
+
 	public static Verb summary(Arg... args) {
 		return Verbs.summary(args);
+	}
+
+	public static Verb surv(Arg... args) {
+		return Verbs.surv(args);
 	}
 
 	public static Verb tac(Arg... args) {
@@ -261,6 +288,10 @@ public class Verb implements Arg {
 
 	public static Verb uniq(Arg... args) {
 		return Verbs.uniq(args);
+	}
+
+	public static Verb unspace(Arg... args) {
+		return Verbs.unspace(args);
 	}
 
 	public static Verb unsparsify(Arg... args) {
