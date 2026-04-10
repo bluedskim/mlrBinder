@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
+import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.verb.Option.option;
 
@@ -81,20 +82,20 @@ class TenMinTutorialE2eTest {
 		Path root = tenMinRoot();
 		MlrBinder head = new MlrBinder("mlr", root.toString())
 				.flag(Flags.csv())
-				.verb(Verbs.head(option(n(), new Objective("4"))))
+				.verb(Verbs.head(option(n(), objective("4"))))
 				.file("example.csv");
 		assertEquals(expected("head_n4.txt"), run(head));
 
 		MlrBinder tail = new MlrBinder("mlr", root.toString())
 				.flag(Flags.csv())
-				.verb(Verbs.tail(option(n(), new Objective("4"))))
+				.verb(Verbs.tail(option(n(), objective("4"))))
 				.file("example.csv");
 		assertEquals(expected("tail_n4.txt"), run(tail));
 
 		MlrBinder tailJson = new MlrBinder("mlr", root.toString())
 				.flag(Flags.icsv())
 				.flag(Flags.ojson())
-				.verb(Verbs.tail(option(n(), new Objective("2"))))
+				.verb(Verbs.tail(option(n(), objective("2"))))
 				.file("example.csv");
 		assertEquals(expected("tail_n2_json.txt"), run(tailJson));
 	}
@@ -150,14 +151,14 @@ class TenMinTutorialE2eTest {
 		MlrBinder rename = new MlrBinder("mlr", root.toString())
 				.flag(Flags.icsv())
 				.flag(Flags.opprint())
-				.verb(Verbs.put(new Objective("$[[3]] = \"NEW\"")))
+				.verb(Verbs.put(objective("$[[3]] = \"NEW\"")))
 				.file("example.csv");
 		assertEquals(expected("put_rename_field3.txt"), run(rename));
 
 		MlrBinder value = new MlrBinder("mlr", root.toString())
 				.flag(Flags.icsv())
 				.flag(Flags.opprint())
-				.verb(Verbs.put(new Objective("$[[[3]]] = \"NEW\"")))
+				.verb(Verbs.put(objective("$[[[3]]] = \"NEW\"")))
 				.file("example.csv");
 		assertEquals(expected("put_value_field3.txt"), run(value));
 	}
@@ -169,14 +170,14 @@ class TenMinTutorialE2eTest {
 		MlrBinder f1 = new MlrBinder("mlr", root.toString())
 				.flag(Flags.icsv())
 				.flag(Flags.opprint())
-				.verb(Verbs.filter(new Objective("$color == \"red\"")))
+				.verb(Verbs.filter(objective("$color == \"red\"")))
 				.file("example.csv");
 		assertEquals(expected("filter_color_red.txt"), run(f1));
 
 		MlrBinder f2 = new MlrBinder("mlr", root.toString())
 				.flag(Flags.icsv())
 				.flag(Flags.opprint())
-				.verb(Verbs.filter(new Objective("$color == \"red\" && $flag == \"true\"")))
+				.verb(Verbs.filter(objective("$color == \"red\" && $flag == \"true\"")))
 				.file("example.csv");
 		assertEquals(expected("filter_red_true.txt"), run(f2));
 
@@ -184,7 +185,7 @@ class TenMinTutorialE2eTest {
 		MlrBinder put = new MlrBinder("mlr", root.toString())
 				.flag(Flags.icsv())
 				.flag(Flags.opprint())
-				.verb(Verbs.put(new Objective(putExpr)))
+				.verb(Verbs.put(objective(putExpr)))
 				.file("example.csv");
 		assertEquals(expected("put_ratio_color_shape.txt"), run(put));
 
@@ -194,7 +195,7 @@ class TenMinTutorialE2eTest {
 				.flag(Flags.icsv())
 				.flag(Flags.opprint())
 				.flag(Flags.from("example.csv"))
-				.verb(Verbs.put(new Objective(yzExpr)));
+				.verb(Verbs.put(objective(yzExpr)));
 		assertEquals(expected("put_y_z.txt"), run(fromPut));
 	}
 
@@ -210,7 +211,7 @@ class TenMinTutorialE2eTest {
 
 		MlrBinder put = new MlrBinder("mlr", root.toString())
 				.flag(Flags.c2p())
-				.verb(Verbs.put(new Objective("${Total KWh} = ${Total MWh} * 1000")))
+				.verb(Verbs.put(objective("${Total KWh} = ${Total MWh} * 1000")))
 				.file("spaces.csv");
 		assertEquals(expected("spaces_put_kwh.txt"), run(put));
 	}
@@ -236,7 +237,7 @@ class TenMinTutorialE2eTest {
 				.flag(Flags.opprint())
 				.verb(
 						Verbs.sort(new Flag("-nr").objective("index")),
-						Verbs.head(option(n(), new Objective("3"))))
+						Verbs.head(option(n(), objective("3"))))
 				.file("example.csv");
 		assertEquals(expected("sort_then_head.txt"), run(chained));
 
@@ -246,7 +247,7 @@ class TenMinTutorialE2eTest {
 				.flag(Flags.from("example.csv"))
 				.verb(
 						Verbs.sort(new Flag("-nr").objective("index")),
-						Verbs.head(option(n(), new Objective("3"))));
+						Verbs.head(option(n(), objective("3"))));
 		assertEquals(expected("from_sort_then_head.txt"), run(fromHead));
 
 		MlrBinder fromChainCut = new MlrBinder("mlr", root.toString())
@@ -255,7 +256,7 @@ class TenMinTutorialE2eTest {
 				.flag(Flags.from("example.csv"))
 				.verb(
 						Verbs.sort(new Flag("-nr").objective("index")),
-						Verbs.head(option(n(), new Objective("3"))),
+						Verbs.head(option(n(), objective("3"))),
 						Verbs.cut(option(new Flag("-f").objective("shape,quantity"))));
 		assertEquals(expected("from_chain_cut.txt"), run(fromChainCut));
 	}
@@ -270,8 +271,8 @@ class TenMinTutorialE2eTest {
 				.verb(
 						Verbs.sort(new Flag("-f").objective("shape"), new Flag("-nr").objective("index")),
 						Verbs.head(
-								option(n(), new Objective("1")),
-								option(new Flag("-g"), new Objective("shape"))))
+								option(n(), objective("1")),
+								option(new Flag("-g"), objective("shape"))))
 				.file("example.csv");
 		assertEquals(expected("head_g_shape.txt"), run(headG));
 
@@ -311,7 +312,7 @@ class TenMinTutorialE2eTest {
 		Path root = tenMinRoot();
 		MlrBinder greekFilter = new MlrBinder("mlr", root.toString())
 				.flag(Flags.c2p())
-				.verb(Verbs.filter(new Objective("$σχήμα == \"κύκλος\"")))
+				.verb(Verbs.filter(objective("$σχήμα == \"κύκλος\"")))
 				.file("παράδειγμα.csv");
 		assertEquals(expected("greek_filter_circles.txt"), run(greekFilter));
 
@@ -323,7 +324,7 @@ class TenMinTutorialE2eTest {
 
 		MlrBinder ruPut = new MlrBinder("mlr", root.toString())
 				.flag(Flags.c2p())
-				.verb(Verbs.put(new Objective("$форма = toupper($форма); $длина = strlen($цвет)")))
+				.verb(Verbs.put(objective("$форма = toupper($форма); $длина = strlen($цвет)")))
 				.file("пример.csv");
 		assertEquals(expected("russian_put_toupper_strlen.txt"), run(ruPut));
 	}
@@ -442,7 +443,7 @@ class TenMinTutorialE2eTest {
 		new MlrBinder("mlr", tmp.toString())
 				.flag(Flags.csv())
 				.flag(Flags.from("example.csv"))
-				.verb(Verbs.put(new Flag("-q"), new Objective("tee > $shape.\".csv\", $*")))
+				.verb(Verbs.put(new Flag("-q"), objective("tee > $shape.\".csv\", $*")))
 				.run();
 		assertEquals(expected("tee/circle.csv"), Files.readString(tmp.resolve("circle.csv")).trim());
 		assertEquals(expected("tee/square.csv"), Files.readString(tmp.resolve("square.csv")).trim());

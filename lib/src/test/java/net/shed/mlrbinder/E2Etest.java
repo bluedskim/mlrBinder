@@ -1,6 +1,7 @@
 package net.shed.mlrbinder;
 
 import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Verbs.cat;
@@ -87,13 +88,13 @@ public class E2Etest {
 			.addArg(
 				new Option(
 					new Flag("-f")
-					,new Objective("c")
+					,objective("c")
 				)
 			)
 			.addArg(
 				new Option(
 					new Flag("-f")
-					,new Objective("a")
+					,objective("a")
 				)
 			)
 		)
@@ -122,7 +123,7 @@ public class E2Etest {
 			).addArg(
 				new Option(
 					new Flag("-f").objective(
-						new Objective("b,c")
+						objective("b,c")
 					)
 				)
 			)
@@ -146,7 +147,7 @@ public class E2Etest {
 		.verb(
 			new Verb("put")
 			.addArg(
-				new Objective("'$[[[3]]] = \"7\"'")
+				objective("'$[[[3]]] = \"7\"'")
 			)
 		)
 		.file("example.csv")
@@ -185,8 +186,8 @@ public class E2Etest {
 			.flag(csv())
 			.verb(
 				sort()
-					.addArg(new Option(new Flag("-n"), new Objective("a")))
-					.addArg(new Option(new Flag("-nr"), new Objective("b")))
+					.addArg(new Option(new Flag("-n"), objective("a")))
+					.addArg(new Option(new Flag("-nr"), objective("b")))
 			)
 			.file("example.csv")
 		;
@@ -254,7 +255,7 @@ public class E2Etest {
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
 			.flag(new Flag("--csv"))
 			.verb(
-				head(option(n(), new Objective("2"))),
+				head(option(n(), objective("2"))),
 				tac())
 			.file("example.csv");
 

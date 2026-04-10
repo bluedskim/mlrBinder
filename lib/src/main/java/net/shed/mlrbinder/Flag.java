@@ -32,7 +32,7 @@ public class Flag implements Arg {
 	}
 
 	public Flag objective(String objStr) {
-		this.obj = new Objective(objStr);
+		this.obj = Objective.objective(objStr);
 		return this;
 	}
 

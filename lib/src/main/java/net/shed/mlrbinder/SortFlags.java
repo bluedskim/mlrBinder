@@ -8,7 +8,7 @@ package net.shed.mlrbinder;
  * </p>
  * <p>
  * For verbs like {@code head} / {@code tail}, {@code -n} takes the count as the next argv token.
- * Use {@link #n()} with a separate {@link Objective} (e.g. {@code option(n(), new Objective("4"))}),
+ * Use {@link #n()} with a separate value (e.g. {@code option(n(), objective("4"))}),
  * not {@link #n(String)} (that is for {@code sort -n field}).
  * </p>
  */

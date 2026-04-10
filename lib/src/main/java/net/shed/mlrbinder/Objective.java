@@ -9,6 +9,11 @@ import java.util.Collection;
 public class Objective implements Arg {
 	private String name;
 
+	/** Same as {@code new Objective(value)}; use with {@code import static …Objective.objective}. */
+	public static Objective objective(String value) {
+		return new Objective(value);
+	}
+
 	public Objective(String name) {
 		this.name = name;
 	}
