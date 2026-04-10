@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
+import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.verb.Option.option;
 
 import net.shed.mlrbinder.verb.Verbs;
@@ -80,20 +81,20 @@ class TenMinTutorialE2eTest {
 		Path root = tenMinRoot();
 		MlrBinder head = new MlrBinder("mlr", root.toString())
 				.flag(Flags.csv())
-				.verb(Verbs.head(option(new Flag("-n"), new Objective("4"))))
+				.verb(Verbs.head(option(n(), new Objective("4"))))
 				.file("example.csv");
 		assertEquals(expected("head_n4.txt"), run(head));
 
 		MlrBinder tail = new MlrBinder("mlr", root.toString())
 				.flag(Flags.csv())
-				.verb(Verbs.tail(option(new Flag("-n"), new Objective("4"))))
+				.verb(Verbs.tail(option(n(), new Objective("4"))))
 				.file("example.csv");
 		assertEquals(expected("tail_n4.txt"), run(tail));
 
 		MlrBinder tailJson = new MlrBinder("mlr", root.toString())
 				.flag(Flags.icsv())
 				.flag(Flags.ojson())
-				.verb(Verbs.tail(option(new Flag("-n"), new Objective("2"))))
+				.verb(Verbs.tail(option(n(), new Objective("2"))))
 				.file("example.csv");
 		assertEquals(expected("tail_n2_json.txt"), run(tailJson));
 	}
@@ -235,7 +236,7 @@ class TenMinTutorialE2eTest {
 				.flag(Flags.opprint())
 				.verb(
 						Verbs.sort(new Flag("-nr").objective("index")),
-						Verbs.head(option(new Flag("-n"), new Objective("3"))))
+						Verbs.head(option(n(), new Objective("3"))))
 				.file("example.csv");
 		assertEquals(expected("sort_then_head.txt"), run(chained));
 
@@ -245,7 +246,7 @@ class TenMinTutorialE2eTest {
 				.flag(Flags.from("example.csv"))
 				.verb(
 						Verbs.sort(new Flag("-nr").objective("index")),
-						Verbs.head(option(new Flag("-n"), new Objective("3"))));
+						Verbs.head(option(n(), new Objective("3"))));
 		assertEquals(expected("from_sort_then_head.txt"), run(fromHead));
 
 		MlrBinder fromChainCut = new MlrBinder("mlr", root.toString())
@@ -254,7 +255,7 @@ class TenMinTutorialE2eTest {
 				.flag(Flags.from("example.csv"))
 				.verb(
 						Verbs.sort(new Flag("-nr").objective("index")),
-						Verbs.head(option(new Flag("-n"), new Objective("3"))),
+						Verbs.head(option(n(), new Objective("3"))),
 						Verbs.cut(option(new Flag("-f").objective("shape,quantity"))));
 		assertEquals(expected("from_chain_cut.txt"), run(fromChainCut));
 	}
@@ -269,7 +270,7 @@ class TenMinTutorialE2eTest {
 				.verb(
 						Verbs.sort(new Flag("-f").objective("shape"), new Flag("-nr").objective("index")),
 						Verbs.head(
-								option(new Flag("-n"), new Objective("1")),
+								option(n(), new Objective("1")),
 								option(new Flag("-g"), new Objective("shape"))))
 				.file("example.csv");
 		assertEquals(expected("head_g_shape.txt"), run(headG));

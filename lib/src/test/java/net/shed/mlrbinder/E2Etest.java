@@ -7,6 +7,7 @@ import static net.shed.mlrbinder.verb.Verbs.cat;
 import static net.shed.mlrbinder.verb.Verbs.head;
 import static net.shed.mlrbinder.verb.Verbs.sort;
 import static net.shed.mlrbinder.verb.Verbs.tac;
+import static net.shed.mlrbinder.verb.Option.option;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -253,7 +254,7 @@ public class E2Etest {
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
 			.flag(new Flag("--csv"))
 			.verb(
-				head(new Option(new Flag("-n"), new Objective("2"))),
+				head(option(n(), new Objective("2"))),
 				tac())
 			.file("example.csv");
 

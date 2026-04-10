@@ -9,6 +9,12 @@ import org.junit.jupiter.api.Test;
 class SortFlagsTest {
 
 	@Test
+	void nNoArgIsBareMinusN() {
+		assertEquals(new Flag("-n").toString(), n().toString());
+		assertEquals(new Flag("-n").toStringList(), n().toStringList());
+	}
+
+	@Test
 	void nMatchesManualFlag() {
 		assertEquals(new Flag("-n").objective("a").toString(), n("a").toString());
 		assertEquals(new Flag("-n").objective("x").toStringList(), n("x").toStringList());

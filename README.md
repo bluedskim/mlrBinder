@@ -27,7 +27,7 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **전역 플래그**는 `Flags`의 정적 메서드(아래에서는 `import static`으로 짧게 씀)와 `new Flag`, **동사**는 `Verbs`의 정적 메서드, 동사 인자는 `Option`·`Flag`·`Objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
 
-아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다). `Option`은 `new Option(…)` 대신 `import static …Option.option` 후 `option(…)`으로 쓸 수 있습니다.
+아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다). `Option`은 `import static …Option.option` 후 `option(…)`으로 씁니다. `head` / `tail`의 `-n` 개수는 `SortFlags.n()`(인자 없음)과 `Objective`로 나누면 됩니다. `sort -n 필드`는 `n("필드")`처럼 **문자열 인자**가 있는 오버로드를 씁니다.
 
 ```java
 import static net.shed.mlrbinder.Flags.c2p;
@@ -38,6 +38,7 @@ import static net.shed.mlrbinder.Flags.ijson;
 import static net.shed.mlrbinder.Flags.inPlaceShort;
 import static net.shed.mlrbinder.Flags.ocsv;
 import static net.shed.mlrbinder.Flags.opprint;
+import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.verb.Verbs.cat;
 import static net.shed.mlrbinder.verb.Verbs.cut;
 import static net.shed.mlrbinder.verb.Verbs.filter;
@@ -91,7 +92,7 @@ mlr --csv head -n 4 example.csv
 ```java
 new MlrBinder("mlr", workingPath)
 	.flag(csv())
-	.verb(head(option(new Flag("-n"), new Objective("4"))))
+	.verb(head(option(n(), new Objective("4"))))
 	.file("example.csv")
 	.run();
 ```
@@ -103,7 +104,7 @@ mlr --csv tail -n 4 example.csv
 ```java
 new MlrBinder("mlr", workingPath)
 	.flag(csv())
-	.verb(tail(option(new Flag("-n"), new Objective("4"))))
+	.verb(tail(option(n(), new Objective("4"))))
 	.file("example.csv")
 	.run();
 ```
@@ -221,7 +222,7 @@ new MlrBinder("mlr", workingPath)
 	.flag(opprint())
 	.verb(
 		sort(new Flag("-nr").objective("index")),
-		head(option(new Flag("-n"), new Objective("3"))))
+		head(option(n(), new Objective("3"))))
 	.file("example.csv")
 	.run();
 ```
@@ -239,7 +240,7 @@ new MlrBinder("mlr", workingPath)
 	.flag(from("example.csv"))
 	.verb(
 		sort(new Flag("-nr").objective("index")),
-		head(option(new Flag("-n"), new Objective("3"))))
+		head(option(n(), new Objective("3"))))
 	.run();
 ```
 
