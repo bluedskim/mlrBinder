@@ -25,7 +25,33 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 ## Miller 10분 튜토리얼 → Java로 옮기기
 
-[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **전역 플래그**는 `Flags` / `new Flag`, **동사**는 `Verbs` / `Verb`, 동사에 붙는 토큰은 `Option`과 `Flag`·`Objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()`이 넘기는 argv에 자동으로 `then`이 들어갑니다.
+[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **전역 플래그**는 `Flags`의 정적 메서드(아래에서는 `import static`으로 짧게 씀)와 `new Flag`, **동사**는 `Verbs`의 정적 메서드, 동사 인자는 `Option`·`Flag`·`Objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
+
+아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다).
+
+```java
+import static net.shed.mlrbinder.Flags.c2p;
+import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.Flags.from;
+import static net.shed.mlrbinder.Flags.icsv;
+import static net.shed.mlrbinder.Flags.ijson;
+import static net.shed.mlrbinder.Flags.inPlaceShort;
+import static net.shed.mlrbinder.Flags.ocsv;
+import static net.shed.mlrbinder.Flags.opprint;
+import static net.shed.mlrbinder.verb.Verbs.cat;
+import static net.shed.mlrbinder.verb.Verbs.cut;
+import static net.shed.mlrbinder.verb.Verbs.filter;
+import static net.shed.mlrbinder.verb.Verbs.head;
+import static net.shed.mlrbinder.verb.Verbs.put;
+import static net.shed.mlrbinder.verb.Verbs.sort;
+import static net.shed.mlrbinder.verb.Verbs.stats1;
+import static net.shed.mlrbinder.verb.Verbs.tail;
+
+import net.shed.mlrbinder.Flag;
+import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Objective;
+import net.shed.mlrbinder.verb.Option;
+```
 
 더 많은 패턴은 `TenMinTutorialE2eTest`와 `lib/src/test/resources/10min/`을 참고하면 됩니다.
 
@@ -37,8 +63,8 @@ mlr --csv cat example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.csv())
-	.verb(Verbs.cat())
+	.flag(csv())
+	.verb(cat())
 	.file("example.csv")
 	.run();
 ```
@@ -49,9 +75,9 @@ mlr --icsv --opprint cat example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
-	.verb(Verbs.cat())
+	.flag(icsv())
+	.flag(opprint())
+	.verb(cat())
 	.file("example.csv")
 	.run();
 ```
@@ -64,8 +90,20 @@ mlr --csv head -n 4 example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.csv())
-	.verb(Verbs.head(new Option(new Flag("-n"), new Objective("4"))))
+	.flag(csv())
+	.verb(head(new Option(new Flag("-n"), new Objective("4"))))
+	.file("example.csv")
+	.run();
+```
+
+```bash
+mlr --csv tail -n 4 example.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(csv())
+	.verb(tail(new Option(new Flag("-n"), new Objective("4"))))
 	.file("example.csv")
 	.run();
 ```
@@ -78,9 +116,9 @@ mlr --icsv --opprint sort -f shape -nr index example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
-	.verb(Verbs.sort(
+	.flag(icsv())
+	.flag(opprint())
+	.verb(sort(
 		new Flag("-f").objective("shape"),
 		new Flag("-nr").objective("index")))
 	.file("example.csv")
@@ -93,9 +131,9 @@ mlr --icsv --opprint cut -o -f flag,shape example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
-	.verb(Verbs.cut(
+	.flag(icsv())
+	.flag(opprint())
+	.verb(cut(
 		new Option(new Flag("-o")),
 		new Option(new Flag("-f").objective("flag,shape"))))
 	.file("example.csv")
@@ -110,9 +148,9 @@ mlr --icsv --opprint filter '$color == "red"' example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
-	.verb(Verbs.filter(new Objective("$color == \"red\"")))
+	.flag(icsv())
+	.flag(opprint())
+	.verb(filter(new Objective("$color == \"red\"")))
 	.file("example.csv")
 	.run();
 ```
@@ -123,9 +161,9 @@ mlr --icsv --opprint put '$[[3]] = "NEW"' example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
-	.verb(Verbs.put(new Objective("$[[3]] = \"NEW\"")))
+	.flag(icsv())
+	.flag(opprint())
+	.verb(put(new Objective("$[[3]] = \"NEW\"")))
 	.file("example.csv")
 	.run();
 ```
@@ -138,8 +176,8 @@ mlr --c2p sort -nr 'Total MWh' spaces.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.c2p())
-	.verb(Verbs.sort(new Flag("-nr").objective("Total MWh")))
+	.flag(c2p())
+	.verb(sort(new Flag("-nr").objective("Total MWh")))
 	.file("spaces.csv")
 	.run();
 ```
@@ -150,8 +188,8 @@ mlr --c2p put '${Total KWh} = ${Total MWh} * 1000' spaces.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.c2p())
-	.verb(Verbs.put(new Objective("${Total KWh} = ${Total MWh} * 1000")))
+	.flag(c2p())
+	.verb(put(new Objective("${Total KWh} = ${Total MWh} * 1000")))
 	.file("spaces.csv")
 	.run();
 ```
@@ -164,8 +202,8 @@ mlr --csv cat data/a.csv data/b.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.csv())
-	.verb(Verbs.cat())
+	.flag(csv())
+	.verb(cat())
 	.file("data/a.csv")
 	.file("data/b.csv")
 	.run();
@@ -179,11 +217,11 @@ mlr --icsv --opprint sort -nr index then head -n 3 example.csv
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
+	.flag(icsv())
+	.flag(opprint())
 	.verb(
-		Verbs.sort(new Flag("-nr").objective("index")),
-		Verbs.head(new Option(new Flag("-n"), new Objective("3"))))
+		sort(new Flag("-nr").objective("index")),
+		head(new Option(new Flag("-n"), new Objective("3"))))
 	.file("example.csv")
 	.run();
 ```
@@ -196,12 +234,12 @@ mlr --icsv --opprint --from example.csv sort -nr index then head -n 3
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
-	.flag(Flags.from("example.csv"))
+	.flag(icsv())
+	.flag(opprint())
+	.flag(from("example.csv"))
 	.verb(
-		Verbs.sort(new Flag("-nr").objective("index")),
-		Verbs.head(new Option(new Flag("-n"), new Objective("3"))))
+		sort(new Flag("-nr").objective("index")),
+		head(new Option(new Flag("-n"), new Objective("3"))))
 	.run();
 ```
 
@@ -213,9 +251,9 @@ mlr --csv --mfrom a.csv b.csv -- cat
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.csv())
+	.flag(csv())
 	.mfrom("a.csv", "b.csv")
-	.verb(Verbs.cat())
+	.verb(cat())
 	.run();
 ```
 
@@ -227,10 +265,10 @@ mlr --icsv --opprint --from example.csv stats1 -a count,min,mean,max -f quantity
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.icsv())
-	.flag(Flags.opprint())
-	.flag(Flags.from("example.csv"))
-	.verb(Verbs.stats1(
+	.flag(icsv())
+	.flag(opprint())
+	.flag(from("example.csv"))
+	.verb(stats1(
 		new Flag("-a").objective("count,min,mean,max"),
 		new Flag("-f").objective("quantity"),
 		new Flag("-g").objective("shape")))
@@ -245,9 +283,9 @@ mlr --ijson --ocsv cat example.json
 
 ```java
 new MlrBinder("mlr", workingPath)
-	.flag(Flags.ijson())
-	.flag(Flags.ocsv())
-	.verb(Verbs.cat())
+	.flag(ijson())
+	.flag(ocsv())
+	.verb(cat())
 	.file("example.json")
 	.run();
 ```
@@ -260,9 +298,9 @@ mlr -I --csv sort -f shape newfile.txt
 
 ```java
 new MlrBinder("mlr", tmpDir)
-	.flag(Flags.inPlaceShort())
-	.flag(Flags.csv())
-	.verb(Verbs.sort(new Flag("-f").objective("shape")))
+	.flag(inPlaceShort())
+	.flag(csv())
+	.verb(sort(new Flag("-f").objective("shape")))
 	.file("newfile.txt")
 	.run();
 ```
