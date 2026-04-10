@@ -15,6 +15,15 @@ public class Flag implements Arg {
 	 * --csv or -c
 	 */
 	private String flagName;
+
+	/**
+	 * Verb-local or ad-hoc flag token (e.g. {@code flag("-f").objective("shape")}).
+	 * For global Miller flags prefer {@link Flags} factories or {@link Flags#raw(String)}.
+	 */
+	public static Flag flag(String name) {
+		return new Flag(name);
+	}
+
 	public static Flag csv() {
 		return Flags.csv();
 	}

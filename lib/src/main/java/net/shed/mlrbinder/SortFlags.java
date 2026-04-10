@@ -21,16 +21,21 @@ public final class SortFlags {
 	 * For {@code sort -n fieldname} use {@link #n(String)} instead.
 	 */
 	public static Flag n() {
-		return new Flag("-n");
+		return Flag.flag("-n");
 	}
 
 	/** Numeric ascending sort key (Miller {@code -n}). */
 	public static Flag n(String field) {
-		return new Flag("-n").objective(field);
+		return Flag.flag("-n").objective(field);
 	}
 
 	/** Numeric descending sort key (Miller {@code -nr}). */
 	public static Flag nr(String field) {
-		return new Flag("-nr").objective(field);
+		return Flag.flag("-nr").objective(field);
+	}
+
+	/** Lexical ascending sort key (Miller {@code -f}). */
+	public static Flag f(String field) {
+		return Flag.flag("-f").objective(field);
 	}
 }

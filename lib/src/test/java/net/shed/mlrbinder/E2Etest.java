@@ -1,6 +1,9 @@
 package net.shed.mlrbinder;
 
+import static net.shed.mlrbinder.Flag.flag;
 import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.Flags.icsv;
+import static net.shed.mlrbinder.Flags.ocsv;
 import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
@@ -24,7 +27,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
 import net.shed.mlrbinder.verb.Verbs;
 
@@ -49,8 +51,8 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--icsv"))
-		.flag(new Flag("--ocsv"))
+		.flag(icsv())
+		.flag(ocsv())
 		.verb(new Verb("cat"))
 		.file("example.csv")
 		;
@@ -66,7 +68,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--csv"))
+		.flag(csv())
 		.verb(new Verb("cat"))
 		.file("example.csv")
 		;
@@ -82,18 +84,18 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--csv"))
+		.flag(csv())
 		.verb(
 			new Verb("sort")
 			.addArg(
-				new Option(
-					new Flag("-f")
+				option(
+					flag("-f")
 					,objective("c")
 				)
 			)
 			.addArg(
-				new Option(
-					new Flag("-f")
+				option(
+					flag("-f")
 					,objective("a")
 				)
 			)
@@ -112,17 +114,17 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--icsv"))
-		.flag(new Flag("--ocsv"))
+		.flag(icsv())
+		.flag(ocsv())
 		.verb(
 			new Verb("cut")
 			.addArg(
-				new Option(
-					new Flag("-o")
+				option(
+					flag("-o")
 				)
 			).addArg(
-				new Option(
-					new Flag("-f").objective(
+				option(
+					flag("-f").objective(
 						objective("b,c")
 					)
 				)
@@ -142,8 +144,8 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--icsv"))
-		.flag(new Flag("--ocsv"))
+		.flag(icsv())
+		.flag(ocsv())
 		.verb(
 			new Verb("put")
 			.addArg(
@@ -186,8 +188,8 @@ public class E2Etest {
 			.flag(csv())
 			.verb(
 				sort()
-					.addArg(new Option(new Flag("-n"), objective("a")))
-					.addArg(new Option(new Flag("-nr"), objective("b")))
+					.addArg(option(flag("-n"), objective("a")))
+					.addArg(option(flag("-nr"), objective("b")))
 			)
 			.file("example.csv")
 		;
@@ -200,8 +202,8 @@ public class E2Etest {
 			.flag(csv())
 			.verb(
 				sort(
-					new Flag("-n").objective("a")
-					,new Flag("-nr").objective("b")
+					n("a")
+					,nr("b")
 				)
 			)
 			.file("example.csv")
@@ -253,7 +255,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-			.flag(new Flag("--csv"))
+			.flag(csv())
 			.verb(
 				head(option(n(), objective("2"))),
 				tac())
@@ -270,7 +272,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-			.flag(new Flag("--csv"))
+			.flag(csv())
 			.mfrom("example.csv", "example.csv")
 			.verb(cat());
 
@@ -284,6 +286,6 @@ public class E2Etest {
 	@Test
 	public void verbsDelegatesToSameAsVerbStatic() {
 		assertEquals(Verbs.sort().toString(), Verb.sort().toString());
-		assertEquals(Verbs.cat(new Flag("-n")).toString(), Verb.cat(new Flag("-n")).toString());
+		assertEquals(Verbs.cat(flag("-n")).toString(), Verb.cat(flag("-n")).toString());
 	}
 }

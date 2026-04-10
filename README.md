@@ -11,7 +11,7 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 ## 범위와 한계
 
-- **거의 모든 동사**: `Verbs` / `Verb`에 Miller 동사 이름에 대응하는 팩토리가 많이 포함되어 있습니다. **전역 플래그**는 upstream [reference-main-flag-list](https://github.com/johnkerl/miller/blob/main/docs/src/reference-main-flag-list.md)를 따라 `Flags`에 정적 팩토리로 두었으며, 갱신 시 `python3 utils/gen_flags.py`로 재생성합니다. 문서에 없는 플래그는 `Flags.raw("--name")` / `Flags.raw("--name", "value")` 또는 `new Flag("...")`로 넘깁니다. `--mfrom` / `--mload`처럼 인자 뒤에 `--`가 오는 형태는 `MlrBinder#mfrom` / `#mload`를 사용합니다.
+- **거의 모든 동사**: `Verbs` / `Verb`에 Miller 동사 이름에 대응하는 팩토리가 많이 포함되어 있습니다. **전역 플래그**는 upstream [reference-main-flag-list](https://github.com/johnkerl/miller/blob/main/docs/src/reference-main-flag-list.md)를 따라 `Flags`에 정적 팩토리로 두었으며, 갱신 시 `python3 utils/gen_flags.py`로 재생성합니다. 문서에 없는 플래그는 `Flags.raw("--name")` / `Flags.raw("--name", "value")` 또는 동사 옵션용 `Flag.flag("...")`로 넘깁니다. `--mfrom` / `--mload`처럼 인자 뒤에 `--`가 오는 형태는 `MlrBinder#mfrom` / `#mload`를 사용합니다.
 - **네이티브 바인딩 아님**: Miller를 JVM 안에 링크한 것이 아니라 **외부 `mlr` 실행**입니다.
 - **오류 시점**: 잘못된 조합의 일부는 `run()` / `run(InputStreamReader)` 시점에 exit code와 stderr로 드러납니다.
 
@@ -25,7 +25,7 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 ## Miller 10분 튜토리얼 → Java로 옮기기
 
-[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **전역 플래그**는 `Flags`의 정적 메서드(아래에서는 `import static`으로 짧게 씀)와 `new Flag`, **동사**는 `Verbs`의 정적 메서드, 동사 인자는 `Option`·`Flag`·`Objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
+[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **전역 플래그**는 `Flags`의 정적 메서드(아래에서는 `import static`으로 짧게 씀), **동사 옵션 토큰**은 `import static …Flag.flag` 후 `flag("-f").objective("…")`, `sort`의 `-f`/`-n`/`-nr` 필드는 `SortFlags`의 `f` / `n` / `nr`, **동사**는 `Verbs`의 정적 메서드, 그 밖의 값은 `option`·`objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
 
 아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다). `Option`은 `import static …Option.option` 후 `option(…)`으로 씁니다. `head` / `tail`의 `-n` 개수는 `SortFlags.n()`(인자 없음)과 `import static …Objective.objective` 후 `objective("4")`처럼 씁니다. `sort -n 필드`는 `n("필드")`처럼 **문자열 인자**가 있는 오버로드를 씁니다.
 
@@ -38,8 +38,11 @@ import static net.shed.mlrbinder.Flags.ijson;
 import static net.shed.mlrbinder.Flags.inPlaceShort;
 import static net.shed.mlrbinder.Flags.ocsv;
 import static net.shed.mlrbinder.Flags.opprint;
+import static net.shed.mlrbinder.Flag.flag;
 import static net.shed.mlrbinder.Objective.objective;
+import static net.shed.mlrbinder.SortFlags.f;
 import static net.shed.mlrbinder.SortFlags.n;
+import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Verbs.cat;
 import static net.shed.mlrbinder.verb.Verbs.cut;
 import static net.shed.mlrbinder.verb.Verbs.filter;
@@ -50,7 +53,6 @@ import static net.shed.mlrbinder.verb.Verbs.stats1;
 import static net.shed.mlrbinder.verb.Verbs.tail;
 import static net.shed.mlrbinder.verb.Option.option;
 
-import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
 ```
 
@@ -119,9 +121,7 @@ mlr --icsv --opprint sort -f shape -nr index example.csv
 new MlrBinder("mlr", workingPath)
 	.flag(icsv())
 	.flag(opprint())
-	.verb(sort(
-		new Flag("-f").objective("shape"),
-		new Flag("-nr").objective("index")))
+	.verb(sort(f("shape"), nr("index")))
 	.file("example.csv")
 	.run();
 ```
@@ -135,8 +135,8 @@ new MlrBinder("mlr", workingPath)
 	.flag(icsv())
 	.flag(opprint())
 	.verb(cut(
-		option(new Flag("-o")),
-		option(new Flag("-f").objective("flag,shape"))))
+		option(flag("-o")),
+		option(flag("-f").objective("flag,shape"))))
 	.file("example.csv")
 	.run();
 ```
@@ -178,7 +178,7 @@ mlr --c2p sort -nr 'Total MWh' spaces.csv
 ```java
 new MlrBinder("mlr", workingPath)
 	.flag(c2p())
-	.verb(sort(new Flag("-nr").objective("Total MWh")))
+	.verb(sort(nr("Total MWh")))
 	.file("spaces.csv")
 	.run();
 ```
@@ -221,7 +221,7 @@ new MlrBinder("mlr", workingPath)
 	.flag(icsv())
 	.flag(opprint())
 	.verb(
-		sort(new Flag("-nr").objective("index")),
+		sort(nr("index")),
 		head(option(n(), objective("3"))))
 	.file("example.csv")
 	.run();
@@ -239,7 +239,7 @@ new MlrBinder("mlr", workingPath)
 	.flag(opprint())
 	.flag(from("example.csv"))
 	.verb(
-		sort(new Flag("-nr").objective("index")),
+		sort(nr("index")),
 		head(option(n(), objective("3"))))
 	.run();
 ```
@@ -270,9 +270,9 @@ new MlrBinder("mlr", workingPath)
 	.flag(opprint())
 	.flag(from("example.csv"))
 	.verb(stats1(
-		new Flag("-a").objective("count,min,mean,max"),
-		new Flag("-f").objective("quantity"),
-		new Flag("-g").objective("shape")))
+		flag("-a").objective("count,min,mean,max"),
+		flag("-f").objective("quantity"),
+		flag("-g").objective("shape")))
 	.run();
 ```
 
@@ -301,7 +301,7 @@ mlr -I --csv sort -f shape newfile.txt
 new MlrBinder("mlr", tmpDir)
 	.flag(inPlaceShort())
 	.flag(csv())
-	.verb(sort(new Flag("-f").objective("shape")))
+	.verb(sort(f("shape")))
 	.file("newfile.txt")
 	.run();
 ```
@@ -312,35 +312,29 @@ new MlrBinder("mlr", tmpDir)
 
 ```java
 import static net.shed.mlrbinder.Flags.csv;
-import static net.shed.mlrbinder.Objective.objective;
-import static net.shed.mlrbinder.verb.Option.option;
+import static net.shed.mlrbinder.SortFlags.n;
+import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Verbs.sort;
 
-import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
 
-// 저수준 조립(플래그·동사·옵션을 명시)
+// 저수준 조립: sort 키는 SortFlags, 동사는 Verbs
 String runResult = new MlrBinder("mlr", workingPath)
 	.workingPath(workingPath)
 	.flag(csv())
 	.verb(
 		sort()
-			.addArg(option(new Flag("-n"), objective("a")))
-			.addArg(option(new Flag("-nr"), objective("b")))
+			.addArg(n("a"))
+			.addArg(nr("b"))
 	)
 	.file("example.csv")
 	.run();
 
-// 동사에 Flag 인자를 바로 넘기는 형태(정적 팩토리 + 가변 인자)
+// 동사에 sort 키를 가변 인자로
 String runResult2 = new MlrBinder("mlr", workingPath)
 	.workingPath(workingPath)
 	.flag(csv())
-	.verb(
-		sort(
-			new Flag("-n").objective("a"),
-			new Flag("-nr").objective("b")
-		)
-	)
+	.verb(sort(n("a"), nr("b")))
 	.file("example.csv")
 	.run();
 ```
