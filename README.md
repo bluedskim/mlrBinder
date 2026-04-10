@@ -27,7 +27,7 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **전역 플래그**는 `Flags`의 정적 메서드(아래에서는 `import static`으로 짧게 씀)와 `new Flag`, **동사**는 `Verbs`의 정적 메서드, 동사 인자는 `Option`·`Flag`·`Objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
 
-아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다).
+아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다). `Option`은 `new Option(…)` 대신 `import static …Option.option` 후 `option(…)`으로 쓸 수 있습니다.
 
 ```java
 import static net.shed.mlrbinder.Flags.c2p;
@@ -46,11 +46,11 @@ import static net.shed.mlrbinder.verb.Verbs.put;
 import static net.shed.mlrbinder.verb.Verbs.sort;
 import static net.shed.mlrbinder.verb.Verbs.stats1;
 import static net.shed.mlrbinder.verb.Verbs.tail;
+import static net.shed.mlrbinder.verb.Option.option;
 
 import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
 import net.shed.mlrbinder.Objective;
-import net.shed.mlrbinder.verb.Option;
 ```
 
 더 많은 패턴은 `TenMinTutorialE2eTest`와 `lib/src/test/resources/10min/`을 참고하면 됩니다.
@@ -91,7 +91,7 @@ mlr --csv head -n 4 example.csv
 ```java
 new MlrBinder("mlr", workingPath)
 	.flag(csv())
-	.verb(head(new Option(new Flag("-n"), new Objective("4"))))
+	.verb(head(option(new Flag("-n"), new Objective("4"))))
 	.file("example.csv")
 	.run();
 ```
@@ -103,7 +103,7 @@ mlr --csv tail -n 4 example.csv
 ```java
 new MlrBinder("mlr", workingPath)
 	.flag(csv())
-	.verb(tail(new Option(new Flag("-n"), new Objective("4"))))
+	.verb(tail(option(new Flag("-n"), new Objective("4"))))
 	.file("example.csv")
 	.run();
 ```
@@ -134,8 +134,8 @@ new MlrBinder("mlr", workingPath)
 	.flag(icsv())
 	.flag(opprint())
 	.verb(cut(
-		new Option(new Flag("-o")),
-		new Option(new Flag("-f").objective("flag,shape"))))
+		option(new Flag("-o")),
+		option(new Flag("-f").objective("flag,shape"))))
 	.file("example.csv")
 	.run();
 ```
@@ -221,7 +221,7 @@ new MlrBinder("mlr", workingPath)
 	.flag(opprint())
 	.verb(
 		sort(new Flag("-nr").objective("index")),
-		head(new Option(new Flag("-n"), new Objective("3"))))
+		head(option(new Flag("-n"), new Objective("3"))))
 	.file("example.csv")
 	.run();
 ```
@@ -239,7 +239,7 @@ new MlrBinder("mlr", workingPath)
 	.flag(from("example.csv"))
 	.verb(
 		sort(new Flag("-nr").objective("index")),
-		head(new Option(new Flag("-n"), new Objective("3"))))
+		head(option(new Flag("-n"), new Objective("3"))))
 	.run();
 ```
 
@@ -311,11 +311,11 @@ new MlrBinder("mlr", tmpDir)
 
 ```java
 import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.verb.Option.option;
 import static net.shed.mlrbinder.verb.Verbs.sort;
 
 import net.shed.mlrbinder.Flag;
 import net.shed.mlrbinder.MlrBinder;
-import net.shed.mlrbinder.verb.Option;
 
 // 저수준 조립(플래그·동사·옵션을 명시)
 String runResult = new MlrBinder("mlr", workingPath)
@@ -323,8 +323,8 @@ String runResult = new MlrBinder("mlr", workingPath)
 	.flag(csv())
 	.verb(
 		sort()
-			.addArg(new Option(new Flag("-n").objective("a")))
-			.addArg(new Option(new Flag("-nr").objective("b")))
+			.addArg(option(new Flag("-n").objective("a")))
+			.addArg(option(new Flag("-nr").objective("b")))
 	)
 	.file("example.csv")
 	.run();

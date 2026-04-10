@@ -12,6 +12,16 @@ public class Option implements Arg {
 	private Flag flag;
 	private Objective obj;
 
+	/** Same as {@code new Option(flag)}; use with {@code import static …Option.option}. */
+	public static Option option(Flag flag) {
+		return new Option(flag);
+	}
+
+	/** Same as {@code new Option(flag, obj)}. */
+	public static Option option(Flag flag, Objective obj) {
+		return new Option(flag, obj);
+	}
+
 	public Option(Flag flag) {
 		this.flag = flag;
 	}
