@@ -17,15 +17,43 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 ## Testing
 
-1. Jacoco code coverage
-	* ref : https://docs.gradle.org/7.4.1/userguide/jacoco_plugin.html
-	* testing
+```bash
+./gradlew :lib:test
+```
 
-		```
-		./gradlew test
-		google-chrome ./lib/build/jacocoHtml/index.html
-		google-chrome ./lib/build/reports/tests/test/index.html
-		```
+- **JUnit HTML report**: `lib/build/reports/tests/test/index.html`
+- **Jacoco coverage** (after tests): `lib/build/jacocoHtml/index.html` — see [Gradle Jacoco plugin](https://docs.gradle.org/current/userguide/jacoco_plugin.html).
+
+### Miller “10 minutes” tutorial as runnable samples
+
+The class `TenMinTutorialE2eTest` turns the official [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) walkthrough into **copy-friendly Java**: each test builds a `MlrBinder` for a documented scenario and compares `run()` output to golden files. Use it as a **recipe index** when you map CLI examples to this library.
+
+| What to look at | Location |
+|-----------------|----------|
+| Test code (how to assemble flags, verbs, `then` chains, `--from`, etc.) | `lib/src/test/java/net/shed/mlrbinder/TenMinTutorialE2eTest.java` |
+| Input data (CSV, JSON, `data/`, Unicode file names) | `lib/src/test/resources/10min/` |
+| Expected stdout (regenerate if your `mlr` version changes output) | `lib/src/test/resources/10min/expected/` |
+
+**Requirements:** tests in that class run only when `mlr` is on your `PATH` (`@EnabledIf`). Without `mlr`, they are skipped so CI or clones without Miller still pass.
+
+**Run only those tests:**
+
+```bash
+./gradlew :lib:test --tests 'net.shed.mlrbinder.TenMinTutorialE2eTest'
+```
+
+**Regenerate golden files** (example: from repo root, with your desired `mlr`):
+
+```bash
+EXP=lib/src/test/resources/10min/expected
+WP=lib/src/test/resources/10min
+mlr --csv cat "$WP/example.csv" > "$EXP/cat_csv.txt"
+# …repeat for each scenario, or script the same commands as in the tutorial.
+```
+
+The tutorial’s `put` snippet uses `$y2` in prose; the test uses Miller’s exponent operator (`$y**2 + $k`) so the numeric results match the documentation.
+
+Other integration-style tests (e.g. `E2Etest`) also expect `mlr` on `PATH` for nested classes gated the same way.
 
 ## Examples
 
