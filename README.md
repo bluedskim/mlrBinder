@@ -21,39 +21,253 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 ./gradlew :lib:test
 ```
 
-- **JUnit HTML report**: `lib/build/reports/tests/test/index.html`
-- **Jacoco coverage** (after tests): `lib/build/jacocoHtml/index.html` — see [Gradle Jacoco plugin](https://docs.gradle.org/current/userguide/jacoco_plugin.html).
+- 리포트: `lib/build/reports/tests/test/index.html`, 커버리지: `lib/build/jacocoHtml/index.html` ([Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html))
 
-### Miller “10 minutes” tutorial as runnable samples
+## Miller 10분 튜토리얼 → Java로 옮기기
 
-The class `TenMinTutorialE2eTest` turns the official [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) walkthrough into **copy-friendly Java**: each test builds a `MlrBinder` for a documented scenario and compares `run()` output to golden files. Use it as a **recipe index** when you map CLI examples to this library.
+[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **전역 플래그**는 `Flags` / `new Flag`, **동사**는 `Verbs` / `Verb`, 동사에 붙는 토큰은 `Option`과 `Flag`·`Objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()`이 넘기는 argv에 자동으로 `then`이 들어갑니다.
 
-| What to look at | Location |
-|-----------------|----------|
-| Test code (how to assemble flags, verbs, `then` chains, `--from`, etc.) | `lib/src/test/java/net/shed/mlrbinder/TenMinTutorialE2eTest.java` |
-| Input data (CSV, JSON, `data/`, Unicode file names) | `lib/src/test/resources/10min/` |
-| Expected stdout (regenerate if your `mlr` version changes output) | `lib/src/test/resources/10min/expected/` |
+더 많은 패턴은 `TenMinTutorialE2eTest`와 `lib/src/test/resources/10min/`을 참고하면 됩니다.
 
-**Requirements:** tests in that class run only when `mlr` is on your `PATH` (`@EnabledIf`). Without `mlr`, they are skipped so CI or clones without Miller still pass.
-
-**Run only those tests:**
+### 입출력 플래그와 `cat`
 
 ```bash
-./gradlew :lib:test --tests 'net.shed.mlrbinder.TenMinTutorialE2eTest'
+mlr --csv cat example.csv
 ```
 
-**Regenerate golden files** (example: from repo root, with your desired `mlr`):
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.csv())
+	.verb(Verbs.cat())
+	.file("example.csv")
+	.run();
+```
 
 ```bash
-EXP=lib/src/test/resources/10min/expected
-WP=lib/src/test/resources/10min
-mlr --csv cat "$WP/example.csv" > "$EXP/cat_csv.txt"
-# …repeat for each scenario, or script the same commands as in the tutorial.
+mlr --icsv --opprint cat example.csv
 ```
 
-The tutorial’s `put` snippet uses `$y2` in prose; the test uses Miller’s exponent operator (`$y**2 + $k`) so the numeric results match the documentation.
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.verb(Verbs.cat())
+	.file("example.csv")
+	.run();
+```
 
-Other integration-style tests (e.g. `E2Etest`) also expect `mlr` on `PATH` for nested classes gated the same way.
+### `head` / `tail` 옵션
+
+```bash
+mlr --csv head -n 4 example.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.csv())
+	.verb(Verbs.head(new Option(new Flag("-n"), new Objective("4"))))
+	.file("example.csv")
+	.run();
+```
+
+### `sort`, `cut`
+
+```bash
+mlr --icsv --opprint sort -f shape -nr index example.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.verb(Verbs.sort(
+		new Flag("-f").objective("shape"),
+		new Flag("-nr").objective("index")))
+	.file("example.csv")
+	.run();
+```
+
+```bash
+mlr --icsv --opprint cut -o -f flag,shape example.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.verb(Verbs.cut(
+		new Option(new Flag("-o")),
+		new Option(new Flag("-f").objective("flag,shape"))))
+	.file("example.csv")
+	.run();
+```
+
+### `filter` / `put` (DSL은 문자열 그대로)
+
+```bash
+mlr --icsv --opprint filter '$color == "red"' example.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.verb(Verbs.filter(new Objective("$color == \"red\"")))
+	.file("example.csv")
+	.run();
+```
+
+```bash
+mlr --icsv --opprint put '$[[3]] = "NEW"' example.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.verb(Verbs.put(new Objective("$[[3]] = \"NEW\"")))
+	.file("example.csv")
+	.run();
+```
+
+### 필드 이름에 공백 (`-nr` 값은 셸 따옴표 없이 한 토큰)
+
+```bash
+mlr --c2p sort -nr 'Total MWh' spaces.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.c2p())
+	.verb(Verbs.sort(new Flag("-nr").objective("Total MWh")))
+	.file("spaces.csv")
+	.run();
+```
+
+```bash
+mlr --c2p put '${Total KWh} = ${Total MWh} * 1000' spaces.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.c2p())
+	.verb(Verbs.put(new Objective("${Total KWh} = ${Total MWh} * 1000")))
+	.file("spaces.csv")
+	.run();
+```
+
+### 여러 입력 파일
+
+```bash
+mlr --csv cat data/a.csv data/b.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.csv())
+	.verb(Verbs.cat())
+	.file("data/a.csv")
+	.file("data/b.csv")
+	.run();
+```
+
+### `then`으로 동사 연결
+
+```bash
+mlr --icsv --opprint sort -nr index then head -n 3 example.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.verb(
+		Verbs.sort(new Flag("-nr").objective("index")),
+		Verbs.head(new Option(new Flag("-n"), new Objective("3"))))
+	.file("example.csv")
+	.run();
+```
+
+### `--from`
+
+```bash
+mlr --icsv --opprint --from example.csv sort -nr index then head -n 3
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.flag(Flags.from("example.csv"))
+	.verb(
+		Verbs.sort(new Flag("-nr").objective("index")),
+		Verbs.head(new Option(new Flag("-n"), new Objective("3"))))
+	.run();
+```
+
+### `--mfrom` / `--mload` (가변 인자 뒤 `--`)
+
+```bash
+mlr --csv --mfrom a.csv b.csv -- cat
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.csv())
+	.mfrom("a.csv", "b.csv")
+	.verb(Verbs.cat())
+	.run();
+```
+
+### `stats1` 등 옵션이 많은 동사
+
+```bash
+mlr --icsv --opprint --from example.csv stats1 -a count,min,mean,max -f quantity -g shape
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.icsv())
+	.flag(Flags.opprint())
+	.flag(Flags.from("example.csv"))
+	.verb(Verbs.stats1(
+		new Flag("-a").objective("count,min,mean,max"),
+		new Flag("-f").objective("quantity"),
+		new Flag("-g").objective("shape")))
+	.run();
+```
+
+### JSON 입출력
+
+```bash
+mlr --ijson --ocsv cat example.json
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(Flags.ijson())
+	.flag(Flags.ocsv())
+	.verb(Verbs.cat())
+	.file("example.json")
+	.run();
+```
+
+### 제자리 수정 `-I`
+
+```bash
+mlr -I --csv sort -f shape newfile.txt
+```
+
+```java
+new MlrBinder("mlr", tmpDir)
+	.flag(Flags.inPlaceShort())
+	.flag(Flags.csv())
+	.verb(Verbs.sort(new Flag("-f").objective("shape")))
+	.file("newfile.txt")
+	.run();
+```
+
+튜토리얼의 `put` 예시에 나오는 `$y2`는 문서 오타에 가깝고, Miller에서는 제곱에 `$y**2`를 씁니다.
 
 ## Examples
 
