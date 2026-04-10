@@ -1,0 +1,2 @@
+hostname,pid,req.id,req.method,req.path,req.host,req.headers.host,req.headers.user-agent,res.status_code,res.header.content-type,res.header.content-encoding
+localhost,12345,6789,GET,api/check,foo.bar,bar.baz,browser,200,text,plain

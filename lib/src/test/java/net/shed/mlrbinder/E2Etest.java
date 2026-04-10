@@ -260,7 +260,7 @@ public class E2Etest {
 		logger.info("mlr=" + mlr.toString());
 		assertEquals("mlr --csv head -n 2 then tac example.csv", mlr.toString());
 		String runResult = mlr.run();
-		assertEquals("1,2,3\n4,5,6\na,b,c", runResult);
+		assertEquals("a,b,c\n1,2,3\n4,5,6", runResult);
 	}
 
 	@Test
@@ -275,9 +275,7 @@ public class E2Etest {
 		logger.info("mlr=" + mlr.toString());
 		assertEquals("mlr --csv --mfrom example.csv example.csv -- cat", mlr.toString());
 		String runResult = mlr.run();
-		assertEquals(
-				"a,b,c\n4,5,6\n1,2,3\n9,8,7\na,b,c\n4,5,6\n1,2,3\n9,8,7",
-				runResult);
+		assertEquals("a,b,c\n4,5,6\n1,2,3\n9,8,7\n4,5,6\n1,2,3\n9,8,7", runResult);
 	}
 	}
 

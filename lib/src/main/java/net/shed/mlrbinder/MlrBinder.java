@@ -466,7 +466,12 @@ public class MlrBinder {
 		List<String> argList = new ArrayList<>();
 		flags.stream().forEach(f -> argList.addAll(f.toStringList()));
 		argList.addAll(preVerbArgs);
-		verbs.stream().forEach(v -> argList.addAll(v.toStringList()));
+		for (int i = 0; i < verbs.size(); i++) {
+			if (i > 0) {
+				argList.add(CHAINING_ADVERB);
+			}
+			argList.addAll(verbs.get(i).toStringList());
+		}
 		argList.addAll(fileNames);
 		return argList;
 	}

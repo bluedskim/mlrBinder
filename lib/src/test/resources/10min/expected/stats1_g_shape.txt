@@ -1,0 +1,4 @@
+shape    quantity_count quantity_min quantity_mean     quantity_max
+triangle 3              43.6498      68.33976666666666 81.229
+square   4              72.3735      76.60114999999999 79.2778
+circle   3              13.8103      47.0982           63.9785

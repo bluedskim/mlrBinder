@@ -1,0 +1,11 @@
+flag  shape
+true  triangle
+true  square
+true  circle
+false square
+false triangle
+false square
+false triangle
+true  circle
+true  circle
+false square

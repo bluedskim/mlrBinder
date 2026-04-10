@@ -1,0 +1,20 @@
+[
+{
+  "color": "yellow",
+  "shape": "circle",
+  "flag": "true",
+  "k": 9,
+  "index": 87,
+  "quantity": 63.5058,
+  "rate": 8.3350
+},
+{
+  "color": "purple",
+  "shape": "square",
+  "flag": "false",
+  "k": 10,
+  "index": 91,
+  "quantity": 72.3735,
+  "rate": 8.2430
+}
+]

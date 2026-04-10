@@ -1,0 +1,7 @@
+shape    color  quantity_count quantity_min quantity_mean      quantity_max
+triangle yellow 1              43.6498      43.6498            43.6498
+square   red    3              77.1991      78.01036666666666  79.2778
+circle   red    1              13.8103      13.8103            13.8103
+triangle purple 2              80.1405      80.68475000000001  81.229
+circle   yellow 2              63.5058      63.742149999999995 63.9785
+square   purple 1              72.3735      72.3735            72.3735
