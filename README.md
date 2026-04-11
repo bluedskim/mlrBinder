@@ -172,6 +172,18 @@ new MlrBinder("mlr", workingPath)
 ### 필드 이름에 공백 (`-nr` 값은 셸 따옴표 없이 한 토큰)
 
 ```bash
+mlr --csv cat spaces.csv
+```
+
+```java
+new MlrBinder("mlr", workingPath)
+	.flag(csv())
+	.verb(cat())
+	.file("spaces.csv")
+	.run();
+```
+
+```bash
 mlr --c2p sort -nr 'Total MWh' spaces.csv
 ```
 
@@ -224,6 +236,33 @@ new MlrBinder("mlr", workingPath)
 		sort(nr("index")),
 		head(option(n(), objective("3"))))
 	.file("example.csv")
+	.run();
+```
+
+튜토리얼의 **셸 파이프** (`mlr … | mlr …`)는 Java에서 `MlrBinder`를 두 번 쓰면 됩니다. 첫 단계 stdout을 임시 파일로내려면 `redirectOutputFile`을 쓰고, 두 번째는 그 디렉터리에서 stdin 없이 파일만 넘깁니다.
+
+```bash
+mlr --csv sort -nr index example.csv | mlr --icsv --opprint head -n 3
+```
+
+```java
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+Path tmp = Files.createTempDirectory("mlr-pipe");
+Path sorted = tmp.resolve("sorted.csv");
+new MlrBinder("mlr", workingPath)
+	.flag(csv())
+	.verb(sort(nr("index")))
+	.file("example.csv")
+	.redirectOutputFile(sorted.toFile())
+	.run();
+
+String pprintTop = new MlrBinder("mlr", tmp.toString())
+	.flag(icsv())
+	.flag(opprint())
+	.verb(head(option(n(), objective("3"))))
+	.file(sorted.getFileName().toString())
 	.run();
 ```
 

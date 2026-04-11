@@ -225,6 +225,12 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void spacesFieldNames() throws Exception {
 		Path root = tenMinRoot();
+		MlrBinder spacesCat = new MlrBinder("mlr", root.toString())
+				.flag(csv())
+				.verb(cat())
+				.file("spaces.csv");
+		assertEquals(expected("spaces_cat_csv.txt"), run(spacesCat));
+
 		MlrBinder sort = new MlrBinder("mlr", root.toString())
 				.flag(c2p())
 				.verb(sort(nr("Total MWh")))
@@ -262,6 +268,22 @@ class TenMinTutorialE2eTest {
 						head(option(n(), objective("3"))))
 				.file("example.csv");
 		assertEquals(expected("sort_then_head.txt"), run(chained));
+
+		// Tutorial: shell pipe "mlr --csv sort -nr index ... | mlr --icsv --opprint head -n 3"
+		Path pipeTmp = Files.createTempDirectory("mlr-10min-pipe");
+		Path sortedCsv = pipeTmp.resolve("sorted.csv");
+		new MlrBinder("mlr", root.toString())
+				.flag(csv())
+				.verb(sort(nr("index")))
+				.file("example.csv")
+				.redirectOutputFile(sortedCsv.toFile())
+				.run();
+		MlrBinder second = new MlrBinder("mlr", pipeTmp.toString())
+				.flag(icsv())
+				.flag(opprint())
+				.verb(head(option(n(), objective("3"))))
+				.file(sortedCsv.getFileName().toString());
+		assertEquals(expected("sort_then_head.txt"), run(second));
 
 		MlrBinder fromHead = new MlrBinder("mlr", root.toString())
 				.flag(icsv())
