@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.Flag;
-import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Mlr;
 import net.shed.mlrbinder.Objective;
 
 public class Option implements Arg {
@@ -46,6 +46,6 @@ public class Option implements Arg {
 
 	@Override
 	public String toString() {
-		return flag + (obj != null ? MlrBinder.SPACER + obj : "");
+		return flag + (obj != null ? Mlr.SPACER + obj : "");
 	}
 }

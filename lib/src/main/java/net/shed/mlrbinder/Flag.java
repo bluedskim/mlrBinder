@@ -65,7 +65,7 @@ public class Flag implements Arg {
 
 	@Override
 	public String toString() {
-		return flagName + (obj != null ? MlrBinder.SPACER + obj : "");
+		return flagName + (obj != null ? Mlr.SPACER + obj : "");
 	}
 
 }

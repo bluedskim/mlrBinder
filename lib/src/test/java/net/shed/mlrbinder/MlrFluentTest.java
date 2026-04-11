@@ -1,5 +1,9 @@
 package net.shed.mlrbinder;
 
+import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.Flags.from;
+import static net.shed.mlrbinder.Flags.icsv;
+import static net.shed.mlrbinder.Flags.opprint;
 import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
@@ -12,19 +16,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * {@link MlrBinder} fluent verb / global-flag chain helpers match hand-built argv.
+ * {@link Mlr} fluent verb / global-flag chain helpers match hand-built argv.
  */
-class MlrBinderFluentTest {
+class MlrFluentTest {
 
 	@Test
 	void icsvOpprintHeadMatchesManual() {
-		String manual = new MlrBinder("mlr", "wp")
-				.flag(Flags.icsv())
-				.flag(Flags.opprint())
+		String manual = Mlr.inDir("wp")
+				.flag(icsv())
+				.flag(opprint())
 				.verb(head(option(n(), objective("3"))))
 				.file("ex.csv")
 				.toString();
-		String fluent = new MlrBinder("mlr", "wp")
+		String fluent = Mlr.inDir("wp")
 				.icsv()
 				.opprint()
 				.head(3)
@@ -36,13 +40,13 @@ class MlrBinderFluentTest {
 
 	@Test
 	void cutOrderedMatchesManual() {
-		String manual = new MlrBinder("mlr", "wp")
-				.flag(Flags.icsv())
-				.flag(Flags.opprint())
+		String manual = Mlr.inDir("wp")
+				.flag(icsv())
+				.flag(opprint())
 				.verb(cut(option(CutFlags.o()), option(CutFlags.f("a,b"))))
 				.file("ex.csv")
 				.toString();
-		String fluent = new MlrBinder("mlr", "wp")
+		String fluent = Mlr.inDir("wp")
 				.icsv()
 				.opprint()
 				.cutOrdered("a,b")
@@ -53,14 +57,14 @@ class MlrBinderFluentTest {
 
 	@Test
 	void stats1WithGroupMatchesManual() {
-		String manual = new MlrBinder("mlr", "wp")
-				.flag(Flags.from("ex.csv"))
+		String manual = Mlr.inDir("wp")
+				.flag(from("ex.csv"))
 				.verb(stats1(
 						StatsFlags.aggregations("count"),
 						StatsFlags.field("qty"),
 						StatsFlags.groupBy("shape")))
 				.toString();
-		String fluent = new MlrBinder("mlr", "wp")
+		String fluent = Mlr.inDir("wp")
 				.from("ex.csv")
 				.stats1("count", "qty", "shape")
 				.toString();
@@ -69,8 +73,8 @@ class MlrBinderFluentTest {
 
 	@Test
 	void sortChainedWithFluentHead() {
-		String s = new MlrBinder("mlr", "wp")
-				.flag(Flags.csv())
+		String s = Mlr.inDir("wp")
+				.flag(csv())
 				.sort(nr("index"))
 				.head(2)
 				.file("ex.csv")

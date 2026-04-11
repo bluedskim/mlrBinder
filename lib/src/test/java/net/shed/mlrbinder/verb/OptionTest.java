@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static net.shed.mlrbinder.verb.Option.option;
 
 import net.shed.mlrbinder.Flag;
-import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Mlr;
 import net.shed.mlrbinder.Objective;
 
 public class OptionTest {
@@ -43,7 +43,7 @@ public class OptionTest {
 		Objective obj = new Objective(objectName);
 
 		Option optionWithFlag = new Option(flag, obj);
-		assertEquals(optionWithFlag.toString(), flag.toString() + MlrBinder.SPACER + obj.toString());
+		assertEquals(optionWithFlag.toString(), flag.toString() + Mlr.SPACER + obj.toString());
 	}
 
 	@Test

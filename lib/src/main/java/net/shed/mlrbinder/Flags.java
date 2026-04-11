@@ -15,7 +15,7 @@ package net.shed.mlrbinder;
  * </p>
  * <p>
  * Miller options {@code --mfrom} and {@code --mload} take a variable argument list
- * terminated by {@code --}; use {@link MlrBinder#mfrom(String...)} and {@link MlrBinder#mload(String...)}.
+ * terminated by {@code --}; use {@link Mlr#mfrom(String...)} and {@link Mlr#mload(String...)}.
  * </p>
  */
 public final class Flags {

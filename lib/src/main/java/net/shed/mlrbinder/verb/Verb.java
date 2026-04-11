@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.shed.mlrbinder.Arg;
-import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Mlr;
 
 /**
  * Miller verb segment for the command line. Static factories delegate to {@link Verbs}; add new verbs there and add a
@@ -336,7 +336,7 @@ public class Verb implements Arg {
 	private String toStringArgs() {
 		StringBuilder concatenatedOptions = new StringBuilder();
 		for(Arg arg : args) {
-			concatenatedOptions.append(MlrBinder.SPACER + arg);
+			concatenatedOptions.append(Mlr.SPACER + arg);
 		}
 		return concatenatedOptions.toString();
 	}

@@ -41,7 +41,7 @@ import static net.shed.mlrbinder.verb.Verbs.stats1;
 import static net.shed.mlrbinder.verb.Verbs.tail;
 
 /**
- * End-to-end checks that {@link MlrBinder} builds argv matching the Miller
+ * End-to-end checks that {@link Mlr} builds argv matching the Miller
  * <a href="https://miller.readthedocs.io/en/latest/10min/">10-minute tutorial</a>.
  * Golden files under {@code src/test/resources/10min/expected/} are produced with
  * {@code mlr} from the environment (e.g. {@code mlr 6.11}); regenerate if Miller output changes.
@@ -71,7 +71,7 @@ class TenMinTutorialE2eTest {
 		return Files.readString(p).trim();
 	}
 
-	private static String run(MlrBinder binder) throws IOException, InterruptedException {
+	private static String run(Mlr binder) throws IOException, InterruptedException {
 		return binder.run().trim();
 	}
 
@@ -79,7 +79,7 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void catCsv() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder mlr = new MlrBinder("mlr", root.toString())
+		Mlr mlr = Mlr.inDir(root.toString())
 				.flag(csv())
 				.verb(cat())
 				.file("example.csv");
@@ -90,7 +90,7 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void catIcsvOpprint() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder mlr = new MlrBinder("mlr", root.toString())
+		Mlr mlr = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(cat())
@@ -102,19 +102,19 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void headAndTail() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder head = new MlrBinder("mlr", root.toString())
+		Mlr head = Mlr.inDir(root.toString())
 				.flag(csv())
 				.verb(head(option(n(), objective("4"))))
 				.file("example.csv");
 		assertEquals(expected("head_n4.txt"), run(head));
 
-		MlrBinder tail = new MlrBinder("mlr", root.toString())
+		Mlr tail = Mlr.inDir(root.toString())
 				.flag(csv())
 				.verb(tail(option(n(), objective("4"))))
 				.file("example.csv");
 		assertEquals(expected("tail_n4.txt"), run(tail));
 
-		MlrBinder tailJson = new MlrBinder("mlr", root.toString())
+		Mlr tailJson = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(ojson())
 				.verb(tail(option(n(), objective("2"))))
@@ -126,28 +126,28 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void sortAndCut() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder sortF = new MlrBinder("mlr", root.toString())
+		Mlr sortF = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(sort(f("shape")))
 				.file("example.csv");
 		assertEquals(expected("sort_f_shape.txt"), run(sortF));
 
-		MlrBinder sortFnr = new MlrBinder("mlr", root.toString())
+		Mlr sortFnr = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(sort(f("shape"), nr("index")))
 				.file("example.csv");
 		assertEquals(expected("sort_f_shape_nr_index.txt"), run(sortFnr));
 
-		MlrBinder cutKeep = new MlrBinder("mlr", root.toString())
+		Mlr cutKeep = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(cut(option(flag("-f").objective("flag,shape"))))
 				.file("example.csv");
 		assertEquals(expected("cut_f.txt"), run(cutKeep));
 
-		MlrBinder cutOrdered = new MlrBinder("mlr", root.toString())
+		Mlr cutOrdered = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(cut(
@@ -156,7 +156,7 @@ class TenMinTutorialE2eTest {
 				.file("example.csv");
 		assertEquals(expected("cut_o_f.txt"), run(cutOrdered));
 
-		MlrBinder cutOmit = new MlrBinder("mlr", root.toString())
+		Mlr cutOmit = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(cut(
@@ -170,14 +170,14 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void putPositionalFieldNamesAndValues() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder rename = new MlrBinder("mlr", root.toString())
+		Mlr rename = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(put(objective("$[[3]] = \"NEW\"")))
 				.file("example.csv");
 		assertEquals(expected("put_rename_field3.txt"), run(rename));
 
-		MlrBinder value = new MlrBinder("mlr", root.toString())
+		Mlr value = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(put(objective("$[[[3]]] = \"NEW\"")))
@@ -189,14 +189,14 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void filterAndPutComputed() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder f1 = new MlrBinder("mlr", root.toString())
+		Mlr f1 = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(filter(objective("$color == \"red\"")))
 				.file("example.csv");
 		assertEquals(expected("filter_color_red.txt"), run(f1));
 
-		MlrBinder f2 = new MlrBinder("mlr", root.toString())
+		Mlr f2 = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(filter(objective("$color == \"red\" && $flag == \"true\"")))
@@ -204,7 +204,7 @@ class TenMinTutorialE2eTest {
 		assertEquals(expected("filter_red_true.txt"), run(f2));
 
 		String putExpr = "$ratio = $quantity / $rate; $color_shape = $color . \"_\" . $shape";
-		MlrBinder put = new MlrBinder("mlr", root.toString())
+		Mlr put = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(put(objective(putExpr)))
@@ -213,7 +213,7 @@ class TenMinTutorialE2eTest {
 
 		// Tutorial shows $y2 (typo); Miller uses ** for exponent — see tutorial prose / corrected samples.
 		String yzExpr = "$y = $index + 1; $z = $y**2 + $k";
-		MlrBinder fromPut = new MlrBinder("mlr", root.toString())
+		Mlr fromPut = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.flag(from("example.csv"))
@@ -225,19 +225,19 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void spacesFieldNames() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder spacesCat = new MlrBinder("mlr", root.toString())
+		Mlr spacesCat = Mlr.inDir(root.toString())
 				.flag(csv())
 				.verb(cat())
 				.file("spaces.csv");
 		assertEquals(expected("spaces_cat_csv.txt"), run(spacesCat));
 
-		MlrBinder sort = new MlrBinder("mlr", root.toString())
+		Mlr sort = Mlr.inDir(root.toString())
 				.flag(c2p())
 				.verb(sort(nr("Total MWh")))
 				.file("spaces.csv");
 		assertEquals(expected("spaces_sort.txt"), run(sort));
 
-		MlrBinder put = new MlrBinder("mlr", root.toString())
+		Mlr put = Mlr.inDir(root.toString())
 				.flag(c2p())
 				.verb(put(objective("${Total KWh} = ${Total MWh} * 1000")))
 				.file("spaces.csv");
@@ -248,7 +248,7 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void multipleInputFiles() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder mlr = new MlrBinder("mlr", root.toString())
+		Mlr mlr = Mlr.inDir(root.toString())
 				.flag(csv())
 				.verb(cat())
 				.file("data/a.csv")
@@ -260,7 +260,7 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void thenChainingAndFrom() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder chained = new MlrBinder("mlr", root.toString())
+		Mlr chained = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(
@@ -272,20 +272,20 @@ class TenMinTutorialE2eTest {
 		// Tutorial: shell pipe "mlr --csv sort -nr index ... | mlr --icsv --opprint head -n 3"
 		Path pipeTmp = Files.createTempDirectory("mlr-10min-pipe");
 		Path sortedCsv = pipeTmp.resolve("sorted.csv");
-		new MlrBinder("mlr", root.toString())
+		Mlr.inDir(root.toString())
 				.flag(csv())
 				.verb(sort(nr("index")))
 				.file("example.csv")
 				.redirectOutputFile(sortedCsv.toFile())
 				.run();
-		MlrBinder second = new MlrBinder("mlr", pipeTmp.toString())
+		Mlr second = Mlr.inDir(pipeTmp.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(head(option(n(), objective("3"))))
 				.file(sortedCsv.getFileName().toString());
 		assertEquals(expected("sort_then_head.txt"), run(second));
 
-		MlrBinder fromHead = new MlrBinder("mlr", root.toString())
+		Mlr fromHead = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.flag(from("example.csv"))
@@ -294,7 +294,7 @@ class TenMinTutorialE2eTest {
 						head(option(n(), objective("3"))));
 		assertEquals(expected("from_sort_then_head.txt"), run(fromHead));
 
-		MlrBinder fromChainCut = new MlrBinder("mlr", root.toString())
+		Mlr fromChainCut = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.flag(from("example.csv"))
@@ -309,7 +309,7 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void headGroupByAndStats1() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder headG = new MlrBinder("mlr", root.toString())
+		Mlr headG = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(
@@ -320,7 +320,7 @@ class TenMinTutorialE2eTest {
 				.file("example.csv");
 		assertEquals(expected("head_g_shape.txt"), run(headG));
 
-		MlrBinder statsShape = new MlrBinder("mlr", root.toString())
+		Mlr statsShape = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.flag(from("example.csv"))
@@ -330,7 +330,7 @@ class TenMinTutorialE2eTest {
 						flag("-g").objective("shape")));
 		assertEquals(expected("stats1_g_shape.txt"), run(statsShape));
 
-		MlrBinder statsShapeColor = new MlrBinder("mlr", root.toString())
+		Mlr statsShapeColor = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.flag(from("example.csv"))
@@ -340,7 +340,7 @@ class TenMinTutorialE2eTest {
 						flag("-g").objective("shape,color")));
 		assertEquals(expected("stats1_g_shape_color.txt"), run(statsShapeColor));
 
-		MlrBinder statsXtab = new MlrBinder("mlr", root.toString())
+		Mlr statsXtab = Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(oxtab())
 				.flag(from("example.csv"))
@@ -354,19 +354,19 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void unicodeSamples() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder greekFilter = new MlrBinder("mlr", root.toString())
+		Mlr greekFilter = Mlr.inDir(root.toString())
 				.flag(c2p())
 				.verb(filter(objective("$σχήμα == \"κύκλος\"")))
 				.file("παράδειγμα.csv");
 		assertEquals(expected("greek_filter_circles.txt"), run(greekFilter));
 
-		MlrBinder greekSort = new MlrBinder("mlr", root.toString())
+		Mlr greekSort = Mlr.inDir(root.toString())
 				.flag(c2p())
 				.verb(sort(f("σημαία")))
 				.file("παράδειγμα.csv");
 		assertEquals(expected("greek_sort_flag.txt"), run(greekSort));
 
-		MlrBinder ruPut = new MlrBinder("mlr", root.toString())
+		Mlr ruPut = Mlr.inDir(root.toString())
 				.flag(c2p())
 				.verb(put(objective("$форма = toupper($форма); $длина = strlen($цвет)")))
 				.file("пример.csv");
@@ -377,27 +377,27 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void jsonAndNestedConversion() throws Exception {
 		Path root = tenMinRoot();
-		MlrBinder jsonCat = new MlrBinder("mlr", root.toString())
+		Mlr jsonCat = Mlr.inDir(root.toString())
 				.flag(json())
 				.verb(cat())
 				.file("example.json");
 		assertEquals(expected("json_cat.txt"), run(jsonCat));
 
-		MlrBinder jsonCsv = new MlrBinder("mlr", root.toString())
+		Mlr jsonCsv = Mlr.inDir(root.toString())
 				.flag(ijson())
 				.flag(ocsv())
 				.verb(cat())
 				.file("example.json");
 		assertEquals(expected("json_to_csv.txt"), run(jsonCsv));
 
-		MlrBinder srvCsv = new MlrBinder("mlr", root.toString())
+		Mlr srvCsv = Mlr.inDir(root.toString())
 				.flag(ijson())
 				.flag(ocsv())
 				.verb(cat())
 				.file("data/server-log.json");
 		assertEquals(expected("server_log_to_csv.txt"), run(srvCsv));
 
-		MlrBinder srvXtab = new MlrBinder("mlr", root.toString())
+		Mlr srvXtab = Mlr.inDir(root.toString())
 				.flag(ijson())
 				.flag(oxtab())
 				.verb(cat())
@@ -411,7 +411,7 @@ class TenMinTutorialE2eTest {
 		Path root = tenMinRoot();
 		Path tmp = Files.createTempDirectory("mlr-10min-xtab");
 		Path xtabFile = tmp.resolve("sl.xtab");
-		new MlrBinder("mlr", root.toString())
+		Mlr.inDir(root.toString())
 				.flag(ijson())
 				.flag(oxtab())
 				.verb(cat())
@@ -419,7 +419,7 @@ class TenMinTutorialE2eTest {
 				.redirectOutputFile(xtabFile.toFile())
 				.run();
 
-		MlrBinder back = new MlrBinder("mlr", tmp.toString())
+		Mlr back = Mlr.inDir(tmp.toString())
 				.flag(ixtab())
 				.flag(ojson())
 				.verb(cat())
@@ -433,7 +433,7 @@ class TenMinTutorialE2eTest {
 		Path root = tenMinRoot();
 		Path tmp = Files.createTempDirectory("mlr-10min-redir");
 		Path out = tmp.resolve("newfile.csv");
-		new MlrBinder("mlr", root.toString())
+		Mlr.inDir(root.toString())
 				.flag(icsv())
 				.flag(opprint())
 				.verb(cat())
@@ -450,7 +450,7 @@ class TenMinTutorialE2eTest {
 		Path tmp = Files.createTempDirectory("mlr-10min-inplace");
 		Path nf = tmp.resolve("newfile.txt");
 		Files.copy(root.resolve("example.csv"), nf);
-		new MlrBinder("mlr", tmp.toString())
+		Mlr.inDir(tmp.toString())
 				.flag(inPlaceShort())
 				.flag(csv())
 				.verb(sort(f("shape")))
@@ -465,7 +465,7 @@ class TenMinTutorialE2eTest {
 		Path root = tenMinRoot();
 		Path tmp = Files.createTempDirectory("mlr-10min-split");
 		Files.copy(root.resolve("example.csv"), tmp.resolve("example.csv"));
-		new MlrBinder("mlr", tmp.toString())
+		Mlr.inDir(tmp.toString())
 				.flag(csv())
 				.flag(from("example.csv"))
 				.verb(split(flag("-g").objective("shape")))
@@ -484,7 +484,7 @@ class TenMinTutorialE2eTest {
 		Path root = tenMinRoot();
 		Path tmp = Files.createTempDirectory("mlr-10min-tee");
 		Files.copy(root.resolve("example.csv"), tmp.resolve("example.csv"));
-		new MlrBinder("mlr", tmp.toString())
+		Mlr.inDir(tmp.toString())
 				.flag(csv())
 				.flag(from("example.csv"))
 				.verb(put(flag("-q"), objective("tee > $shape.\".csv\", $*")))

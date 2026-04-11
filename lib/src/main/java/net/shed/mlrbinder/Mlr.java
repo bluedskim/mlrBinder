@@ -22,11 +22,13 @@ import net.shed.mlrbinder.verb.Verb;
 import net.shed.mlrbinder.verb.Verbs;
 
 /**
- * Mlr(Miller) binder
- * [Structure]
- * The program name + Flags + Verbs + Zero or more filenames
+ * Miller command builder and runner: executable path + global {@link Flag}s + optional {@code --mfrom}/{@code --mload}
+ * tokens + chained {@link net.shed.mlrbinder.verb.Verb}s + input files, then {@link #run()} or {@link #run(InputStreamReader)}.
+ * <p>
+ * Prefer static helpers {@link #inDir(String)}, {@link #csv()}, {@link #mlr()} over raw constructors when possible.
+ * </p>
  */
-public class MlrBinder {
+public final class Mlr {
 	/**
 	 * put spacer between words
 	 */
@@ -39,7 +41,34 @@ public class MlrBinder {
 
 	private ProcessBuilder processBuilder;
 
-	private static Logger logger = Logger.getLogger(MlrBinder.class.getName());
+	private static Logger logger = Logger.getLogger(Mlr.class.getName());
+
+	/** {@code mlr} on {@code PATH} with process cwd {@code workingDirectory}. */
+	public static Mlr inDir(String workingDirectory) {
+		Objects.requireNonNull(workingDirectory, "workingDirectory");
+		return new Mlr(DEFAULT_MLR_PATH, workingDirectory);
+	}
+
+	/** Same as {@link #inDir(String)}. */
+	public static Mlr inDir(File directory) {
+		Objects.requireNonNull(directory, "directory");
+		return inDir(directory.getPath());
+	}
+
+	/** {@code mlr} on PATH; set {@link #workingPath(String)} (or use {@link #file(File)}) before {@link #run()}. */
+	public static Mlr mlr() {
+		return new Mlr();
+	}
+
+	/** Custom {@code mlr} binary; cwd must still be set before run unless supplied by {@link #file(File)}. */
+	public static Mlr binary(String mlrExecutablePath) {
+		return new Mlr(Objects.requireNonNull(mlrExecutablePath, "mlrExecutablePath"));
+	}
+
+	/** Test hook: supply a {@link ProcessBuilder} used for {@link #run()} / {@link #run(InputStreamReader)}. */
+	public static Mlr withProcessBuilder(ProcessBuilder processBuilder) {
+		return new Mlr(processBuilder);
+	}
 
 	Integer exitCode;
 	String stdErr;
@@ -48,7 +77,7 @@ public class MlrBinder {
 	/**
 	 * default constructor
 	 */
-	public MlrBinder() {
+	public Mlr() {
 		super();
 		mlrPath = DEFAULT_MLR_PATH;
 		processBuilder = new ProcessBuilder();
@@ -58,7 +87,7 @@ public class MlrBinder {
 	 * constructor, get ProcessBuilder
 	 * @param mlrPath
 	 */
-	public MlrBinder(ProcessBuilder processBuilder) {
+	public Mlr(ProcessBuilder processBuilder) {
 		this();
 		this.processBuilder = processBuilder;
 	}
@@ -67,7 +96,7 @@ public class MlrBinder {
 	 * constructor, get mlr executable path
 	 * @param mlrPath
 	 */
-	public MlrBinder(String mlrPath) {
+	public Mlr(String mlrPath) {
 		this();
 		this.mlrPath = mlrPath;
 	}
@@ -76,7 +105,7 @@ public class MlrBinder {
 	 * constructor, get mlr executable path
 	 * @param mlrPath
 	 */
-	public MlrBinder(String mlrPath, String workingPath) {
+	public Mlr(String mlrPath, String workingPath) {
 		this();
 		this.mlrPath = mlrPath;
 		this.workingPath = workingPath;
@@ -87,7 +116,7 @@ public class MlrBinder {
 	 * @param mlrPath
 	 * @return
 	 */
-	public MlrBinder mlrPath(String mlrPath) {
+	public Mlr mlrPath(String mlrPath) {
 		this.mlrPath = mlrPath;
 		return this;
 	}
@@ -107,14 +136,14 @@ public class MlrBinder {
 	 * @param mlrPath
 	 * @return
 	 */
-	public MlrBinder workingPath(String workingPath) {
+	public Mlr workingPath(String workingPath) {
 		this.workingPath = workingPath;
 		return this;
 	}
 
 	private File redirectOutputFile;
 
-	public MlrBinder redirectOutputFile(File redirectOutputFile) {
+	public Mlr redirectOutputFile(File redirectOutputFile) {
 		this.redirectOutputFile = redirectOutputFile;
 		return this;
 	}
@@ -139,9 +168,9 @@ public class MlrBinder {
 	/**
 	 * add flag
 	 * @param flag
-	 * @return this MlrBinder
+	 * @return this Mlr
 	 */
-	public MlrBinder flag(Flag flag) {
+	public Mlr flag(Flag flag) {
 		flags.add(flag);
 		return this;
 	}
@@ -168,7 +197,7 @@ public class MlrBinder {
 	/**
 	 * Miller {@code --mfrom} with a variable file list, terminated by {@code --} on the argv.
 	 */
-	public MlrBinder mfrom(String... paths) {
+	public Mlr mfrom(String... paths) {
 		Objects.requireNonNull(paths, "paths");
 		preVerbArgs.add("--mfrom");
 		for (String p : paths) {
@@ -181,7 +210,7 @@ public class MlrBinder {
 	/**
 	 * Miller {@code --mload} with a variable script list, terminated by {@code --} on the argv.
 	 */
-	public MlrBinder mload(String... scripts) {
+	public Mlr mload(String... scripts) {
 		Objects.requireNonNull(scripts, "scripts");
 		preVerbArgs.add("--mload");
 		for (String s : scripts) {
@@ -199,11 +228,11 @@ public class MlrBinder {
 	}
 
 	/**
-	 * add verbs and return this MlrBinder
+	 * add verbs and return this Mlr
 	 * @param flag
-	 * @return this MlrBinder
+	 * @return this Mlr
 	 */
-	public MlrBinder verb(Verb... verbs) {
+	public Mlr verb(Verb... verbs) {
 		this.verbs.addAll(Arrays.asList(verbs));
 		return this;
 	}
@@ -213,7 +242,7 @@ public class MlrBinder {
 	 */
 	private List<String> fileNames = new ArrayList<>();
 
-	public MlrBinder file(String fileName) {
+	public Mlr file(String fileName) {
 		fileNames.add(fileName);
 		return this;
 	}
@@ -223,7 +252,7 @@ public class MlrBinder {
 	 * working directory to {@code user.dir}; for an absolute file, sets it to the file's parent directory (file name
 	 * only is passed to {@code mlr}, matching {@link #file(String)} with a bare name and matching working directory).
 	 */
-	public MlrBinder file(File file) {
+	public Mlr file(File file) {
 		Objects.requireNonNull(file, "file");
 		File absolute = file.getAbsoluteFile();
 		if (file.isAbsolute()) {
@@ -244,21 +273,21 @@ public class MlrBinder {
 	/**
 	 * Fluent entry: {@code mlr} on {@code PATH}, {@code --csv}, empty verbs/files until chained.
 	 */
-	public static MlrBinder csv() {
-		return new MlrBinder().flag(Flags.csv());
+	public static Mlr csv() {
+		return mlr().flag(Flags.csv());
 	}
 
 	/**
 	 * Alias for {@link #workingPath(String)} for fluent chains.
 	 */
-	public MlrBinder workDir(String path) {
+	public Mlr workDir(String path) {
 		return workingPath(path);
 	}
 
 	/**
 	 * Sets the process working directory from {@code dir}'s path.
 	 */
-	public MlrBinder workDir(File dir) {
+	public Mlr workDir(File dir) {
 		Objects.requireNonNull(dir, "dir");
 		return workingPath(dir.getPath());
 	}
@@ -266,59 +295,59 @@ public class MlrBinder {
 	/**
 	 * Appends a {@code sort} verb with the given Miller arguments (e.g. from {@link SortFlags#n} / {@link SortFlags#nr}).
 	 */
-	public MlrBinder sort(Arg... args) {
+	public Mlr sort(Arg... args) {
 		return verb(Verbs.sort(args));
 	}
 
 	/** Appends {@code cat} with optional extra Miller arguments. */
-	public MlrBinder cat(Arg... args) {
+	public Mlr cat(Arg... args) {
 		return verb(Verbs.cat(args));
 	}
 
 	/** Appends {@code head -n count}. */
-	public MlrBinder head(int count) {
+	public Mlr head(int count) {
 		return verb(Verbs.head(HeadTail.n(count)));
 	}
 
 	/** Appends {@code tail -n count}. */
-	public MlrBinder tail(int count) {
+	public Mlr tail(int count) {
 		return verb(Verbs.tail(HeadTail.n(count)));
 	}
 
 	/** Appends {@code filter} with a Miller DSL expression. */
-	public MlrBinder filter(Objective expression) {
+	public Mlr filter(Objective expression) {
 		return verb(Verbs.filter(expression));
 	}
 
 	/** Appends {@code put} with a Miller DSL expression (or script body). */
-	public MlrBinder put(Objective expression) {
+	public Mlr put(Objective expression) {
 		return verb(Verbs.put(expression));
 	}
 
 	/** Appends {@code put -q} then the expression (e.g. tee splits). */
-	public MlrBinder putQuiet(Objective expression) {
+	public Mlr putQuiet(Objective expression) {
 		return verb(Verbs.put(PutFlags.quiet(), expression));
 	}
 
 	/** Appends {@code cut -f fields} (field order follows input). */
-	public MlrBinder cutFields(String fields) {
+	public Mlr cutFields(String fields) {
 		return verb(Verbs.cut(Option.option(CutFlags.f(fields))));
 	}
 
 	/** Appends {@code cut -o -f fields} (reorder to match {@code fields}). */
-	public MlrBinder cutOrdered(String fields) {
+	public Mlr cutOrdered(String fields) {
 		return verb(Verbs.cut(Option.option(CutFlags.o()), Option.option(CutFlags.f(fields))));
 	}
 
 	/** Appends {@code cut -x -f fields} (omit listed fields). */
-	public MlrBinder cutExcept(String fields) {
+	public Mlr cutExcept(String fields) {
 		return verb(Verbs.cut(Option.option(CutFlags.x()), Option.option(CutFlags.f(fields))));
 	}
 
 	/**
 	 * Appends {@code stats1} with aggregations, numeric field, and optional group-by (comma-separated if multiple).
 	 */
-	public MlrBinder stats1(String aggregations, String field, String groupBy) {
+	public Mlr stats1(String aggregations, String field, String groupBy) {
 		return verb(Verbs.stats1(
 				StatsFlags.aggregations(aggregations),
 				StatsFlags.field(field),
@@ -326,58 +355,58 @@ public class MlrBinder {
 	}
 
 	/** Appends {@code stats1} without {@code -g}. */
-	public MlrBinder stats1(String aggregations, String field) {
+	public Mlr stats1(String aggregations, String field) {
 		return verb(Verbs.stats1(StatsFlags.aggregations(aggregations), StatsFlags.field(field)));
 	}
 
 	/** Appends {@code split -g field}. */
-	public MlrBinder splitBy(String field) {
+	public Mlr splitBy(String field) {
 		return verb(Verbs.split(SplitFlags.group(field)));
 	}
 
 	// --- Global format / IO flags (fluent; each appends one Miller global flag) ---
 
-	public MlrBinder icsv() {
+	public Mlr icsv() {
 		return flag(Flags.icsv());
 	}
 
-	public MlrBinder ocsv() {
+	public Mlr ocsv() {
 		return flag(Flags.ocsv());
 	}
 
-	public MlrBinder opprint() {
+	public Mlr opprint() {
 		return flag(Flags.opprint());
 	}
 
-	public MlrBinder ojson() {
+	public Mlr ojson() {
 		return flag(Flags.ojson());
 	}
 
-	public MlrBinder ijson() {
+	public Mlr ijson() {
 		return flag(Flags.ijson());
 	}
 
-	public MlrBinder json() {
+	public Mlr json() {
 		return flag(Flags.json());
 	}
 
-	public MlrBinder oxtab() {
+	public Mlr oxtab() {
 		return flag(Flags.oxtab());
 	}
 
-	public MlrBinder ixtab() {
+	public Mlr ixtab() {
 		return flag(Flags.ixtab());
 	}
 
-	public MlrBinder c2p() {
+	public Mlr c2p() {
 		return flag(Flags.c2p());
 	}
 
-	public MlrBinder from(String path) {
+	public Mlr from(String path) {
 		return flag(Flags.from(path));
 	}
 
-	public MlrBinder inPlace() {
+	public Mlr inPlace() {
 		return flag(Flags.inPlaceShort());
 	}
 

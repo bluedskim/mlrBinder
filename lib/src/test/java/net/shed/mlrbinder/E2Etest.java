@@ -50,7 +50,7 @@ public class E2Etest {
 	public void multiFlagTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 		.flag(icsv())
 		.flag(ocsv())
 		.verb(new Verb("cat"))
@@ -67,7 +67,7 @@ public class E2Etest {
 	public void catTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 		.flag(csv())
 		.verb(new Verb("cat"))
 		.file("example.csv")
@@ -83,7 +83,7 @@ public class E2Etest {
 	public void sortTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 		.flag(csv())
 		.verb(
 			new Verb("sort")
@@ -113,7 +113,7 @@ public class E2Etest {
 	public void cutTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 		.flag(icsv())
 		.flag(ocsv())
 		.verb(
@@ -143,7 +143,7 @@ public class E2Etest {
 	public void putTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 		.flag(icsv())
 		.flag(ocsv())
 		.verb(
@@ -165,7 +165,7 @@ public class E2Etest {
 	public void staticCatMethodTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.workingPath(workingPath)
 			.flag(csv())
 			.verb(cat())
@@ -183,7 +183,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		/*
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.workingPath(workingPath)
 			.flag(csv())
 			.verb(
@@ -197,7 +197,7 @@ public class E2Etest {
 		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
 		 */
 
-		MlrBinder mlr = new MlrBinder()
+		Mlr mlr = Mlr.mlr()
 			.workingPath(workingPath)
 			.flag(csv())
 			.verb(
@@ -222,7 +222,7 @@ public class E2Etest {
 		out.deleteOnExit();
 
 		String stdinCsv = "a,b,c\n4,5,6\n1,2,3\n9,8,7\n";
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.flag(csv())
 			.verb(cat())
 			.redirectOutputFile(out);
@@ -239,7 +239,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 		File example = new File(workingPath, "example.csv");
 
-		MlrBinder mlr = MlrBinder.csv()
+		Mlr mlr = Mlr.csv()
 			.workDir(workingPath)
 			.sort(n("a"), nr("b"))
 			.file(example);
@@ -254,7 +254,7 @@ public class E2Etest {
 	public void chainedVerbsHeadThenTacTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.flag(csv())
 			.verb(
 				head(option(n(), objective("2"))),
@@ -271,7 +271,7 @@ public class E2Etest {
 	public void mfromMultiFileCatTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.flag(csv())
 			.mfrom("example.csv", "example.csv")
 			.verb(cat());
