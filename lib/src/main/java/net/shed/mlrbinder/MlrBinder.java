@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import net.shed.mlrbinder.Arg;
+import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
 import net.shed.mlrbinder.verb.Verbs;
 
@@ -267,6 +268,117 @@ public class MlrBinder {
 	 */
 	public MlrBinder sort(Arg... args) {
 		return verb(Verbs.sort(args));
+	}
+
+	/** Appends {@code cat} with optional extra Miller arguments. */
+	public MlrBinder cat(Arg... args) {
+		return verb(Verbs.cat(args));
+	}
+
+	/** Appends {@code head -n count}. */
+	public MlrBinder head(int count) {
+		return verb(Verbs.head(HeadTail.n(count)));
+	}
+
+	/** Appends {@code tail -n count}. */
+	public MlrBinder tail(int count) {
+		return verb(Verbs.tail(HeadTail.n(count)));
+	}
+
+	/** Appends {@code filter} with a Miller DSL expression. */
+	public MlrBinder filter(Objective expression) {
+		return verb(Verbs.filter(expression));
+	}
+
+	/** Appends {@code put} with a Miller DSL expression (or script body). */
+	public MlrBinder put(Objective expression) {
+		return verb(Verbs.put(expression));
+	}
+
+	/** Appends {@code put -q} then the expression (e.g. tee splits). */
+	public MlrBinder putQuiet(Objective expression) {
+		return verb(Verbs.put(PutFlags.quiet(), expression));
+	}
+
+	/** Appends {@code cut -f fields} (field order follows input). */
+	public MlrBinder cutFields(String fields) {
+		return verb(Verbs.cut(Option.option(CutFlags.f(fields))));
+	}
+
+	/** Appends {@code cut -o -f fields} (reorder to match {@code fields}). */
+	public MlrBinder cutOrdered(String fields) {
+		return verb(Verbs.cut(Option.option(CutFlags.o()), Option.option(CutFlags.f(fields))));
+	}
+
+	/** Appends {@code cut -x -f fields} (omit listed fields). */
+	public MlrBinder cutExcept(String fields) {
+		return verb(Verbs.cut(Option.option(CutFlags.x()), Option.option(CutFlags.f(fields))));
+	}
+
+	/**
+	 * Appends {@code stats1} with aggregations, numeric field, and optional group-by (comma-separated if multiple).
+	 */
+	public MlrBinder stats1(String aggregations, String field, String groupBy) {
+		return verb(Verbs.stats1(
+				StatsFlags.aggregations(aggregations),
+				StatsFlags.field(field),
+				StatsFlags.groupBy(groupBy)));
+	}
+
+	/** Appends {@code stats1} without {@code -g}. */
+	public MlrBinder stats1(String aggregations, String field) {
+		return verb(Verbs.stats1(StatsFlags.aggregations(aggregations), StatsFlags.field(field)));
+	}
+
+	/** Appends {@code split -g field}. */
+	public MlrBinder splitBy(String field) {
+		return verb(Verbs.split(SplitFlags.group(field)));
+	}
+
+	// --- Global format / IO flags (fluent; each appends one Miller global flag) ---
+
+	public MlrBinder icsv() {
+		return flag(Flags.icsv());
+	}
+
+	public MlrBinder ocsv() {
+		return flag(Flags.ocsv());
+	}
+
+	public MlrBinder opprint() {
+		return flag(Flags.opprint());
+	}
+
+	public MlrBinder ojson() {
+		return flag(Flags.ojson());
+	}
+
+	public MlrBinder ijson() {
+		return flag(Flags.ijson());
+	}
+
+	public MlrBinder json() {
+		return flag(Flags.json());
+	}
+
+	public MlrBinder oxtab() {
+		return flag(Flags.oxtab());
+	}
+
+	public MlrBinder ixtab() {
+		return flag(Flags.ixtab());
+	}
+
+	public MlrBinder c2p() {
+		return flag(Flags.c2p());
+	}
+
+	public MlrBinder from(String path) {
+		return flag(Flags.from(path));
+	}
+
+	public MlrBinder inPlace() {
+		return flag(Flags.inPlaceShort());
 	}
 
 	public List<String> getFileNames() {

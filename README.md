@@ -338,9 +338,9 @@ mlr -I --csv sort -f shape newfile.txt
 
 ```java
 new MlrBinder("mlr", tmpDir)
-	.flag(inPlaceShort())
+	.inPlace()
 	.flag(csv())
-	.verb(sort(f("shape")))
+	.sort(f("shape"))
 	.file("newfile.txt")
 	.run();
 ```
@@ -378,11 +378,19 @@ String runResult2 = new MlrBinder("mlr", workingPath)
 	.run();
 ```
 
-### Fluent entry (`MlrBinder.csv()`, `sort`, `file(File)`)
+### Fluent entry (`MlrBinder` + small flag helpers)
 
-`SortFlags` provides Miller `sort` key shorthands `n` / `nr` (static import recommended).
+- **`MlrBinder.csv()`** — `mlr` + `--csv`로 시작.
+- **전역 플래그 체인**: `.icsv()`, `.opprint()`, `.ocsv()`, `.ijson()`, `.json()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`) 등은 각각 `flag(Flags…)`와 동일합니다.
+- **동사 체인**: `.sort(…)`, `.cat(…)`, `.head(n)`, `.tail(n)`, `.filter(objective("…"))`, `.put(…)`, `.putQuiet(…)`, `.cutFields("a,b")`, `.cutOrdered("a,b")`, `.cutExcept("a,b")`, `.stats1(aggregations, field)`, `.stats1(aggregations, field, groupBy)`, `.splitBy("field")`.
+
+`cut`의 `-o` / `-x` / `-f`는 **`CutFlags.o()`**, **`CutFlags.x()`**, **`CutFlags.f("…")`** (또는 위 `cut*` 메서드). `head`/`tail` 개수는 **`HeadTail.n(4)`** (= `option(SortFlags.n(), objective("4"))`). `stats1`의 `-a`/`-f`/`-g`는 **`StatsFlags`**. `put -q`는 **`PutFlags.quiet()`** 또는 **`.putQuiet(…)`**. `split -g`는 **`SplitFlags.group("shape")`** 또는 **`.splitBy("shape")`**. 여러 동사에 공통인 **`MillerVerbOpts.groupBy("field")`** (`head -g` 등)도 씁니다.
+
+`SortFlags`의 **`n("field")` / `nr("field")` / `f("field")`** 와 **`n()`** (값 없는 `-n`, `head`용)은 그대로 씁니다.
 
 ```java
+import static net.shed.mlrbinder.Objective.objective;
+import static net.shed.mlrbinder.SortFlags.f;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 
@@ -390,6 +398,15 @@ String runResult = MlrBinder.csv()
 	.workDir(workingPath)
 	.sort(n("a"), nr("b"))
 	.file(new File("example.csv"))
+	.run();
+
+// 동일 튜토리얼 흐름을 더 짧게
+String top3 = new MlrBinder("mlr", workingPath)
+	.icsv()
+	.opprint()
+	.sort(nr("index"))
+	.head(3)
+	.file("example.csv")
 	.run();
 ```
 
