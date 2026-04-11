@@ -19,13 +19,13 @@ import java.util.logging.Logger;
 import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
-import net.shed.mlrbinder.verb.Verbs;
 
 /**
  * Miller command builder and runner: executable path + global {@link Flag}s + optional {@code --mfrom}/{@code --mload}
  * tokens + chained {@link net.shed.mlrbinder.verb.Verb}s + input files, then {@link #run()} or {@link #run(InputStreamReader)}.
  * <p>
  * Prefer static helpers {@link #inDir(String)}, {@link #csv()}, {@link #mlr()} over raw constructors when possible.
+ * Build verbs with {@link Verbs} ({@code import static …Mlr.Verbs.*}).
  * </p>
  */
 public final class Mlr {
@@ -292,78 +292,6 @@ public final class Mlr {
 		return workingPath(dir.getPath());
 	}
 
-	/**
-	 * Appends a {@code sort} verb with the given Miller arguments (e.g. from {@link SortFlags#n} / {@link SortFlags#nr}).
-	 */
-	public Mlr sort(Arg... args) {
-		return verb(Verbs.sort(args));
-	}
-
-	/** Appends {@code cat} with optional extra Miller arguments. */
-	public Mlr cat(Arg... args) {
-		return verb(Verbs.cat(args));
-	}
-
-	/** Appends {@code head -n count}. */
-	public Mlr head(int count) {
-		return verb(Verbs.head(HeadTail.n(count)));
-	}
-
-	/** Appends {@code tail -n count}. */
-	public Mlr tail(int count) {
-		return verb(Verbs.tail(HeadTail.n(count)));
-	}
-
-	/** Appends {@code filter} with a Miller DSL expression. */
-	public Mlr filter(Objective expression) {
-		return verb(Verbs.filter(expression));
-	}
-
-	/** Appends {@code put} with a Miller DSL expression (or script body). */
-	public Mlr put(Objective expression) {
-		return verb(Verbs.put(expression));
-	}
-
-	/** Appends {@code put -q} then the expression (e.g. tee splits). */
-	public Mlr putQuiet(Objective expression) {
-		return verb(Verbs.put(PutFlags.quiet(), expression));
-	}
-
-	/** Appends {@code cut -f fields} (field order follows input). */
-	public Mlr cutFields(String fields) {
-		return verb(Verbs.cut(Option.option(CutFlags.f(fields))));
-	}
-
-	/** Appends {@code cut -o -f fields} (reorder to match {@code fields}). */
-	public Mlr cutOrdered(String fields) {
-		return verb(Verbs.cut(Option.option(CutFlags.o()), Option.option(CutFlags.f(fields))));
-	}
-
-	/** Appends {@code cut -x -f fields} (omit listed fields). */
-	public Mlr cutExcept(String fields) {
-		return verb(Verbs.cut(Option.option(CutFlags.x()), Option.option(CutFlags.f(fields))));
-	}
-
-	/**
-	 * Appends {@code stats1} with aggregations, numeric field, and optional group-by (comma-separated if multiple).
-	 */
-	public Mlr stats1(String aggregations, String field, String groupBy) {
-		return verb(Verbs.stats1(
-				StatsFlags.aggregations(aggregations),
-				StatsFlags.field(field),
-				StatsFlags.groupBy(groupBy)));
-	}
-
-	/** Appends {@code stats1} without {@code -g}. */
-	public Mlr stats1(String aggregations, String field) {
-		return verb(Verbs.stats1(StatsFlags.aggregations(aggregations), StatsFlags.field(field)));
-	}
-
-	/** Appends {@code split -g field}. */
-	public Mlr splitBy(String field) {
-		return verb(Verbs.split(SplitFlags.group(field)));
-	}
-
 	// --- Global format / IO flags (fluent; each appends one Miller global flag) ---
 
 	public Mlr icsv() {
@@ -615,5 +543,296 @@ public final class Mlr {
 		}
 		argList.addAll(fileNames);
 		return argList;
+	}
+
+	/**
+	 * Static factories for every Miller verb; delegates to {@link net.shed.mlrbinder.verb.Verbs}.
+	 * <p>
+	 * Recommended: {@code import static net.shed.mlrbinder.Mlr.Verbs.*;} then {@code .verb(cat())}.
+	 * </p>
+	 */
+	public static final class Verbs {
+		private Verbs() {
+		}
+
+		public static Verb altkv(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.altkv(args);
+		}
+
+		public static Verb bar(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.bar(args);
+		}
+
+		public static Verb bootstrap(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.bootstrap(args);
+		}
+
+		public static Verb caseVerb(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.caseVerb(args);
+		}
+
+		public static Verb cat(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.cat(args);
+		}
+
+		public static Verb check(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.check(args);
+		}
+
+		public static Verb cleanWhitespace(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.cleanWhitespace(args);
+		}
+
+		public static Verb count(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.count(args);
+		}
+
+		public static Verb countDistinct(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.countDistinct(args);
+		}
+
+		public static Verb countSimilar(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.countSimilar(args);
+		}
+
+		public static Verb cut(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.cut(args);
+		}
+
+		public static Verb decimate(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.decimate(args);
+		}
+
+		public static Verb fillDown(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.fillDown(args);
+		}
+
+		public static Verb fillEmpty(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.fillEmpty(args);
+		}
+
+		public static Verb filter(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.filter(args);
+		}
+
+		public static Verb flatten(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.flatten(args);
+		}
+
+		public static Verb formatValues(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.formatValues(args);
+		}
+
+		public static Verb fraction(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.fraction(args);
+		}
+
+		public static Verb gap(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.gap(args);
+		}
+
+		public static Verb grep(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.grep(args);
+		}
+
+		public static Verb gsub(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.gsub(args);
+		}
+
+		public static Verb groupBy(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.groupBy(args);
+		}
+
+		public static Verb groupLike(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.groupLike(args);
+		}
+
+		public static Verb havingFields(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.havingFields(args);
+		}
+
+		public static Verb head(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.head(args);
+		}
+
+		public static Verb histogram(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.histogram(args);
+		}
+
+		public static Verb join(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.join(args);
+		}
+
+		public static Verb jsonParse(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.jsonParse(args);
+		}
+
+		public static Verb jsonStringify(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.jsonStringify(args);
+		}
+
+		public static Verb label(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.label(args);
+		}
+
+		public static Verb latin1ToUtf8(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.latin1ToUtf8(args);
+		}
+
+		public static Verb utf8ToLatin1(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.utf8ToLatin1(args);
+		}
+
+		public static Verb leastFrequent(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.leastFrequent(args);
+		}
+
+		public static Verb mergeFields(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.mergeFields(args);
+		}
+
+		public static Verb mostFrequent(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.mostFrequent(args);
+		}
+
+		public static Verb nest(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.nest(args);
+		}
+
+		public static Verb nothing(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.nothing(args);
+		}
+
+		public static Verb put(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.put(args);
+		}
+
+		public static Verb regularize(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.regularize(args);
+		}
+
+		public static Verb removeEmptyColumns(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.removeEmptyColumns(args);
+		}
+
+		public static Verb rename(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.rename(args);
+		}
+
+		public static Verb reorder(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.reorder(args);
+		}
+
+		public static Verb repeat(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.repeat(args);
+		}
+
+		public static Verb reshape(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.reshape(args);
+		}
+
+		public static Verb sample(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.sample(args);
+		}
+
+		public static Verb sec2Gmt(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.sec2Gmt(args);
+		}
+
+		public static Verb sec2Gmtdate(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.sec2Gmtdate(args);
+		}
+
+		public static Verb seqgen(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.seqgen(args);
+		}
+
+		public static Verb shuffle(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.shuffle(args);
+		}
+
+		public static Verb sparsify(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.sparsify(args);
+		}
+
+		public static Verb skipTrivialRecords(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.skipTrivialRecords(args);
+		}
+
+		public static Verb sort(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.sort(args);
+		}
+
+		public static Verb sortWithinRecords(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.sortWithinRecords(args);
+		}
+
+		public static Verb split(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.split(args);
+		}
+
+		public static Verb ssub(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.ssub(args);
+		}
+
+		public static Verb stats1(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.stats1(args);
+		}
+
+		public static Verb stats2(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.stats2(args);
+		}
+
+		public static Verb step(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.step(args);
+		}
+
+		public static Verb sub(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.sub(args);
+		}
+
+		public static Verb summary(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.summary(args);
+		}
+
+		public static Verb surv(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.surv(args);
+		}
+
+		public static Verb tac(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.tac(args);
+		}
+
+		public static Verb tail(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.tail(args);
+		}
+
+		public static Verb tee(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.tee(args);
+		}
+
+		public static Verb template(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.template(args);
+		}
+
+		public static Verb top(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.top(args);
+		}
+
+		public static Verb unflatten(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.unflatten(args);
+		}
+
+		public static Verb uniq(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.uniq(args);
+		}
+
+		public static Verb unspace(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.unspace(args);
+		}
+
+		public static Verb unsparsify(Arg... args) {
+			return net.shed.mlrbinder.verb.Verbs.unsparsify(args);
+		}
 	}
 }

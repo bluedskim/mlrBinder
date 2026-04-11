@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import net.shed.mlrbinder.Flag;
-import static net.shed.mlrbinder.verb.Verb.sort;
+import net.shed.mlrbinder.Mlr;
 import net.shed.mlrbinder.verb.Verbs;
 
 public class VerbTest {
@@ -69,20 +69,20 @@ public class VerbTest {
 
 	@Test
 	public void staticSortMethodTest() {
-		Verb verb = sort();
+		Verb verb = Mlr.Verbs.sort();
 		assertEquals("sort", verb.toString());
 	}
 
 	@Test
-	public void verbsDelegatesToSameAsVerbStatic() {
-		assertEquals(Verbs.sort().toString(), Verb.sort().toString());
-		assertEquals(Verbs.cat(new Flag("-n")).toString(), Verb.cat(new Flag("-n")).toString());
-		assertEquals(Verbs.caseVerb().toString(), Verb.caseVerb().toString());
-		assertEquals(Verbs.gsub().toString(), Verb.gsub().toString());
-		assertEquals(Verbs.sparsify().toString(), Verb.sparsify().toString());
-		assertEquals(Verbs.ssub().toString(), Verb.ssub().toString());
-		assertEquals(Verbs.sub().toString(), Verb.sub().toString());
-		assertEquals(Verbs.surv().toString(), Verb.surv().toString());
-		assertEquals(Verbs.unspace().toString(), Verb.unspace().toString());
+	public void mlrVerbsMatchesCanonicalVerbs() {
+		assertEquals(Verbs.sort().toString(), Mlr.Verbs.sort().toString());
+		assertEquals(Verbs.cat(new Flag("-n")).toString(), Mlr.Verbs.cat(new Flag("-n")).toString());
+		assertEquals(Verbs.caseVerb().toString(), Mlr.Verbs.caseVerb().toString());
+		assertEquals(Verbs.gsub().toString(), Mlr.Verbs.gsub().toString());
+		assertEquals(Verbs.sparsify().toString(), Mlr.Verbs.sparsify().toString());
+		assertEquals(Verbs.ssub().toString(), Mlr.Verbs.ssub().toString());
+		assertEquals(Verbs.sub().toString(), Mlr.Verbs.sub().toString());
+		assertEquals(Verbs.surv().toString(), Mlr.Verbs.surv().toString());
+		assertEquals(Verbs.unspace().toString(), Mlr.Verbs.unspace().toString());
 	}
 }
