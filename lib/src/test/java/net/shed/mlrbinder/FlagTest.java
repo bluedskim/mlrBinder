@@ -1,5 +1,6 @@
 package net.shed.mlrbinder;
 
+import static net.shed.mlrbinder.Flag.flag;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -10,6 +11,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class FlagTest {
+	@Test
+	@DisplayName("flag() matches constructor")
+	public void staticFlagFactory() {
+		assertEquals(new Flag("-x").toString(), flag("-x").toString());
+		assertEquals(new Flag("-x").toStringList(), flag("-x").toStringList());
+	}
+
 	@Test
 	@DisplayName("constructor without object test")
 	public void flagWithoutObject() {
@@ -39,7 +47,7 @@ public class FlagTest {
 		Flag flagWithObject = flag.objective(obj);
 		assertEquals(obj, flagWithObject.getObjective());
 		assertSame(flag, flagWithObject);
-		assertEquals(flag.toString(), flagName + MlrBinder.SPACER + objectName);
+		assertEquals(flag.toString(), flagName + Mlr.SPACER + objectName);
 	}
 
 	@Test

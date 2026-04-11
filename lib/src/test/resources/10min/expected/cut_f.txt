@@ -1,0 +1,11 @@
+shape    flag
+triangle true
+square   true
+circle   true
+square   false
+triangle false
+square   false
+triangle false
+circle   true
+circle   true
+square   false

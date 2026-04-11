@@ -8,11 +8,22 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static net.shed.mlrbinder.verb.Option.option;
+
 import net.shed.mlrbinder.Flag;
-import net.shed.mlrbinder.MlrBinder;
+import net.shed.mlrbinder.Mlr;
 import net.shed.mlrbinder.Objective;
 
 public class OptionTest {
+	@Test
+	@DisplayName("static option() matches constructors")
+	public void staticOptionFactories() {
+		Flag f = new Flag("-x");
+		Objective o = new Objective("v");
+		assertEquals(new Option(f).toStringList(), option(f).toStringList());
+		assertEquals(new Option(f, o).toStringList(), option(f, o).toStringList());
+	}
+
 	@Test
 	@DisplayName("constructor with flag test")
 	public void constructorWithFlagTest() {
@@ -32,7 +43,7 @@ public class OptionTest {
 		Objective obj = new Objective(objectName);
 
 		Option optionWithFlag = new Option(flag, obj);
-		assertEquals(optionWithFlag.toString(), flag.toString() + MlrBinder.SPACER + obj.toString());
+		assertEquals(optionWithFlag.toString(), flag.toString() + Mlr.SPACER + obj.toString());
 	}
 
 	@Test

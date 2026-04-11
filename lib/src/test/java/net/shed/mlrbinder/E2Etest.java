@@ -1,12 +1,17 @@
 package net.shed.mlrbinder;
 
+import static net.shed.mlrbinder.Flag.flag;
 import static net.shed.mlrbinder.Flags.csv;
+import static net.shed.mlrbinder.Flags.icsv;
+import static net.shed.mlrbinder.Flags.ocsv;
+import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Verbs.cat;
 import static net.shed.mlrbinder.verb.Verbs.head;
 import static net.shed.mlrbinder.verb.Verbs.sort;
 import static net.shed.mlrbinder.verb.Verbs.tac;
+import static net.shed.mlrbinder.verb.Option.option;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +27,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
 import net.shed.mlrbinder.verb.Verbs;
 
@@ -46,9 +50,9 @@ public class E2Etest {
 	public void multiFlagTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--icsv"))
-		.flag(new Flag("--ocsv"))
+		Mlr mlr = Mlr.inDir(workingPath)
+		.flag(icsv())
+		.flag(ocsv())
 		.verb(new Verb("cat"))
 		.file("example.csv")
 		;
@@ -63,8 +67,8 @@ public class E2Etest {
 	public void catTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--csv"))
+		Mlr mlr = Mlr.inDir(workingPath)
+		.flag(csv())
 		.verb(new Verb("cat"))
 		.file("example.csv")
 		;
@@ -79,20 +83,20 @@ public class E2Etest {
 	public void sortTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--csv"))
+		Mlr mlr = Mlr.inDir(workingPath)
+		.flag(csv())
 		.verb(
 			new Verb("sort")
 			.addArg(
-				new Option(
-					new Flag("-f")
-					,new Objective("c")
+				option(
+					flag("-f")
+					,objective("c")
 				)
 			)
 			.addArg(
-				new Option(
-					new Flag("-f")
-					,new Objective("a")
+				option(
+					flag("-f")
+					,objective("a")
 				)
 			)
 		)
@@ -109,19 +113,19 @@ public class E2Etest {
 	public void cutTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--icsv"))
-		.flag(new Flag("--ocsv"))
+		Mlr mlr = Mlr.inDir(workingPath)
+		.flag(icsv())
+		.flag(ocsv())
 		.verb(
 			new Verb("cut")
 			.addArg(
-				new Option(
-					new Flag("-o")
+				option(
+					flag("-o")
 				)
 			).addArg(
-				new Option(
-					new Flag("-f").objective(
-						new Objective("b,c")
+				option(
+					flag("-f").objective(
+						objective("b,c")
 					)
 				)
 			)
@@ -139,13 +143,13 @@ public class E2Etest {
 	public void putTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-		.flag(new Flag("--icsv"))
-		.flag(new Flag("--ocsv"))
+		Mlr mlr = Mlr.inDir(workingPath)
+		.flag(icsv())
+		.flag(ocsv())
 		.verb(
 			new Verb("put")
 			.addArg(
-				new Objective("'$[[[3]]] = \"7\"'")
+				objective("'$[[[3]]] = \"7\"'")
 			)
 		)
 		.file("example.csv")
@@ -161,7 +165,7 @@ public class E2Etest {
 	public void staticCatMethodTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.workingPath(workingPath)
 			.flag(csv())
 			.verb(cat())
@@ -179,13 +183,13 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		/*
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.workingPath(workingPath)
 			.flag(csv())
 			.verb(
 				sort()
-					.addArg(new Option(new Flag("-n"), new Objective("a")))
-					.addArg(new Option(new Flag("-nr"), new Objective("b")))
+					.addArg(option(flag("-n"), objective("a")))
+					.addArg(option(flag("-nr"), objective("b")))
 			)
 			.file("example.csv")
 		;
@@ -193,13 +197,13 @@ public class E2Etest {
 		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
 		 */
 
-		MlrBinder mlr = new MlrBinder()
+		Mlr mlr = Mlr.mlr()
 			.workingPath(workingPath)
 			.flag(csv())
 			.verb(
 				sort(
-					new Flag("-n").objective("a")
-					,new Flag("-nr").objective("b")
+					n("a")
+					,nr("b")
 				)
 			)
 			.file("example.csv")
@@ -218,7 +222,7 @@ public class E2Etest {
 		out.deleteOnExit();
 
 		String stdinCsv = "a,b,c\n4,5,6\n1,2,3\n9,8,7\n";
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
+		Mlr mlr = Mlr.inDir(workingPath)
 			.flag(csv())
 			.verb(cat())
 			.redirectOutputFile(out);
@@ -235,7 +239,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 		File example = new File(workingPath, "example.csv");
 
-		MlrBinder mlr = MlrBinder.csv()
+		Mlr mlr = Mlr.csv()
 			.workDir(workingPath)
 			.sort(n("a"), nr("b"))
 			.file(example);
@@ -250,40 +254,38 @@ public class E2Etest {
 	public void chainedVerbsHeadThenTacTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-			.flag(new Flag("--csv"))
+		Mlr mlr = Mlr.inDir(workingPath)
+			.flag(csv())
 			.verb(
-				head(new Option(new Flag("-n"), new Objective("2"))),
+				head(option(n(), objective("2"))),
 				tac())
 			.file("example.csv");
 
 		logger.info("mlr=" + mlr.toString());
 		assertEquals("mlr --csv head -n 2 then tac example.csv", mlr.toString());
 		String runResult = mlr.run();
-		assertEquals("1,2,3\n4,5,6\na,b,c", runResult);
+		assertEquals("a,b,c\n1,2,3\n4,5,6", runResult);
 	}
 
 	@Test
 	public void mfromMultiFileCatTest() throws IOException, InterruptedException {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
-		MlrBinder mlr = new MlrBinder("mlr", workingPath)
-			.flag(new Flag("--csv"))
+		Mlr mlr = Mlr.inDir(workingPath)
+			.flag(csv())
 			.mfrom("example.csv", "example.csv")
 			.verb(cat());
 
 		logger.info("mlr=" + mlr.toString());
 		assertEquals("mlr --csv --mfrom example.csv example.csv -- cat", mlr.toString());
 		String runResult = mlr.run();
-		assertEquals(
-				"a,b,c\n4,5,6\n1,2,3\n9,8,7\na,b,c\n4,5,6\n1,2,3\n9,8,7",
-				runResult);
+		assertEquals("a,b,c\n4,5,6\n1,2,3\n9,8,7\n4,5,6\n1,2,3\n9,8,7", runResult);
 	}
 	}
 
 	@Test
 	public void verbsDelegatesToSameAsVerbStatic() {
 		assertEquals(Verbs.sort().toString(), Verb.sort().toString());
-		assertEquals(Verbs.cat(new Flag("-n")).toString(), Verb.cat(new Flag("-n")).toString());
+		assertEquals(Verbs.cat(flag("-n")).toString(), Verb.cat(flag("-n")).toString());
 	}
 }

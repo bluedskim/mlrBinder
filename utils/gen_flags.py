@@ -24,7 +24,7 @@ FORCE_NEEDS_ARG = frozenset(
     }
 )
 
-# Miller --mfrom / --mload use varargs + "--"; use MlrBinder#mfrom / #mload instead.
+# Miller --mfrom / --mload use varargs + "--"; use Mlr#mfrom / #mload instead.
 SKIP_FLAGS = frozenset({"--mfrom", "--mload"})
 
 JAVA_KEYWORDS = frozenset(
@@ -193,7 +193,7 @@ def main() -> None:
         " * </p>",
         " * <p>",
         " * Miller options {@code --mfrom} and {@code --mload} take a variable argument list",
-        " * terminated by {@code --}; use {@link MlrBinder#mfrom(String...)} and {@link MlrBinder#mload(String...)}.",
+        " * terminated by {@code --}; use {@link Mlr#mfrom(String...)} and {@link Mlr#mload(String...)}.",
         " * </p>",
         " */",
         "public final class Flags {",

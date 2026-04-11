@@ -1,0 +1,4 @@
+shape  quantity
+square 72.3735
+circle 63.5058
+circle 63.9785

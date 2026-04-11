@@ -1,0 +1,8 @@
+rate_p0   0.0130
+rate_p10  2.9010
+rate_p25  4.2370
+rate_p50  8.2430
+rate_p75  8.5910
+rate_p90  9.8870
+rate_p99  9.8870
+rate_p100 9.8870

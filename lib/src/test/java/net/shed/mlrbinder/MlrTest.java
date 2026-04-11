@@ -31,13 +31,13 @@ import net.shed.mlrbinder.verb.Verb;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 
-class MlrBinderTest {
-	private static Logger logger = Logger.getLogger(MlrBinderTest.class.getName());
+class MlrTest {
+	private static Logger logger = Logger.getLogger(MlrTest.class.getName());
 
 	@Test
 	@DisplayName("mlrPath not nullable test")
 	void mlrPathNotNullableTest() {
-		MlrBinder mlr = new MlrBinder();
+		Mlr mlr = Mlr.mlr();
 		assertThrows(IllegalArgumentException.class, () -> {
 			mlr.toString();
 		});
@@ -46,7 +46,7 @@ class MlrBinderTest {
 	@Test
 	@DisplayName("mlrPath not nullable test")
 	void workingPathNullableTest() {
-		MlrBinder mlr = new MlrBinder("mlrPath");
+		Mlr mlr = Mlr.binary("mlrPath");
 		assertThrows(IllegalArgumentException.class, () -> {
 			mlr.toString();
 		});
@@ -56,7 +56,7 @@ class MlrBinderTest {
 	void pathTest() {
 		String mlrPath = "mlr executable";
 		logger.info("mlrPath=" + mlrPath);
-		MlrBinder mlr = new MlrBinder().mlrPath(mlrPath);
+		Mlr mlr = Mlr.mlr().mlrPath(mlrPath);
 		logger.info(mlr.getMlrPath());
 		assertEquals(mlrPath, mlr.getMlrPath());
 	}
@@ -66,7 +66,7 @@ class MlrBinderTest {
 	void flagsTest() {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
-		MlrBinder mlr = new MlrBinder();
+		Mlr mlr = Mlr.mlr();
 		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("flag" + i);
 			mlr.flag(flag);
@@ -79,12 +79,12 @@ class MlrBinderTest {
 	void flagsToStringTest() {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
-		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
+		Mlr mlr = Mlr.inDir("workingPath").mlrPath("mlrPath");
 		String toStringResult = "mlrPath";
 		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("flag" + i);
 			mlr.flag(flag);
-			toStringResult += MlrBinder.SPACER + flag;
+			toStringResult += Mlr.SPACER + flag;
 		}
 		logger.info("mlr.toString()=" + mlr.toString());
 		assertEquals(mlr.toString(), toStringResult);
@@ -95,7 +95,7 @@ class MlrBinderTest {
 	void verbsTest() {
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
-		MlrBinder mlr = new MlrBinder();
+		Mlr mlr = Mlr.mlr();
 		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
 			mlr.verb(verb);
@@ -108,7 +108,7 @@ class MlrBinderTest {
 	void verbsMultiTest() {
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
-		MlrBinder mlr = new MlrBinder();
+		Mlr mlr = Mlr.mlr();
 		List<Verb> verbs = new ArrayList<>();
 		for (int i = 0; i < cntOfVerbs; i++) {
 			verbs.add(new Verb("verb" + i));
@@ -125,15 +125,15 @@ class MlrBinderTest {
 	void verbsToStringTest() {
 		int cntOfVerbs = new Random().nextInt(10);
 		logger.info("cntOfVerbs=" + cntOfVerbs);
-		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
+		Mlr mlr = Mlr.inDir("workingPath").mlrPath("mlrPath");
 		String toStringResult = "mlrPath";
 		for (int i = 0; i < cntOfVerbs; i++) {
 			Verb verb = new Verb("verb" + i);
 			mlr.verb(verb);
 			if(i > 0) {
-				toStringResult += MlrBinder.SPACER + MlrBinder.CHAINING_ADVERB;
+				toStringResult += Mlr.SPACER + Mlr.CHAINING_ADVERB;
 			}
-			toStringResult += MlrBinder.SPACER + verb;
+			toStringResult += Mlr.SPACER + verb;
 		}
 		logger.info("mlr.toString()=" + mlr.toString());
 		assertEquals(mlr.toString(), toStringResult);
@@ -144,7 +144,7 @@ class MlrBinderTest {
 	void filesTest() {
 		int cntOfFiles = new Random().nextInt(10);
 		logger.info("cntOfFiles=" + cntOfFiles);
-		MlrBinder mlr = new MlrBinder();
+		Mlr mlr = Mlr.mlr();
 		for (int i = 0; i < cntOfFiles; i++) {
 			String fileName = "file" + i;
 			mlr.file(fileName);
@@ -157,12 +157,12 @@ class MlrBinderTest {
 	void filesToStringTest() {
 		int cnt = new Random().nextInt(10);
 		logger.info("cnt=" + cnt);
-		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
+		Mlr mlr = Mlr.inDir("workingPath").mlrPath("mlrPath");
 		String toStringResult = "mlrPath";
 		for (int i = 0; i < cnt; i++) {
 			String fileName = "fileName" + i;
 			mlr.file(fileName);
-			toStringResult += MlrBinder.SPACER + fileName;
+			toStringResult += Mlr.SPACER + fileName;
 		}
 		logger.info("mlr.toString()=" + mlr.toString());
 		assertEquals(toStringResult, mlr.toString());
@@ -173,13 +173,13 @@ class MlrBinderTest {
 	void flagsVerbsFilesToStringTest() {
 		int cntOfFlags = new Random().nextInt(10);
 		logger.info("cntOfFlags=" + cntOfFlags);
-		MlrBinder mlr = new MlrBinder("mlrPath", "workingPath");
+		Mlr mlr = Mlr.inDir("workingPath").mlrPath("mlrPath");
 		String toStringResult = "mlrPath";
 		for (int i = 0; i < cntOfFlags; i++) {
 			Flag flag = new Flag("--flag" + i);
 			flag.objective(new Objective("obj" + i));
 			mlr.flag(flag);
-			toStringResult += MlrBinder.SPACER + flag;
+			toStringResult += Mlr.SPACER + flag;
 		}
 
 		int cntOfVerbs = new Random().nextInt(10);
@@ -195,9 +195,9 @@ class MlrBinderTest {
 			);
 			mlr.verb(verb);
 			if(i > 0) {
-				toStringResult += MlrBinder.SPACER + MlrBinder.CHAINING_ADVERB;
+				toStringResult += Mlr.SPACER + Mlr.CHAINING_ADVERB;
 			}
-			toStringResult += MlrBinder.SPACER + verb;
+			toStringResult += Mlr.SPACER + verb;
 		}
 
 		int cnt = new Random().nextInt(10);
@@ -205,7 +205,7 @@ class MlrBinderTest {
 		for (int i = 0; i < cnt; i++) {
 			String fileName = "fileName" + i;
 			mlr.file(fileName);
-			toStringResult += MlrBinder.SPACER + fileName;
+			toStringResult += Mlr.SPACER + fileName;
 		}
 
 		logger.info("mlr.toString()=" + mlr.toString());
@@ -218,7 +218,7 @@ class MlrBinderTest {
 		String runResult = "결과";
 		ProcessBuilder processBuilder = getProcessBuilder(exitCode, runResult);
 
-		MlrBinder mlr = new MlrBinder(processBuilder);
+		Mlr mlr = Mlr.withProcessBuilder(processBuilder);
 		mlr.workingPath("workingPath");
 
 		assertEquals(runResult, mlr.run());
@@ -247,7 +247,7 @@ class MlrBinderTest {
 		};
 		when(process.getOutputStream()).thenReturn(failingStdin);
 
-		MlrBinder mlr = new MlrBinder(processBuilder);
+		Mlr mlr = Mlr.withProcessBuilder(processBuilder);
 		mlr.workingPath("workingPath");
 		mlr.verb(new Verb("cat"));
 
@@ -271,7 +271,7 @@ class MlrBinderTest {
 		when(process.getErrorStream()).thenReturn(errStream);
 		when(errStream.readAllBytes()).thenReturn(errMsg.getBytes(StandardCharsets.UTF_8));
 
-		MlrBinder mlr = new MlrBinder(processBuilder);
+		Mlr mlr = Mlr.withProcessBuilder(processBuilder);
 		mlr.workingPath("workingPath");
 
 		RuntimeException ex = assertThrows(RuntimeException.class, mlr::run);
@@ -285,7 +285,7 @@ class MlrBinderTest {
 	@Test
 	@DisplayName("mfrom expands to --mfrom paths then -- before verbs")
 	void mfromPreVerbArgs() {
-		MlrBinder mlr = new MlrBinder("mlr", "workingPath")
+		Mlr mlr = Mlr.inDir("workingPath")
 				.mfrom("a.csv", "b.csv")
 				.verb(new Verb("cat"));
 		assertEquals("mlr --mfrom a.csv b.csv -- cat", mlr.toString());
@@ -294,7 +294,7 @@ class MlrBinderTest {
 	@Test
 	@DisplayName("mload expands to --mload scripts then -- before verbs")
 	void mloadPreVerbArgs() {
-		MlrBinder mlr = new MlrBinder("mlr", "workingPath")
+		Mlr mlr = Mlr.inDir("workingPath")
 				.mload("one.mlr", "two.mlr")
 				.verb(new Verb("cat"));
 		assertEquals("mlr --mload one.mlr two.mlr -- cat", mlr.toString());
@@ -303,7 +303,7 @@ class MlrBinderTest {
 	@Test
 	@DisplayName("fluent csv().sort(n,nr).file matches manual assembly")
 	void fluentCsvSortWithSortFlags() {
-		MlrBinder mlr = MlrBinder.csv()
+		Mlr mlr = Mlr.csv()
 				.workDir("workingPath")
 				.sort(n("a"), nr("b"))
 				.file("example.csv");
@@ -318,7 +318,7 @@ class MlrBinderTest {
 		assertTrue(csv.createNewFile());
 		csv.deleteOnExit();
 
-		MlrBinder mlr = new MlrBinder("mlr").file(csv);
+		Mlr mlr = Mlr.mlr().file(csv);
 		assertEquals(dir.toFile().getPath(), mlr.workingPath);
 		assertEquals("mlr x.csv", mlr.toString());
 	}
@@ -326,7 +326,7 @@ class MlrBinderTest {
 	@Test
 	@DisplayName("file(File) relative path defaults working directory to user.dir")
 	void fileRelativeDefaultsWorkingPathToUserDir() {
-		MlrBinder mlr = new MlrBinder("mlr").file(new File("sub/example.csv"));
+		Mlr mlr = Mlr.mlr().file(new File("sub/example.csv"));
 		assertEquals(System.getProperty("user.dir"), mlr.workingPath);
 		assertEquals("mlr sub/example.csv", mlr.toString());
 	}
@@ -335,21 +335,21 @@ class MlrBinderTest {
 	@DisplayName("workDir(File) sets working path from directory")
 	void workDirFileSetsWorkingPath() throws IOException {
 		java.nio.file.Path dir = Files.createTempDirectory("mlrbinder-workdir");
-		MlrBinder mlr = new MlrBinder("mlr").workDir(dir.toFile());
+		Mlr mlr = Mlr.mlr().workDir(dir.toFile());
 		assertEquals(dir.toFile().getPath(), mlr.workingPath);
 	}
 
 	@Test
 	@DisplayName("getPreVerbArgs is unmodifiable")
 	void getPreVerbArgsUnmodifiable() {
-		MlrBinder mlr = new MlrBinder("mlr", "workingPath").mfrom("a.csv");
+		Mlr mlr = Mlr.inDir("workingPath").mfrom("a.csv");
 		assertThrows(UnsupportedOperationException.class, () -> mlr.getPreVerbArgs().add("x"));
 	}
 
 	@Test
 	@DisplayName("mfrom and mload reject null collection")
 	void mfromMloadRequireNonNull() {
-		MlrBinder mlr = new MlrBinder("mlr", "workingPath");
+		Mlr mlr = Mlr.inDir("workingPath");
 		assertThrows(NullPointerException.class, () -> mlr.mfrom((String[]) null));
 		assertThrows(NullPointerException.class, () -> mlr.mload((String[]) null));
 		assertThrows(NullPointerException.class, () -> mlr.mfrom("ok", null));
@@ -359,14 +359,14 @@ class MlrBinderTest {
 	@Test
 	@DisplayName("run(InputStreamReader) rejects null reader")
 	void runStdinRejectsNullReader() {
-		MlrBinder mlr = new MlrBinder("mlr", "workingPath");
+		Mlr mlr = Mlr.inDir("workingPath");
 		assertThrows(IllegalArgumentException.class, () -> mlr.run((InputStreamReader) null));
 	}
 
 	@Test
 	@DisplayName("run(InputStreamReader) requires working path")
 	void runStdinRequiresWorkingPath() {
-		MlrBinder mlr = new MlrBinder("mlr");
+		Mlr mlr = Mlr.mlr();
 		InputStreamReader isr = new InputStreamReader(
 				new ByteArrayInputStream("x\n".getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
 		assertThrows(IllegalArgumentException.class, () -> mlr.run(isr));
@@ -377,7 +377,7 @@ class MlrBinderTest {
 	void redirectOutputFileGetter() throws IOException {
 		File out = File.createTempFile("mlrbinder-out", ".csv");
 		out.deleteOnExit();
-		MlrBinder mlr = new MlrBinder("mlr", "workingPath").redirectOutputFile(out);
+		Mlr mlr = Mlr.inDir("workingPath").redirectOutputFile(out);
 		assertEquals(out, mlr.getRedirectOutputFile());
 	}
 
