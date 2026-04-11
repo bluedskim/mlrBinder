@@ -305,7 +305,7 @@ class MlrTest {
 	void fluentCsvSortWithSortFlags() {
 		Mlr mlr = Mlr.csv()
 				.workDir("workingPath")
-				.sort(n("a"), nr("b"))
+				.verb(net.shed.mlrbinder.Mlr.Verbs.sort(n("a"), nr("b")))
 				.file("example.csv");
 		assertEquals("mlr --csv sort -n a -nr b example.csv", mlr.toString());
 	}

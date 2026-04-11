@@ -3,7 +3,7 @@ package net.shed.mlrbinder;
 /**
  * Shorthand {@link Flag} factories for Miller {@code cut} (e.g. {@code -f}, {@code -o}, {@code -x}).
  * <p>
- * Typical use: {@code cut(option(CutFlags.o()), option(CutFlags.f("a,b")))} or {@link Mlr#cutOrdered(String)}.
+ * Typical use: {@code verb(Mlr.Verbs.cut(option(CutFlags.o()), option(CutFlags.f("a,b"))))}.
  * </p>
  */
 public final class CutFlags {

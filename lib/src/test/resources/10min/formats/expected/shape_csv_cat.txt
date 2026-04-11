@@ -1,0 +1,3 @@
+shape,flag,index
+circle,1,24
+square,0,36

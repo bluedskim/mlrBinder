@@ -30,15 +30,15 @@ import static net.shed.mlrbinder.SortFlags.f;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Option.option;
-import static net.shed.mlrbinder.verb.Verbs.cat;
-import static net.shed.mlrbinder.verb.Verbs.cut;
-import static net.shed.mlrbinder.verb.Verbs.filter;
-import static net.shed.mlrbinder.verb.Verbs.head;
-import static net.shed.mlrbinder.verb.Verbs.put;
-import static net.shed.mlrbinder.verb.Verbs.sort;
-import static net.shed.mlrbinder.verb.Verbs.split;
-import static net.shed.mlrbinder.verb.Verbs.stats1;
-import static net.shed.mlrbinder.verb.Verbs.tail;
+import static net.shed.mlrbinder.Mlr.Verbs.cat;
+import static net.shed.mlrbinder.Mlr.Verbs.cut;
+import static net.shed.mlrbinder.Mlr.Verbs.filter;
+import static net.shed.mlrbinder.Mlr.Verbs.head;
+import static net.shed.mlrbinder.Mlr.Verbs.put;
+import static net.shed.mlrbinder.Mlr.Verbs.sort;
+import static net.shed.mlrbinder.Mlr.Verbs.split;
+import static net.shed.mlrbinder.Mlr.Verbs.stats1;
+import static net.shed.mlrbinder.Mlr.Verbs.tail;
 
 /**
  * End-to-end checks that {@link Mlr} builds argv matching the Miller
@@ -468,7 +468,7 @@ class TenMinTutorialE2eTest {
 		Mlr.inDir(tmp.toString())
 				.flag(csv())
 				.flag(from("example.csv"))
-				.verb(split(flag("-g").objective("shape")))
+				.verb(split(SplitFlags.group("shape")))
 				.run();
 		assertEquals(expected("split/split_circle.csv"),
 				Files.readString(tmp.resolve("split_circle.csv")).trim());

@@ -4,7 +4,7 @@ package net.shed.mlrbinder;
  * Shorthand {@link Flag} factories for Miller {@code sort} (e.g. {@code -n}, {@code -nr}).
  * <p>
  * Typical use with static import: {@code import static net.shed.mlrbinder.SortFlags.*;}
- * then {@code .sort(n("a"), nr("b"))}.
+ * then {@code verb(sort(n("a"), nr("b")))} on {@link Mlr}.
  * </p>
  * <p>
  * For verbs like {@code head} / {@code tail}, {@code -n} takes the count as the next argv token.
