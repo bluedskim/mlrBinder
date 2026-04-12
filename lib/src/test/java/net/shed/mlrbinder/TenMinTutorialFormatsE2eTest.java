@@ -1,12 +1,5 @@
 package net.shed.mlrbinder;
 
-import static net.shed.mlrbinder.Flags.csv;
-import static net.shed.mlrbinder.Flags.idkvp;
-import static net.shed.mlrbinder.Flags.ijson;
-import static net.shed.mlrbinder.Flags.json;
-import static net.shed.mlrbinder.Flags.ocsv;
-import static net.shed.mlrbinder.Flags.tsv;
-import static net.shed.mlrbinder.Mlr.Verbs.cat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -54,7 +47,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void csvCat() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).flag(csv()).verb(cat()).file("shape.csv");
+		Mlr mlr = Mlr.inDir(root.toString()).withCsv().cat().file("shape.csv");
 		assertEquals(expected("shape_csv_cat.txt"), run(mlr));
 	}
 
@@ -62,7 +55,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void jsonArrayCat() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).flag(json()).verb(cat()).file("shape.json");
+		Mlr mlr = Mlr.inDir(root.toString()).json().cat().file("shape.json");
 		assertEquals(expected("shape_json_cat.txt"), run(mlr));
 	}
 
@@ -70,7 +63,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void jsonLinesCat() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).flag(json()).verb(cat()).file("shape.jsonl");
+		Mlr mlr = Mlr.inDir(root.toString()).json().cat().file("shape.jsonl");
 		assertEquals(expected("shape_jsonl_cat.txt"), run(mlr));
 	}
 
@@ -78,7 +71,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void dkvpToCsv() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).flag(idkvp()).flag(ocsv()).verb(cat()).file("shape.dkvp");
+		Mlr mlr = Mlr.inDir(root.toString()).idkvp().ocsv().cat().file("shape.dkvp");
 		assertEquals(expected("shape_dkvp_to_csv.txt"), run(mlr));
 	}
 
@@ -86,7 +79,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void tsvCat() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).flag(tsv()).verb(cat()).file("shape.tsv");
+		Mlr mlr = Mlr.inDir(root.toString()).tsv().cat().file("shape.tsv");
 		assertEquals(expected("shape_tsv_cat.txt"), run(mlr));
 	}
 
@@ -94,7 +87,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void jsonToCsvTwoRecords() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).flag(ijson()).flag(ocsv()).verb(cat()).file("shape.json");
+		Mlr mlr = Mlr.inDir(root.toString()).ijson().ocsv().cat().file("shape.json");
 		assertEquals("shape,flag,index\n" + "circle,1,24\n" + "square,0,36", run(mlr));
 	}
 }

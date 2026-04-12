@@ -1,12 +1,5 @@
 package net.shed.mlrbinder;
 
-import static net.shed.mlrbinder.Flags.csv;
-import static net.shed.mlrbinder.Flags.from;
-import static net.shed.mlrbinder.Flags.icsv;
-import static net.shed.mlrbinder.Flags.opprint;
-import static net.shed.mlrbinder.Mlr.Verbs.cut;
-import static net.shed.mlrbinder.Mlr.Verbs.head;
-import static net.shed.mlrbinder.Mlr.Verbs.stats1;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Option.option;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * {@link Mlr} chains with {@link Mlr.Verbs} match expected argv.
+ * {@link Mlr} recommended style: global-flag chain + verb-named instance methods.
  */
 class MlrFluentTest {
 
@@ -23,7 +16,7 @@ class MlrFluentTest {
 		String s = Mlr.inDir("wp")
 				.icsv()
 				.opprint()
-				.verb(head(HeadTail.n(3)))
+				.head(3)
 				.file("ex.csv")
 				.toString();
 		assertEquals("mlr --icsv --opprint head -n 3 ex.csv", s);
@@ -34,7 +27,7 @@ class MlrFluentTest {
 		String s = Mlr.inDir("wp")
 				.icsv()
 				.opprint()
-				.verb(cut(option(CutFlags.o()), option(CutFlags.f("a,b"))))
+				.cut(option(CutFlags.o()), option(CutFlags.f("a,b")))
 				.file("ex.csv")
 				.toString();
 		assertEquals("mlr --icsv --opprint cut -o -f a,b ex.csv", s);
@@ -44,10 +37,10 @@ class MlrFluentTest {
 	void stats1WithGroupMatchesExpected() {
 		String s = Mlr.inDir("wp")
 				.from("ex.csv")
-				.verb(stats1(
+				.stats1(
 						StatsFlags.aggregations("count"),
 						StatsFlags.field("qty"),
-						StatsFlags.groupBy("shape")))
+						StatsFlags.groupBy("shape"))
 				.toString();
 		assertEquals("mlr --from ex.csv stats1 -a count -f qty -g shape", s);
 	}
@@ -55,7 +48,7 @@ class MlrFluentTest {
 	@Test
 	void sortChainedWithHead() {
 		String s = Mlr.inDir("wp")
-				.flag(csv())
+				.withCsv()
 				.sort(nr("index"))
 				.head(2)
 				.file("ex.csv")

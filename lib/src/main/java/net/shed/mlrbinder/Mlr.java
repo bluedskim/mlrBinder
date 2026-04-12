@@ -739,6 +739,21 @@ public final class Mlr {
 		return flag(Flags.c2p());
 	}
 
+	/** Appends {@code --csv} (use when chaining after {@link #inDir(String)}; entry with CSV preset remains {@link #csv()}). */
+	public Mlr withCsv() {
+		return flag(Flags.csv());
+	}
+
+	/** Appends {@code --idkvp}. */
+	public Mlr idkvp() {
+		return flag(Flags.idkvp());
+	}
+
+	/** Appends {@code --tsv}. */
+	public Mlr tsv() {
+		return flag(Flags.tsv());
+	}
+
 	public Mlr from(String path) {
 		return flag(Flags.from(path));
 	}
@@ -957,7 +972,7 @@ public final class Mlr {
 	/**
 	 * Static factories for every Miller verb; delegates to {@link net.shed.mlrbinder.verb.Verbs}.
 	 * <p>
-	 * Recommended: {@code import static net.shed.mlrbinder.Mlr.Verbs.*;} then {@code .verb(cat())}.
+	 * Prefer {@code Mlr.cat()} on a chain; use static imports with {@code .verb(cat())} only when needed.
 	 * </p>
 	 */
 	public static final class Verbs {
