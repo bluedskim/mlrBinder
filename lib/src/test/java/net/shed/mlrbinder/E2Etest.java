@@ -240,7 +240,7 @@ public class E2Etest {
 
 		Mlr mlr = Mlr.csv()
 			.workDir(workingPath)
-			.verb(Mlr.Verbs.sort(n("a"), nr("b")))
+			.sort(n("a"), nr("b"))
 			.file(example);
 
 		logger.info("mlr=" + mlr.toString());

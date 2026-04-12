@@ -292,6 +292,78 @@ public final class Mlr {
 		return workingPath(dir.getPath());
 	}
 
+	/**
+	 * Appends a {@code sort} verb (same as {@code .verb(Mlr.Verbs.sort(args))}).
+	 */
+	public Mlr sort(Arg... args) {
+		return verb(Mlr.Verbs.sort(args));
+	}
+
+	/** Appends {@code cat} with optional extra Miller arguments. */
+	public Mlr cat(Arg... args) {
+		return verb(Mlr.Verbs.cat(args));
+	}
+
+	/** Appends {@code head -n count}. */
+	public Mlr head(int count) {
+		return verb(Mlr.Verbs.head(HeadTail.n(count)));
+	}
+
+	/** Appends {@code tail -n count}. */
+	public Mlr tail(int count) {
+		return verb(Mlr.Verbs.tail(HeadTail.n(count)));
+	}
+
+	/** Appends {@code filter} with a Miller DSL expression. */
+	public Mlr filter(Objective expression) {
+		return verb(Mlr.Verbs.filter(expression));
+	}
+
+	/** Appends {@code put} with a Miller DSL expression (or script body). */
+	public Mlr put(Objective expression) {
+		return verb(Mlr.Verbs.put(expression));
+	}
+
+	/** Appends {@code put -q} then the expression (e.g. tee splits). */
+	public Mlr putQuiet(Objective expression) {
+		return verb(Mlr.Verbs.put(PutFlags.quiet(), expression));
+	}
+
+	/** Appends {@code cut -f fields} (field order follows input). */
+	public Mlr cutFields(String fields) {
+		return verb(Mlr.Verbs.cut(Option.option(CutFlags.f(fields))));
+	}
+
+	/** Appends {@code cut -o -f fields} (reorder to match {@code fields}). */
+	public Mlr cutOrdered(String fields) {
+		return verb(Mlr.Verbs.cut(Option.option(CutFlags.o()), Option.option(CutFlags.f(fields))));
+	}
+
+	/** Appends {@code cut -x -f fields} (omit listed fields). */
+	public Mlr cutExcept(String fields) {
+		return verb(Mlr.Verbs.cut(Option.option(CutFlags.x()), Option.option(CutFlags.f(fields))));
+	}
+
+	/**
+	 * Appends {@code stats1} with aggregations, numeric field, and optional group-by (comma-separated if multiple).
+	 */
+	public Mlr stats1(String aggregations, String field, String groupBy) {
+		return verb(Mlr.Verbs.stats1(
+				StatsFlags.aggregations(aggregations),
+				StatsFlags.field(field),
+				StatsFlags.groupBy(groupBy)));
+	}
+
+	/** Appends {@code stats1} without {@code -g}. */
+	public Mlr stats1(String aggregations, String field) {
+		return verb(Mlr.Verbs.stats1(StatsFlags.aggregations(aggregations), StatsFlags.field(field)));
+	}
+
+	/** Appends {@code split -g field}. */
+	public Mlr splitBy(String field) {
+		return verb(Mlr.Verbs.split(SplitFlags.group(field)));
+	}
+
 	// --- Global format / IO flags (fluent; each appends one Miller global flag) ---
 
 	public Mlr icsv() {

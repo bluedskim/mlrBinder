@@ -6,7 +6,6 @@ import static net.shed.mlrbinder.Flags.icsv;
 import static net.shed.mlrbinder.Flags.opprint;
 import static net.shed.mlrbinder.Mlr.Verbs.cut;
 import static net.shed.mlrbinder.Mlr.Verbs.head;
-import static net.shed.mlrbinder.Mlr.Verbs.sort;
 import static net.shed.mlrbinder.Mlr.Verbs.stats1;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Option.option;
@@ -57,8 +56,8 @@ class MlrFluentTest {
 	void sortChainedWithHead() {
 		String s = Mlr.inDir("wp")
 				.flag(csv())
-				.verb(sort(nr("index")))
-				.verb(head(HeadTail.n(2)))
+				.sort(nr("index"))
+				.head(2)
 				.file("ex.csv")
 				.toString();
 		assertEquals("mlr --csv sort -nr index then head -n 2 ex.csv", s);

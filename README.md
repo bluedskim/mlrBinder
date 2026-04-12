@@ -389,10 +389,10 @@ String runResult = Mlr.inDir(workingPath)
 	.file("example.csv")
 	.run();
 
-// 동사에 sort 키를 가변 인자로
+// 동일: Mlr 체인 메서드(내부적으로 Mlr.Verbs.sort에 위임)
 String runResult2 = Mlr.inDir(workingPath)
 	.flag(csv())
-	.verb(sort(n("a"), nr("b")))
+	.sort(n("a"), nr("b"))
 	.file("example.csv")
 	.run();
 ```
@@ -401,23 +401,19 @@ String runResult2 = Mlr.inDir(workingPath)
 
 - **`Mlr.csv()`** — `mlr` + `--csv`로 시작.
 - **전역 플래그 체인**: `.icsv()`, `.opprint()`, `.ocsv()`, `.ijson()`, `.json()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`) 등은 각각 `flag(Flags…)`와 동일합니다.
-- **동사**: `.verb(Mlr.Verbs.sort(…), Mlr.Verbs.head(…))`처럼 **`Mlr.Verbs`**만 쓰면 됩니다 (`import static net.shed.mlrbinder.Mlr.Verbs.*` 권장).
+- **동사**: 자주 쓰는 것은 **`Mlr` 체인** — **`.sort(…)`**, **`.cat(…)`**, **`.head(n)`**, **`.tail(n)`**, **`.filter(…)`**, **`.put(…)`**, **`.putQuiet(…)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1(…)`**, **`.splitBy(…)`** (각각 `Mlr.Verbs`에 위임). 그 밖의 동사는 **`.verb(Mlr.Verbs.foo(…))`** 또는 `import static …Mlr.Verbs.*` 후 **`.verb(foo(…))`**.
 
-`cut`의 `-o` / `-x` / `-f`는 **`CutFlags.o()`**, **`CutFlags.x()`**, **`CutFlags.f("…")`** 와 `verb(cut(option(…), option(…)))`. `head`/`tail` 개수는 **`HeadTail.n(4)`** (= `option(SortFlags.n(), objective("4"))`). `stats1`의 `-a`/`-f`/`-g`는 **`StatsFlags`**. `put -q`는 **`PutFlags.quiet()`**. `split -g`는 **`SplitFlags.group("shape")`**. 여러 동사에 공통인 **`MillerVerbOpts.groupBy("field")`** (`head -g` 등)도 씁니다.
+`cut`의 `-o` / `-x` / `-f`는 **`CutFlags`**와 위 `cut*` 메서드, 또는 `verb(cut(option(…), option(…)))`. `head`/`tail` 개수는 **`.head(4)`** / **`.tail(4)`** 또는 **`HeadTail.n(4)`**. `stats1`의 `-a`/`-f`/`-g`는 **`StatsFlags`**. `put -q`는 **`PutFlags.quiet()`** 또는 **`.putQuiet(…)`**. `split -g`는 **`SplitFlags.group("shape")`** 또는 **`.splitBy("shape")`**. 여러 동사에 공통인 **`MillerVerbOpts.groupBy("field")`** (`head -g` 등)도 씁니다.
 
 `SortFlags`의 **`n("field")` / `nr("field")` / `f("field")`** 와 **`n()`** (값 없는 `-n`, `head`용)은 그대로 씁니다.
 
 ```java
-import static net.shed.mlrbinder.Mlr.Verbs.head;
-import static net.shed.mlrbinder.Mlr.Verbs.sort;
-import static net.shed.mlrbinder.Objective.objective;
-import static net.shed.mlrbinder.SortFlags.f;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 
 String runResult = Mlr.csv()
 	.workDir(workingPath)
-	.verb(sort(n("a"), nr("b")))
+	.sort(n("a"), nr("b"))
 	.file(new File("example.csv"))
 	.run();
 
@@ -425,8 +421,8 @@ String runResult = Mlr.csv()
 String top3 = Mlr.inDir(workingPath)
 	.icsv()
 	.opprint()
-	.verb(sort(nr("index")))
-	.verb(head(HeadTail.n(3)))
+	.sort(nr("index"))
+	.head(3)
 	.file("example.csv")
 	.run();
 ```
