@@ -25,10 +25,14 @@ import net.shed.mlrbinder.verb.Verb;
  * Miller command builder and runner: executable path + global {@link Flag}s + optional {@code --mfrom}/{@code --mload}
  * tokens + chained {@link net.shed.mlrbinder.verb.Verb}s + input files, then {@link #run()} or {@link #run(InputStreamReader)}.
  * <p>
- * Prefer static helpers {@link #inDir(String)}, {@link #csv()}, {@link #mlr()} over raw constructors when possible.
- * Build verbs with {@link Verbs} ({@code import static …Mlr.Verbs.*}), or chain the same names as instance methods
- * (each delegates to {@code Mlr.Verbs}). Miller {@code filter} / {@code split} use {@link #filterVerb} /
- * {@link #splitVerb} on {@code Mlr} so they do not collide with {@link java.util.stream.Stream#filter}.
+ * <strong>Recommended style:</strong> chain global I/O flags on {@code Mlr} (e.g. {@link #icsv()}, {@link #from(String)}),
+ * then append each Miller verb with the <strong>same-named instance method</strong> (each delegates to
+ * {@link Mlr.Verbs}). Use {@link #filterVerb} / {@link #splitVerb} for Miller {@code filter} / {@code split} so they do not
+ * collide with {@link java.util.stream.Stream#filter}. Prefer this over {@link #flag(Flag)} plus {@link #verb(Verb...)}
+ * when the fluent surface covers your case; fall back to {@code .verb(Mlr.Verbs.foo(…))} only when needed.
+ * </p>
+ * <p>
+ * Start builds with {@link #inDir(String)}, {@link #csv()}, or {@link #mlr()} rather than raw constructors when possible.
  * </p>
  */
 public final class Mlr {
