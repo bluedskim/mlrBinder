@@ -58,7 +58,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-		.withCsv()
+		.csvFlag()
 		.cat()
 		.file("example.csv")
 		;
@@ -74,7 +74,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-		.withCsv()
+		.csvFlag()
 		.sort(
 			option(flag("-f"), objective("c")),
 			option(flag("-f"), objective("a")))
@@ -129,7 +129,7 @@ public class E2Etest {
 
 		Mlr mlr = Mlr.inDir(workingPath)
 			.workingPath(workingPath)
-			.withCsv()
+			.csvFlag()
 			.cat()
 			.file("example.csv")
 		;
@@ -161,7 +161,7 @@ public class E2Etest {
 
 		Mlr mlr = Mlr.mlr()
 			.workingPath(workingPath)
-			.withCsv()
+			.csvFlag()
 			.sort(
 					n("a")
 					,nr("b")
@@ -183,7 +183,7 @@ public class E2Etest {
 
 		String stdinCsv = "a,b,c\n4,5,6\n1,2,3\n9,8,7\n";
 		Mlr mlr = Mlr.inDir(workingPath)
-			.withCsv()
+			.csvFlag()
 			.cat()
 			.redirectOutputFile(out);
 
@@ -215,7 +215,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-			.withCsv()
+			.csvFlag()
 			.head(2)
 			.tac()
 			.file("example.csv");
@@ -231,7 +231,7 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-			.withCsv()
+			.csvFlag()
 			.mfrom("example.csv", "example.csv")
 			.cat();
 

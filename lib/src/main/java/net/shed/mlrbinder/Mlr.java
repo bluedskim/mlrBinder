@@ -739,8 +739,11 @@ public final class Mlr {
 		return flag(Flags.c2p());
 	}
 
-	/** Appends {@code --csv} (use when chaining after {@link #inDir(String)}; entry with CSV preset remains {@link #csv()}). */
-	public Mlr withCsv() {
+	/**
+	 * Appends {@code --csv} when chaining after {@link #inDir(String)} (named {@code csvFlag} so IDE completion lists it
+	 * with other {@code csv*} helpers; static entry with CSV preset remains {@link #csv()}).
+	 */
+	public Mlr csvFlag() {
 		return flag(Flags.csv());
 	}
 

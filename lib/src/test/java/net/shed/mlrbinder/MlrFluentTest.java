@@ -48,7 +48,7 @@ class MlrFluentTest {
 	@Test
 	void sortChainedWithHead() {
 		String s = Mlr.inDir("wp")
-				.withCsv()
+				.csvFlag()
 				.sort(nr("index"))
 				.head(2)
 				.file("ex.csv")
