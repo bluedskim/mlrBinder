@@ -215,7 +215,7 @@ class MlrTest {
 	@Test
 	void runSuccess() throws IOException, InterruptedException {
 		int exitCode = 1;
-		String runResult = "결과";
+		String runResult = "result";
 		ProcessBuilder processBuilder = getProcessBuilder(exitCode, runResult);
 
 		Mlr mlr = Mlr.withProcessBuilder(processBuilder);

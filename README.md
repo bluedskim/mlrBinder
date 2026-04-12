@@ -1,21 +1,21 @@
 # Miller Java Binder
 
-Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 때 생기는 불편을 줄이기 위한 라이브러리입니다.
+A library that reduces friction when calling [Miller (`mlr`)](https://miller.readthedocs.io/) directly from Java.
 
-**권장 스타일:** `Mlr` 하나로 이어 쓰되, **전역 플래그는 `Mlr`의 전역 플래그 체인 메서드**(`.icsv()`, `.from("…")` 등), **Miller 동사는 `verb`와 같은 이름의 인스턴스 메서드**(`.sort(…)`, `.cat()` 등; `filter` / `split`만 `.filterVerb()` / `.splitVerb()`)를 쓰는 것을 **강력히 권장**합니다. `flag(Flags…)` + `verb(Mlr.Verbs…)` 조합은 필요할 때만 쓰면 됩니다.
+**Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
 
-## 목적
+## Goals
 
-- **호출 방식**: Miller의 동작을 가능한 한 **Java 메서드·객체 조합**으로 표현합니다. 문자열로 긴 명령을 이어 붙이는 대신 `Flag`, `Verb`, `Option` 등으로 조립합니다.
-- **컴파일 타임 검증**: API로 조립한 부분(플래그 이름, 동사 이름, 인자 순서 등)은 타입과 메서드 시그니처 수준에서 잡을 수 있습니다. 다만 Miller DSL(예: `put`의 표현식)이나 필드 이름의 유효성은 **런타임에 `mlr`이 검사**하므로, 그 부분까지 컴파일로 막을 수는 없습니다.
-- **Miller 문법 몰라도 사용**: 위 **권장 스타일**대로, 전역 플래그는 **`Mlr` 체인**, 동사는 **`verb`와 동일한 이름의 `Mlr` 메서드**(예외: `filter`→`.filterVerb()`, `split`→`.splitVerb()`). 내부 구현·고급 조립용으로 **`Mlr.Verbs`** 정적 팩토리도 있습니다. 세부 옵션은 `Flag`, `Objective`, `Option`으로 Miller와 동일한 인자를 넘깁니다. (`Verb` 타입은 argv 조각일 뿐, 사용자 코드에서 `new Verb(...)`는 피하는 것이 좋습니다.)
-- **실행**: 내부적으로는 구성한 인자 목록으로 `ProcessBuilder`가 `mlr` 프로세스를 띄웁니다. 시스템에 `mlr`이 설치되어 있고 `PATH`(또는 지정한 경로)에서 실행 가능해야 합니다.
+- **How you invoke Miller:** Express Miller behavior as much as possible with **Java methods and objects** instead of concatenating long command strings; assemble with `Flag`, `Verb`, `Option`, and related types.
+- **Compile-time checks:** Parts you build through the API (flag names, verb names, argument order, and so on) can be caught at the type and method-signature level. Miller DSL (for example `put` expressions) and field-name validity are still **checked at runtime by `mlr`**, so the compiler cannot catch everything.
+- **Usable without deep Miller syntax knowledge:** Following the **recommended style** above, global flags go on the **`Mlr` chain**, verbs use **`Mlr` methods with the same names as verbs** (exceptions: `filter` → `.filterVerb()`, `split` → `.splitVerb()`). There is also a **`Mlr.Verbs`** static factory for internals and advanced assembly. Pass the same arguments as Miller for fine-grained options via `Flag`, `Objective`, and `Option`. (`Verb` is just an argv fragment; avoid `new Verb(...)` in application code when you can.)
+- **Execution:** Internally, `ProcessBuilder` starts an `mlr` process with the assembled argument list. `mlr` must be installed and executable on `PATH` (or the path you configure).
 
-## 범위와 한계
+## Scope and limitations
 
-- **거의 모든 동사**: 내부 `net.shed.mlrbinder.verb.Verbs`에 Miller 동사별 팩토리가 정의되어 있고, **`Mlr`의 동사 이름 인스턴스 메서드**와 **`Mlr.Verbs`**가 모두 여기로 위임됩니다. **전역 플래그**는 upstream [reference-main-flag-list](https://github.com/johnkerl/miller/blob/main/docs/src/reference-main-flag-list.md)를 따라 `Flags`에 정적 팩토리로 두었으며, **`Mlr`에도 같은 플래그를 붙이는 체인 메서드**가 있습니다(갱신은 `python3 utils/gen_flags.py`). 문서에 없는 플래그는 `Flags.raw("--name")` / `Flags.raw("--name", "value")` 또는 동사 옵션용 `Flag.flag("...")`로 넘깁니다. `--mfrom` / `--mload`처럼 인자 뒤에 `--`가 오는 형태는 `Mlr#mfrom` / `#mload`를 사용합니다.
-- **네이티브 바인딩 아님**: Miller를 JVM 안에 링크한 것이 아니라 **외부 `mlr` 실행**입니다.
-- **오류 시점**: 잘못된 조합의 일부는 `run()` / `run(InputStreamReader)` 시점에 exit code와 stderr로 드러납니다.
+- **Nearly all verbs:** Factories per Miller verb live in `net.shed.mlrbinder.verb.Verbs`, and both **`Mlr` verb-named instance methods** and **`Mlr.Verbs`** delegate there. **Global flags** follow upstream [reference-main-flag-list](https://github.com/johnkerl/miller/blob/main/docs/src/reference-main-flag-list.md) as static factories on `Flags`, and **`Mlr` exposes matching chain methods** (regenerate with `python3 utils/gen_flags.py`). Flags missing from the docs can be passed with `Flags.raw("--name")` / `Flags.raw("--name", "value")` or verb options via `Flag.flag("...")`. For forms like `--mfrom` / `--mload` where `--` follows variadic arguments, use `Mlr#mfrom` / `#mload`.
+- **Not a native binding:** This **runs external `mlr`**, not Miller linked inside the JVM.
+- **When errors surface:** Some invalid combinations appear at `run()` / `run(InputStreamReader)` via exit code and stderr.
 
 ## Testing
 
@@ -23,13 +23,13 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 ./gradlew :lib:test
 ```
 
-- 리포트: `lib/build/reports/tests/test/index.html`, 커버리지: `lib/build/jacocoHtml/index.html` ([Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html))
+- Reports: `lib/build/reports/tests/test/index.html`, coverage: `lib/build/jacocoHtml/index.html` ([Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html))
 
-## Miller 10분 튜토리얼 → Java로 옮기기
+## Miller in 10 minutes → Java
 
-[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. **아래 Java 샘플은 모두 권장 스타일**입니다: **`Mlr.inDir(…)`** 또는 **`Mlr.csv()`**로 시작하고, **전역 플래그는 `Mlr` 체인 메서드**, **동사는 `verb`와 같은 이름의 인스턴스 메서드**로 이어 씁니다(`filter` / `split` → `.filterVerb` / `.splitVerb`). `--csv`만 더할 때는 **`Mlr.inDir(…).csvFlag()`** (`Mlr.csv()`는 이미 `mlr --csv` 프리셋이라 정적 팩토리 이름과 겹침을 피함). **동사 옵션**은 `SortFlags`의 `f` / `n` / `nr`, `import static …Flag.flag` 후 `flag("-f").objective("…")`, `option`·`objective` 등으로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
+How `mlr` invocations from [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) map to this library. **All Java samples below use the recommended style:** start with **`Mlr.inDir(…)`** or **`Mlr.csv()`**, chain **global flags on `Mlr`**, and use **instance methods named like verbs** (`filter` / `split` → `.filterVerb` / `.splitVerb`). To add `--csv` only, use **`Mlr.inDir(…).csvFlag()`** (`Mlr.csv()` already applies the `mlr --csv` preset, so the name avoids clashing with the static factory). **Verb options** use `SortFlags` helpers `f` / `n` / `nr`, `import static …Flag.flag` with `flag("-f").objective("…")`, `option` / `objective`, and so on. Chaining several verbs automatically inserts `then` into the `run()` argv.
 
-아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다).
+The Java snippets below assume the following imports in common (pick only what you need in real code):
 
 ```java
 import static net.shed.mlrbinder.Flag.flag;
@@ -42,9 +42,9 @@ import static net.shed.mlrbinder.verb.Option.option;
 import net.shed.mlrbinder.Mlr;
 ```
 
-더 많은 패턴은 `TenMinTutorialE2eTest`, `TenMinTutorialFormatsE2eTest`(튜토리얼의 CSV/JSON/DKVP/TSV 등 파일 형식 절), `lib/src/test/resources/10min/`을 참고하면 됩니다.
+For more patterns, see `TenMinTutorialE2eTest`, `TenMinTutorialFormatsE2eTest` (the tutorial’s CSV/JSON/DKVP/TSV file-format sections), and `lib/src/test/resources/10min/`.
 
-### 입출력 플래그와 `cat`
+### I/O flags and `cat`
 
 ```bash
 mlr --csv cat example.csv
@@ -71,9 +71,9 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### 파일 형식 (CSV, JSON, DKVP, TSV)
+### File formats (CSV, JSON, DKVP, TSV)
 
-튜토리얼의 “File formats” 절과 같이, 입력 형식은 `--csv` / `--json` / `--idkvp` / `--tsv` 등으로 지정합니다.
+As in the tutorial’s “File formats” section, set input format with `--csv` / `--json` / `--idkvp` / `--tsv`, and so on.
 
 ```bash
 mlr --csv cat shape.csv
@@ -89,7 +89,7 @@ Mlr.inDir(workingPath).idkvp().ocsv().cat().file("shape.dkvp").run();
 Mlr.inDir(workingPath).tsv().cat().file("shape.tsv").run();
 ```
 
-### `head` / `tail` 옵션
+### `head` / `tail` options
 
 ```bash
 mlr --csv head -n 4 example.csv
@@ -145,7 +145,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### `filter` / `put` (DSL은 문자열 그대로)
+### `filter` / `put` (DSL stays a plain string)
 
 ```bash
 mlr --icsv --opprint filter '$color == "red"' example.csv
@@ -173,7 +173,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### 필드 이름에 공백 (`-nr` 값은 셸 따옴표 없이 한 토큰)
+### Field names with spaces (`-nr` value is one token without shell quotes)
 
 ```bash
 mlr --csv cat spaces.csv
@@ -211,7 +211,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### 여러 입력 파일
+### Multiple input files
 
 ```bash
 mlr --csv cat data/a.csv data/b.csv
@@ -226,7 +226,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### `then`으로 동사 연결
+### Chaining verbs with `then`
 
 ```bash
 mlr --icsv --opprint sort -nr index then head -n 3 example.csv
@@ -242,7 +242,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-튜토리얼의 **셸 파이프** (`mlr … | mlr …`)는 Java에서 `Mlr`를 두 번 쓰면 됩니다. 첫 단계 stdout을 임시 파일로내려면 `redirectOutputFile`을 쓰고, 두 번째는 그 디렉터리에서 stdin 없이 파일만 넘깁니다.
+The tutorial’s **shell pipe** (`mlr … | mlr …`) maps to two `Mlr` calls in Java. To capture the first stage’s stdout to a temp file, use `redirectOutputFile`; the second stage runs in that directory with files only (no stdin).
 
 ```bash
 mlr --csv sort -nr index example.csv | mlr --icsv --opprint head -n 3
@@ -285,7 +285,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### `--mfrom` / `--mload` (가변 인자 뒤 `--`)
+### `--mfrom` / `--mload` (`--` after variadic arguments)
 
 ```bash
 mlr --csv --mfrom a.csv b.csv -- cat
@@ -299,7 +299,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### `stats1` 등 옵션이 많은 동사
+### Verbs with many options such as `stats1`
 
 ```bash
 mlr --icsv --opprint --from example.csv stats1 -a count,min,mean,max -f quantity -g shape
@@ -317,7 +317,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### JSON 입출력
+### JSON input and output
 
 ```bash
 mlr --ijson --ocsv cat example.json
@@ -332,7 +332,7 @@ Mlr.inDir(workingPath)
 	.run();
 ```
 
-### 제자리 수정 `-I`
+### In-place update `-I`
 
 ```bash
 mlr -I --csv sort -f shape newfile.txt
@@ -347,7 +347,7 @@ Mlr.inDir(tmpDir)
 	.run();
 ```
 
-튜토리얼의 `put` 예시에 나오는 `$y2`는 문서 오타에 가깝고, Miller에서는 제곱에 `$y**2`를 씁니다.
+The tutorial’s `put` example mentioning `$y2` is likely a documentation typo; in Miller you write squaring as `$y**2`.
 
 ## Examples
 
@@ -357,14 +357,14 @@ import static net.shed.mlrbinder.SortFlags.nr;
 
 import net.shed.mlrbinder.Mlr;
 
-// 권장: 전역 플래그 체인 + 동사 이름 메서드
+// Recommended: global-flag chain + verb-named methods
 String runResult = Mlr.inDir(workingPath)
 	.csvFlag()
 	.sort(n("a"), nr("b"))
 	.file("example.csv")
 	.run();
 
-// CSV 프리셋으로 시작할 때는 정적 Mlr.csv()
+// When starting from the CSV preset, use static Mlr.csv()
 String runResult2 = Mlr.csv()
 	.workDir(workingPath)
 	.sort(n("a"), nr("b"))
@@ -372,15 +372,15 @@ String runResult2 = Mlr.csv()
 	.run();
 ```
 
-### `Mlr`: 전역 플래그 체인 + 동사 이름 인스턴스 메서드 (권장)
+### `Mlr`: global-flag chain + verb-named instance methods (recommended)
 
-- **`Mlr.csv()`** — 정적 팩토리: `mlr` + `--csv`로 시작합니다. 이미 `--csv`가 붙은 상태에서 같은 체인을 이어 쓸 때는 **`.csvFlag()`**로 또 `--csv`를 붙일 수 있습니다.
-- **전역 플래그 체인 (권장)**: `.icsv()`, `.opprint()`, **`.csvFlag()`** (`--csv`; `csv`로 자동완성 검색 시 묶이도록 이름 붙임), `.ocsv()`, `.ijson()`, **`.jsonFlag()`** (`--json`), `.idkvp()`, `.tsv()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`) 등은 각각 `flag(Flags…)`와 동일하지만, **체인 형태를 우선** 쓰세요.
-- **동사 (권장)**: `Verbs`에 정의된 Miller 동사마다 **`Mlr`에 같은 이름의 인스턴스 메서드**가 있습니다(예: `.uniq()`, `.histogram()`, `.join(…)`). 예외: **`filter`** → **`.filterVerb(…)`**, **`split`** → **`.splitVerb(…)`**. 편의 오버로드: **`.head(n)`** / **`.tail(n)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1("count", "qty")`**, **`.splitBy("shape")`**, **`.putQuiet(…)`**. **`.verb(Mlr.Verbs.foo(…))`** 는 위 패턴으로 표현하기 어려울 때만 보조적으로 쓰면 됩니다.
+- **`Mlr.csv()`** — static factory: starts with `mlr` + `--csv`. If `--csv` is already on the chain and you need another, use **`.csvFlag()`**.
+- **Global-flag chain (recommended):** `.icsv()`, `.opprint()`, **`.csvFlag()`** (`--csv`; named so `csv` autocomplete groups sensibly), `.ocsv()`, `.ijson()`, **`.jsonFlag()`** (`--json`), `.idkvp()`, `.tsv()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`), and so on mirror `flag(Flags…)` but **prefer the chain form**.
+- **Verbs (recommended):** For each verb in `Verbs`, **`Mlr` exposes a same-named instance method** (for example `.uniq()`, `.histogram()`, `.join(…)`). Exceptions: **`filter`** → **`.filterVerb(…)`**, **`split`** → **`.splitVerb(…)`**. Convenience overloads: **`.head(n)`** / **`.tail(n)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1("count", "qty")`**, **`.splitBy("shape")`**, **`.putQuiet(…)`**. Use **`.verb(Mlr.Verbs.foo(…))`** only when the patterns above are awkward.
 
-`cut`의 `-o` / `-x` / `-f`는 **`CutFlags`**와 **`.cutOrdered` / `.cutFields`** 등, 또는 **`.cut(option(…), option(…))`**. `head`/`tail` 개수는 **`.head(4)`** / **`.tail(4)`** 또는 **`HeadTail.n(4)`**. `stats1`의 `-a`/`-f`/`-g`는 **`StatsFlags`**. `put -q`는 **`.putQuiet(…)`**. `split -g`는 **`.splitBy("shape")`**. 여러 동사에 공통인 **`MillerVerbOpts.groupBy("field")`** (`head -g` 등)도 씁니다.
+For `cut`’s `-o` / `-x` / `-f`, use **`CutFlags`** and **`.cutOrdered` / `.cutFields`**, or **`.cut(option(…), option(…))`**. `head`/`tail` counts: **`.head(4)`** / **`.tail(4)`** or **`HeadTail.n(4)`**. `stats1`’s `-a`/`-f`/`-g`: **`StatsFlags`**. `put -q`: **`.putQuiet(…)`**. `split -g`: **`.splitBy("shape")`**. Shared grouping: **`MillerVerbOpts.groupBy("field")`** (for example `head -g`).
 
-`SortFlags`의 **`n("field")` / `nr("field")` / `f("field")`** 와 **`n()`** (값 없는 `-n`, `head`용)은 그대로 씁니다.
+For **`SortFlags`**, keep using **`n("field")` / `nr("field")` / `f("field")`** and **`n()`** (bare `-n`, for `head`).
 
 ```java
 import static net.shed.mlrbinder.SortFlags.n;
@@ -392,7 +392,7 @@ String runResult = Mlr.csv()
 	.file(new File("example.csv"))
 	.run();
 
-// 동일 튜토리얼 흐름
+// Same tutorial flow
 String top3 = Mlr.inDir(workingPath)
 	.icsv()
 	.opprint()
@@ -402,7 +402,7 @@ String top3 = Mlr.inDir(workingPath)
 	.run();
 ```
 
-Miller `filter` / `split` 동사는 체인에서 **`.filterVerb(…)`**, **`.splitVerb(…)`** 로 부릅니다.
+Miller `filter` / `split` verbs are invoked on the chain as **`.filterVerb(…)`** and **`.splitVerb(…)`**.
 
 ```java
 import static net.shed.mlrbinder.Objective.objective;
@@ -434,4 +434,4 @@ Mlr.inDir(workingPath)
 
 ### v0.1
 
-1. ~~execute mlr then connect output stream to isr~~ — `Mlr#run(InputStreamReader)` 및 `redirectOutputFile`로 stdin/stdout 처리 가능
+1. ~~execute mlr then connect output stream to isr~~ — stdin/stdout covered by `Mlr#run(InputStreamReader)` and `redirectOutputFile`
