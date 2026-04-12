@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import net.shed.mlrbinder.Arg;
+import net.shed.mlrbinder.Objective;
 import net.shed.mlrbinder.verb.Option;
 import net.shed.mlrbinder.verb.Verb;
 
@@ -25,7 +26,9 @@ import net.shed.mlrbinder.verb.Verb;
  * tokens + chained {@link net.shed.mlrbinder.verb.Verb}s + input files, then {@link #run()} or {@link #run(InputStreamReader)}.
  * <p>
  * Prefer static helpers {@link #inDir(String)}, {@link #csv()}, {@link #mlr()} over raw constructors when possible.
- * Build verbs with {@link Verbs} ({@code import static …Mlr.Verbs.*}).
+ * Build verbs with {@link Verbs} ({@code import static …Mlr.Verbs.*}), or chain the same names as instance methods
+ * (each delegates to {@code Mlr.Verbs}). Miller {@code filter} / {@code split} use {@link #filterVerb} /
+ * {@link #splitVerb} on {@code Mlr} so they do not collide with {@link java.util.stream.Stream#filter}.
  * </p>
  */
 public final class Mlr {
@@ -292,76 +295,406 @@ public final class Mlr {
 		return workingPath(dir.getPath());
 	}
 
-	/**
-	 * Appends a {@code sort} verb (same as {@code .verb(Mlr.Verbs.sort(args))}).
-	 */
-	public Mlr sort(Arg... args) {
-		return verb(Mlr.Verbs.sort(args));
+	// --- Miller verbs (fluent; each delegates to {@link Mlr.Verbs}) ---
+
+	/** Appends Miller verb <code>altkv</code>; delegates to {@link Mlr.Verbs#altkv}. */
+	public Mlr altkv(Arg... args) {
+		return verb(Mlr.Verbs.altkv(args));
 	}
 
-	/** Appends {@code cat} with optional extra Miller arguments. */
+	/** Appends Miller verb <code>bar</code>; delegates to {@link Mlr.Verbs#bar}. */
+	public Mlr bar(Arg... args) {
+		return verb(Mlr.Verbs.bar(args));
+	}
+
+	/** Appends Miller verb <code>bootstrap</code>; delegates to {@link Mlr.Verbs#bootstrap}. */
+	public Mlr bootstrap(Arg... args) {
+		return verb(Mlr.Verbs.bootstrap(args));
+	}
+
+	/** Appends Miller verb <code>case</code>; delegates to {@link Mlr.Verbs#caseVerb}. */
+	public Mlr caseVerb(Arg... args) {
+		return verb(Mlr.Verbs.caseVerb(args));
+	}
+
+	/** Appends Miller verb <code>cat</code>; delegates to {@link Mlr.Verbs#cat}. */
 	public Mlr cat(Arg... args) {
 		return verb(Mlr.Verbs.cat(args));
 	}
 
-	/** Appends {@code head -n count}. */
+	/** Appends Miller verb <code>check</code>; delegates to {@link Mlr.Verbs#check}. */
+	public Mlr check(Arg... args) {
+		return verb(Mlr.Verbs.check(args));
+	}
+
+	/** Appends Miller verb <code>cleanWhitespace</code>; delegates to {@link Mlr.Verbs#cleanWhitespace}. */
+	public Mlr cleanWhitespace(Arg... args) {
+		return verb(Mlr.Verbs.cleanWhitespace(args));
+	}
+
+	/** Appends Miller verb <code>count</code>; delegates to {@link Mlr.Verbs#count}. */
+	public Mlr count(Arg... args) {
+		return verb(Mlr.Verbs.count(args));
+	}
+
+	/** Appends Miller verb <code>countDistinct</code>; delegates to {@link Mlr.Verbs#countDistinct}. */
+	public Mlr countDistinct(Arg... args) {
+		return verb(Mlr.Verbs.countDistinct(args));
+	}
+
+	/** Appends Miller verb <code>countSimilar</code>; delegates to {@link Mlr.Verbs#countSimilar}. */
+	public Mlr countSimilar(Arg... args) {
+		return verb(Mlr.Verbs.countSimilar(args));
+	}
+
+	/** Appends Miller verb <code>cut</code>; delegates to {@link Mlr.Verbs#cut}. */
+	public Mlr cut(Arg... args) {
+		return verb(Mlr.Verbs.cut(args));
+	}
+
+	/** Appends Miller verb <code>decimate</code>; delegates to {@link Mlr.Verbs#decimate}. */
+	public Mlr decimate(Arg... args) {
+		return verb(Mlr.Verbs.decimate(args));
+	}
+
+	/** Appends Miller verb <code>fillDown</code>; delegates to {@link Mlr.Verbs#fillDown}. */
+	public Mlr fillDown(Arg... args) {
+		return verb(Mlr.Verbs.fillDown(args));
+	}
+
+	/** Appends Miller verb <code>fillEmpty</code>; delegates to {@link Mlr.Verbs#fillEmpty}. */
+	public Mlr fillEmpty(Arg... args) {
+		return verb(Mlr.Verbs.fillEmpty(args));
+	}
+
+	/** Appends Miller verb <code>filter</code>; delegates to {@link Mlr.Verbs#filter}. */
+	public Mlr filterVerb(Arg... args) {
+		return verb(Mlr.Verbs.filter(args));
+	}
+
+	/** Appends Miller verb <code>flatten</code>; delegates to {@link Mlr.Verbs#flatten}. */
+	public Mlr flatten(Arg... args) {
+		return verb(Mlr.Verbs.flatten(args));
+	}
+
+	/** Appends Miller verb <code>formatValues</code>; delegates to {@link Mlr.Verbs#formatValues}. */
+	public Mlr formatValues(Arg... args) {
+		return verb(Mlr.Verbs.formatValues(args));
+	}
+
+	/** Appends Miller verb <code>fraction</code>; delegates to {@link Mlr.Verbs#fraction}. */
+	public Mlr fraction(Arg... args) {
+		return verb(Mlr.Verbs.fraction(args));
+	}
+
+	/** Appends Miller verb <code>gap</code>; delegates to {@link Mlr.Verbs#gap}. */
+	public Mlr gap(Arg... args) {
+		return verb(Mlr.Verbs.gap(args));
+	}
+
+	/** Appends Miller verb <code>grep</code>; delegates to {@link Mlr.Verbs#grep}. */
+	public Mlr grep(Arg... args) {
+		return verb(Mlr.Verbs.grep(args));
+	}
+
+	/** Appends Miller verb <code>gsub</code>; delegates to {@link Mlr.Verbs#gsub}. */
+	public Mlr gsub(Arg... args) {
+		return verb(Mlr.Verbs.gsub(args));
+	}
+
+	/** Appends Miller verb <code>groupBy</code>; delegates to {@link Mlr.Verbs#groupBy}. */
+	public Mlr groupBy(Arg... args) {
+		return verb(Mlr.Verbs.groupBy(args));
+	}
+
+	/** Appends Miller verb <code>groupLike</code>; delegates to {@link Mlr.Verbs#groupLike}. */
+	public Mlr groupLike(Arg... args) {
+		return verb(Mlr.Verbs.groupLike(args));
+	}
+
+	/** Appends Miller verb <code>havingFields</code>; delegates to {@link Mlr.Verbs#havingFields}. */
+	public Mlr havingFields(Arg... args) {
+		return verb(Mlr.Verbs.havingFields(args));
+	}
+
+	/** Appends Miller verb <code>head</code>; delegates to {@link Mlr.Verbs#head}. */
+	public Mlr head(Arg... args) {
+		return verb(Mlr.Verbs.head(args));
+	}
+
+	/** Appends Miller verb <code>histogram</code>; delegates to {@link Mlr.Verbs#histogram}. */
+	public Mlr histogram(Arg... args) {
+		return verb(Mlr.Verbs.histogram(args));
+	}
+
+	/** Appends Miller verb <code>join</code>; delegates to {@link Mlr.Verbs#join}. */
+	public Mlr join(Arg... args) {
+		return verb(Mlr.Verbs.join(args));
+	}
+
+	/** Appends Miller verb <code>jsonParse</code>; delegates to {@link Mlr.Verbs#jsonParse}. */
+	public Mlr jsonParse(Arg... args) {
+		return verb(Mlr.Verbs.jsonParse(args));
+	}
+
+	/** Appends Miller verb <code>jsonStringify</code>; delegates to {@link Mlr.Verbs#jsonStringify}. */
+	public Mlr jsonStringify(Arg... args) {
+		return verb(Mlr.Verbs.jsonStringify(args));
+	}
+
+	/** Appends Miller verb <code>label</code>; delegates to {@link Mlr.Verbs#label}. */
+	public Mlr label(Arg... args) {
+		return verb(Mlr.Verbs.label(args));
+	}
+
+	/** Appends Miller verb <code>latin1ToUtf8</code>; delegates to {@link Mlr.Verbs#latin1ToUtf8}. */
+	public Mlr latin1ToUtf8(Arg... args) {
+		return verb(Mlr.Verbs.latin1ToUtf8(args));
+	}
+
+	/** Appends Miller verb <code>utf8ToLatin1</code>; delegates to {@link Mlr.Verbs#utf8ToLatin1}. */
+	public Mlr utf8ToLatin1(Arg... args) {
+		return verb(Mlr.Verbs.utf8ToLatin1(args));
+	}
+
+	/** Appends Miller verb <code>leastFrequent</code>; delegates to {@link Mlr.Verbs#leastFrequent}. */
+	public Mlr leastFrequent(Arg... args) {
+		return verb(Mlr.Verbs.leastFrequent(args));
+	}
+
+	/** Appends Miller verb <code>mergeFields</code>; delegates to {@link Mlr.Verbs#mergeFields}. */
+	public Mlr mergeFields(Arg... args) {
+		return verb(Mlr.Verbs.mergeFields(args));
+	}
+
+	/** Appends Miller verb <code>mostFrequent</code>; delegates to {@link Mlr.Verbs#mostFrequent}. */
+	public Mlr mostFrequent(Arg... args) {
+		return verb(Mlr.Verbs.mostFrequent(args));
+	}
+
+	/** Appends Miller verb <code>nest</code>; delegates to {@link Mlr.Verbs#nest}. */
+	public Mlr nest(Arg... args) {
+		return verb(Mlr.Verbs.nest(args));
+	}
+
+	/** Appends Miller verb <code>nothing</code>; delegates to {@link Mlr.Verbs#nothing}. */
+	public Mlr nothing(Arg... args) {
+		return verb(Mlr.Verbs.nothing(args));
+	}
+
+	/** Appends Miller verb <code>put</code>; delegates to {@link Mlr.Verbs#put}. */
+	public Mlr put(Arg... args) {
+		return verb(Mlr.Verbs.put(args));
+	}
+
+	/** Appends Miller verb <code>regularize</code>; delegates to {@link Mlr.Verbs#regularize}. */
+	public Mlr regularize(Arg... args) {
+		return verb(Mlr.Verbs.regularize(args));
+	}
+
+	/** Appends Miller verb <code>removeEmptyColumns</code>; delegates to {@link Mlr.Verbs#removeEmptyColumns}. */
+	public Mlr removeEmptyColumns(Arg... args) {
+		return verb(Mlr.Verbs.removeEmptyColumns(args));
+	}
+
+	/** Appends Miller verb <code>rename</code>; delegates to {@link Mlr.Verbs#rename}. */
+	public Mlr rename(Arg... args) {
+		return verb(Mlr.Verbs.rename(args));
+	}
+
+	/** Appends Miller verb <code>reorder</code>; delegates to {@link Mlr.Verbs#reorder}. */
+	public Mlr reorder(Arg... args) {
+		return verb(Mlr.Verbs.reorder(args));
+	}
+
+	/** Appends Miller verb <code>repeat</code>; delegates to {@link Mlr.Verbs#repeat}. */
+	public Mlr repeat(Arg... args) {
+		return verb(Mlr.Verbs.repeat(args));
+	}
+
+	/** Appends Miller verb <code>reshape</code>; delegates to {@link Mlr.Verbs#reshape}. */
+	public Mlr reshape(Arg... args) {
+		return verb(Mlr.Verbs.reshape(args));
+	}
+
+	/** Appends Miller verb <code>sample</code>; delegates to {@link Mlr.Verbs#sample}. */
+	public Mlr sample(Arg... args) {
+		return verb(Mlr.Verbs.sample(args));
+	}
+
+	/** Appends Miller verb <code>sec2gmt</code>; delegates to {@link Mlr.Verbs#sec2Gmt}. */
+	public Mlr sec2Gmt(Arg... args) {
+		return verb(Mlr.Verbs.sec2Gmt(args));
+	}
+
+	/** Appends Miller verb <code>sec2gmtdate</code>; delegates to {@link Mlr.Verbs#sec2Gmtdate}. */
+	public Mlr sec2Gmtdate(Arg... args) {
+		return verb(Mlr.Verbs.sec2Gmtdate(args));
+	}
+
+	/** Appends Miller verb <code>seqgen</code>; delegates to {@link Mlr.Verbs#seqgen}. */
+	public Mlr seqgen(Arg... args) {
+		return verb(Mlr.Verbs.seqgen(args));
+	}
+
+	/** Appends Miller verb <code>shuffle</code>; delegates to {@link Mlr.Verbs#shuffle}. */
+	public Mlr shuffle(Arg... args) {
+		return verb(Mlr.Verbs.shuffle(args));
+	}
+
+	/** Appends Miller verb <code>sparsify</code>; delegates to {@link Mlr.Verbs#sparsify}. */
+	public Mlr sparsify(Arg... args) {
+		return verb(Mlr.Verbs.sparsify(args));
+	}
+
+	/** Appends Miller verb <code>skipTrivialRecords</code>; delegates to {@link Mlr.Verbs#skipTrivialRecords}. */
+	public Mlr skipTrivialRecords(Arg... args) {
+		return verb(Mlr.Verbs.skipTrivialRecords(args));
+	}
+
+	/** Appends Miller verb <code>sort</code>; delegates to {@link Mlr.Verbs#sort}. */
+	public Mlr sort(Arg... args) {
+		return verb(Mlr.Verbs.sort(args));
+	}
+
+	/** Appends Miller verb <code>sortWithinRecords</code>; delegates to {@link Mlr.Verbs#sortWithinRecords}. */
+	public Mlr sortWithinRecords(Arg... args) {
+		return verb(Mlr.Verbs.sortWithinRecords(args));
+	}
+
+	/** Appends Miller verb <code>split</code>; delegates to {@link Mlr.Verbs#split}. */
+	public Mlr splitVerb(Arg... args) {
+		return verb(Mlr.Verbs.split(args));
+	}
+
+	/** Appends Miller verb <code>ssub</code>; delegates to {@link Mlr.Verbs#ssub}. */
+	public Mlr ssub(Arg... args) {
+		return verb(Mlr.Verbs.ssub(args));
+	}
+
+	/** Appends Miller verb <code>stats1</code>; delegates to {@link Mlr.Verbs#stats1}. */
+	public Mlr stats1(Arg... args) {
+		return verb(Mlr.Verbs.stats1(args));
+	}
+
+	/** Appends Miller verb <code>stats2</code>; delegates to {@link Mlr.Verbs#stats2}. */
+	public Mlr stats2(Arg... args) {
+		return verb(Mlr.Verbs.stats2(args));
+	}
+
+	/** Appends Miller verb <code>step</code>; delegates to {@link Mlr.Verbs#step}. */
+	public Mlr step(Arg... args) {
+		return verb(Mlr.Verbs.step(args));
+	}
+
+	/** Appends Miller verb <code>sub</code>; delegates to {@link Mlr.Verbs#sub}. */
+	public Mlr sub(Arg... args) {
+		return verb(Mlr.Verbs.sub(args));
+	}
+
+	/** Appends Miller verb <code>summary</code>; delegates to {@link Mlr.Verbs#summary}. */
+	public Mlr summary(Arg... args) {
+		return verb(Mlr.Verbs.summary(args));
+	}
+
+	/** Appends Miller verb <code>surv</code>; delegates to {@link Mlr.Verbs#surv}. */
+	public Mlr surv(Arg... args) {
+		return verb(Mlr.Verbs.surv(args));
+	}
+
+	/** Appends Miller verb <code>tac</code>; delegates to {@link Mlr.Verbs#tac}. */
+	public Mlr tac(Arg... args) {
+		return verb(Mlr.Verbs.tac(args));
+	}
+
+	/** Appends Miller verb <code>tail</code>; delegates to {@link Mlr.Verbs#tail}. */
+	public Mlr tail(Arg... args) {
+		return verb(Mlr.Verbs.tail(args));
+	}
+
+	/** Appends Miller verb <code>tee</code>; delegates to {@link Mlr.Verbs#tee}. */
+	public Mlr tee(Arg... args) {
+		return verb(Mlr.Verbs.tee(args));
+	}
+
+	/** Appends Miller verb <code>template</code>; delegates to {@link Mlr.Verbs#template}. */
+	public Mlr template(Arg... args) {
+		return verb(Mlr.Verbs.template(args));
+	}
+
+	/** Appends Miller verb <code>top</code>; delegates to {@link Mlr.Verbs#top}. */
+	public Mlr top(Arg... args) {
+		return verb(Mlr.Verbs.top(args));
+	}
+
+	/** Appends Miller verb <code>unflatten</code>; delegates to {@link Mlr.Verbs#unflatten}. */
+	public Mlr unflatten(Arg... args) {
+		return verb(Mlr.Verbs.unflatten(args));
+	}
+
+	/** Appends Miller verb <code>uniq</code>; delegates to {@link Mlr.Verbs#uniq}. */
+	public Mlr uniq(Arg... args) {
+		return verb(Mlr.Verbs.uniq(args));
+	}
+
+	/** Appends Miller verb <code>unspace</code>; delegates to {@link Mlr.Verbs#unspace}. */
+	public Mlr unspace(Arg... args) {
+		return verb(Mlr.Verbs.unspace(args));
+	}
+
+	/** Appends Miller verb <code>unsparsify</code>; delegates to {@link Mlr.Verbs#unsparsify}. */
+	public Mlr unsparsify(Arg... args) {
+		return verb(Mlr.Verbs.unsparsify(args));
+	}
+
+	/** Appends {@code head -n count}; shorthand for {@code head(HeadTail.n(count))}. */
 	public Mlr head(int count) {
-		return verb(Mlr.Verbs.head(HeadTail.n(count)));
+		return head(HeadTail.n(count));
 	}
 
-	/** Appends {@code tail -n count}. */
+	/** Appends {@code tail -n count}; shorthand for {@code tail(HeadTail.n(count))}. */
 	public Mlr tail(int count) {
-		return verb(Mlr.Verbs.tail(HeadTail.n(count)));
-	}
-
-	/** Appends {@code filter} with a Miller DSL expression. */
-	public Mlr filter(Objective expression) {
-		return verb(Mlr.Verbs.filter(expression));
-	}
-
-	/** Appends {@code put} with a Miller DSL expression (or script body). */
-	public Mlr put(Objective expression) {
-		return verb(Mlr.Verbs.put(expression));
-	}
-
-	/** Appends {@code put -q} then the expression (e.g. tee splits). */
-	public Mlr putQuiet(Objective expression) {
-		return verb(Mlr.Verbs.put(PutFlags.quiet(), expression));
+		return tail(HeadTail.n(count));
 	}
 
 	/** Appends {@code cut -f fields} (field order follows input). */
 	public Mlr cutFields(String fields) {
-		return verb(Mlr.Verbs.cut(Option.option(CutFlags.f(fields))));
+		return cut(Option.option(CutFlags.f(fields)));
 	}
 
 	/** Appends {@code cut -o -f fields} (reorder to match {@code fields}). */
 	public Mlr cutOrdered(String fields) {
-		return verb(Mlr.Verbs.cut(Option.option(CutFlags.o()), Option.option(CutFlags.f(fields))));
+		return cut(Option.option(CutFlags.o()), Option.option(CutFlags.f(fields)));
 	}
 
 	/** Appends {@code cut -x -f fields} (omit listed fields). */
 	public Mlr cutExcept(String fields) {
-		return verb(Mlr.Verbs.cut(Option.option(CutFlags.x()), Option.option(CutFlags.f(fields))));
+		return cut(Option.option(CutFlags.x()), Option.option(CutFlags.f(fields)));
 	}
 
 	/**
 	 * Appends {@code stats1} with aggregations, numeric field, and optional group-by (comma-separated if multiple).
 	 */
 	public Mlr stats1(String aggregations, String field, String groupBy) {
-		return verb(Mlr.Verbs.stats1(
+		return stats1(
 				StatsFlags.aggregations(aggregations),
 				StatsFlags.field(field),
-				StatsFlags.groupBy(groupBy)));
+				StatsFlags.groupBy(groupBy));
 	}
 
 	/** Appends {@code stats1} without {@code -g}. */
 	public Mlr stats1(String aggregations, String field) {
-		return verb(Mlr.Verbs.stats1(StatsFlags.aggregations(aggregations), StatsFlags.field(field)));
+		return stats1(StatsFlags.aggregations(aggregations), StatsFlags.field(field));
 	}
 
 	/** Appends {@code split -g field}. */
 	public Mlr splitBy(String field) {
-		return verb(Mlr.Verbs.split(SplitFlags.group(field)));
+		return splitVerb(SplitFlags.group(field));
+	}
+
+	/** Appends {@code put -q} then the expression (e.g. tee splits). */
+	public Mlr putQuiet(Objective expression) {
+		return put(PutFlags.quiet(), expression);
 	}
 
 	// --- Global format / IO flags (fluent; each appends one Miller global flag) ---

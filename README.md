@@ -6,12 +6,12 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 - **호출 방식**: Miller의 동작을 가능한 한 **Java 메서드·객체 조합**으로 표현합니다. 문자열로 긴 명령을 이어 붙이는 대신 `Flag`, `Verb`, `Option` 등으로 조립합니다.
 - **컴파일 타임 검증**: API로 조립한 부분(플래그 이름, 동사 이름, 인자 순서 등)은 타입과 메서드 시그니처 수준에서 잡을 수 있습니다. 다만 Miller DSL(예: `put`의 표현식)이나 필드 이름의 유효성은 **런타임에 `mlr`이 검사**하므로, 그 부분까지 컴파일로 막을 수는 없습니다.
-- **Miller 문법 몰라도 사용**: 자주 쓰는 입출력 형식은 `Flags`의 정적 팩토리로, 동사는 **`Mlr.Verbs`**의 정적 팩토리로 노출되어 있어, Miller CLI 문서를 모두 외우지 않아도 Java 관용에 가깝게 쓸 수 있습니다. 세부 옵션은 여전히 `Flag`, `Objective`, `Option`으로 Miller와 동일한 인자를 넘깁니다. (`Verb` 타입은 argv의 동사 한 덩어리를 나타낼 뿐, 사용자 코드에서는 직접 `new Verb(...)`를 쓰지 않는 것을 권장합니다.)
+- **Miller 문법 몰라도 사용**: 자주 쓰는 입출력 형식은 `Flags`의 정적 팩토리로, 동사는 **`Mlr` 인스턴스 메서드**(Miller 동사 이름과 동일, `filter`→`.filterVerb()`, `split`→`.splitVerb()`) 또는 **`Mlr.Verbs`** 정적 팩토리로 표현합니다. 세부 옵션은 여전히 `Flag`, `Objective`, `Option`으로 Miller와 동일한 인자를 넘깁니다. (`Verb` 타입은 argv의 동사 한 덩어리를 나타낼 뿐, 사용자 코드에서는 직접 `new Verb(...)`를 쓰지 않는 것을 권장합니다.)
 - **실행**: 내부적으로는 구성한 인자 목록으로 `ProcessBuilder`가 `mlr` 프로세스를 띄웁니다. 시스템에 `mlr`이 설치되어 있고 `PATH`(또는 지정한 경로)에서 실행 가능해야 합니다.
 
 ## 범위와 한계
 
-- **거의 모든 동사**: 내부 `net.shed.mlrbinder.verb.Verbs`에 Miller 동사 이름별 팩토리가 정의되어 있고, 공개 진입은 **`Mlr.Verbs`**로만 노출됩니다. **전역 플래그**는 upstream [reference-main-flag-list](https://github.com/johnkerl/miller/blob/main/docs/src/reference-main-flag-list.md)를 따라 `Flags`에 정적 팩토리로 두었으며, 갱신 시 `python3 utils/gen_flags.py`로 재생성합니다. 문서에 없는 플래그는 `Flags.raw("--name")` / `Flags.raw("--name", "value")` 또는 동사 옵션용 `Flag.flag("...")`로 넘깁니다. `--mfrom` / `--mload`처럼 인자 뒤에 `--`가 오는 형태는 `Mlr#mfrom` / `#mload`를 사용합니다.
+- **거의 모든 동사**: 내부 `net.shed.mlrbinder.verb.Verbs`에 Miller 동사별 팩토리가 정의되어 있고, **`Mlr.Verbs`**와 **`Mlr`의 동일 이름 체인 메서드**가 모두 여기로 위임됩니다. **전역 플래그**는 upstream [reference-main-flag-list](https://github.com/johnkerl/miller/blob/main/docs/src/reference-main-flag-list.md)를 따라 `Flags`에 정적 팩토리로 두었으며, 갱신 시 `python3 utils/gen_flags.py`로 재생성합니다. 문서에 없는 플래그는 `Flags.raw("--name")` / `Flags.raw("--name", "value")` 또는 동사 옵션용 `Flag.flag("...")`로 넘깁니다. `--mfrom` / `--mload`처럼 인자 뒤에 `--`가 오는 형태는 `Mlr#mfrom` / `#mload`를 사용합니다.
 - **네이티브 바인딩 아님**: Miller를 JVM 안에 링크한 것이 아니라 **외부 `mlr` 실행**입니다.
 - **오류 시점**: 잘못된 조합의 일부는 `run()` / `run(InputStreamReader)` 시점에 exit code와 stderr로 드러납니다.
 
@@ -25,7 +25,7 @@ Java에서 [Miller (`mlr`)](https://miller.readthedocs.io/)를 직접 호출할 
 
 ## Miller 10분 튜토리얼 → Java로 옮기기
 
-[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. 실행·체인의 시작은 **`Mlr.inDir(workingPath)`** (또는 `Mlr.csv()` 등). **전역 플래그**는 `Flags`의 정적 메서드(아래에서는 `import static`으로 짧게 씀) 또는 `Mlr`의 `.icsv()` 같은 체인 메서드, **동사 옵션 토큰**은 `import static …Flag.flag` 후 `flag("-f").objective("…")`, `sort`의 `-f`/`-n`/`-nr` 필드는 `SortFlags`의 `f` / `n` / `nr`, **동사**는 **`Mlr.Verbs`**의 정적 메서드(`import static net.shed.mlrbinder.Mlr.Verbs.*`), 그 밖의 값은 `option`·`objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
+[Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)에 나오는 `mlr` 호출을 이 라이브러리로 표현할 때의 대응 관계입니다. 실행·체인의 시작은 **`Mlr.inDir(workingPath)`** (또는 `Mlr.csv()` 등). **전역 플래그**는 `Flags`의 정적 메서드(아래에서는 `import static`으로 짧게 씀) 또는 `Mlr`의 `.icsv()` 같은 체인 메서드, **동사 옵션 토큰**은 `import static …Flag.flag` 후 `flag("-f").objective("…")`, `sort`의 `-f`/`-n`/`-nr` 필드는 `SortFlags`의 `f` / `n` / `nr`, **동사**는 **`Mlr`에 동사 이름과 같은 메서드**로 체인하거나 **`Mlr.Verbs`** 정적 메서드(`import static net.shed.mlrbinder.Mlr.Verbs.*`)로 `.verb(…)`에 넣습니다. Miller `filter` / `split`만 Java와 이름이 겹치므로 체인에서는 **`.filterVerb(…)`**, **`.splitVerb(…)`** (또는 `Mlr.Verbs.filter` / `split`)를 씁니다. 그 밖의 값은 `option`·`objective`로 나눕니다. 여러 동사를 이어 쓰면 `run()` argv에 자동으로 `then`이 들어갑니다.
 
 아래 Java 조각은 공통으로 다음 import를 둔다고 가정합니다(실제 코드에서는 필요한 것만 골라 써도 됩니다). `Option`은 `import static …Option.option` 후 `option(…)`으로 씁니다. `head` / `tail`의 `-n` 개수는 `SortFlags.n()`(인자 없음)과 `import static …Objective.objective` 후 `objective("4")`처럼 씁니다. `sort -n 필드`는 `n("필드")`처럼 **문자열 인자**가 있는 오버로드를 씁니다.
 
@@ -401,7 +401,7 @@ String runResult2 = Mlr.inDir(workingPath)
 
 - **`Mlr.csv()`** — `mlr` + `--csv`로 시작.
 - **전역 플래그 체인**: `.icsv()`, `.opprint()`, `.ocsv()`, `.ijson()`, `.json()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`) 등은 각각 `flag(Flags…)`와 동일합니다.
-- **동사**: 자주 쓰는 것은 **`Mlr` 체인** — **`.sort(…)`**, **`.cat(…)`**, **`.head(n)`**, **`.tail(n)`**, **`.filter(…)`**, **`.put(…)`**, **`.putQuiet(…)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1(…)`**, **`.splitBy(…)`** (각각 `Mlr.Verbs`에 위임). 그 밖의 동사는 **`.verb(Mlr.Verbs.foo(…))`** 또는 `import static …Mlr.Verbs.*` 후 **`.verb(foo(…))`**.
+- **동사**: `Verbs`에 정의된 Miller 동사마다 **`Mlr`에 같은 이름의 인스턴스 메서드**가 있습니다(예: `.uniq()`, `.histogram()`, `.join(…)`). 예외: **`filter`** → **`.filterVerb(…)`**, **`split`** → **`.splitVerb(…)`** (`java.util.stream.Stream#filter` 등과의 혼동 방지). 편의 오버로드: **`.head(n)`** / **`.tail(n)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1("count", "qty")`**, **`.splitBy("shape")`**, **`.putQuiet(…)`**. 필요하면 여전히 **`.verb(Mlr.Verbs.foo(…))`** 로도 동일하게 조립할 수 있습니다.
 
 `cut`의 `-o` / `-x` / `-f`는 **`CutFlags`**와 위 `cut*` 메서드, 또는 `verb(cut(option(…), option(…)))`. `head`/`tail` 개수는 **`.head(4)`** / **`.tail(4)`** 또는 **`HeadTail.n(4)`**. `stats1`의 `-a`/`-f`/`-g`는 **`StatsFlags`**. `put -q`는 **`PutFlags.quiet()`** 또는 **`.putQuiet(…)`**. `split -g`는 **`SplitFlags.group("shape")`** 또는 **`.splitBy("shape")`**. 여러 동사에 공통인 **`MillerVerbOpts.groupBy("field")`** (`head -g` 등)도 씁니다.
 
@@ -423,6 +423,18 @@ String top3 = Mlr.inDir(workingPath)
 	.opprint()
 	.sort(nr("index"))
 	.head(3)
+	.file("example.csv")
+	.run();
+```
+
+Miller `filter` / `split` 동사는 체인에서 **`.filterVerb(…)`**, **`.splitVerb(…)`** 로 부릅니다.
+
+```java
+import static net.shed.mlrbinder.Objective.objective;
+
+Mlr.inDir(workingPath)
+	.flag(csv())
+	.filterVerb(objective("$index > 1"))
 	.file("example.csv")
 	.run();
 ```
