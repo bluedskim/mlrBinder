@@ -1,16 +1,9 @@
 package net.shed.mlrbinder;
 
 import static net.shed.mlrbinder.Flag.flag;
-import static net.shed.mlrbinder.Flags.csv;
-import static net.shed.mlrbinder.Flags.icsv;
-import static net.shed.mlrbinder.Flags.ocsv;
 import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
-import static net.shed.mlrbinder.verb.Verbs.cat;
-import static net.shed.mlrbinder.verb.Verbs.head;
-import static net.shed.mlrbinder.verb.Verbs.sort;
-import static net.shed.mlrbinder.verb.Verbs.tac;
 import static net.shed.mlrbinder.verb.Option.option;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,9 +19,6 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-
-import net.shed.mlrbinder.verb.Verb;
-import net.shed.mlrbinder.verb.Verbs;
 
 public class E2Etest {
 	private static Logger logger = Logger.getLogger(E2Etest.class.getName());
@@ -51,9 +41,9 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-		.flag(icsv())
-		.flag(ocsv())
-		.verb(new Verb("cat"))
+		.icsv()
+		.ocsv()
+		.cat()
 		.file("example.csv")
 		;
 
@@ -68,8 +58,8 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-		.flag(csv())
-		.verb(new Verb("cat"))
+		.csvFlag()
+		.cat()
 		.file("example.csv")
 		;
 
@@ -84,22 +74,10 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-		.flag(csv())
-		.verb(
-			new Verb("sort")
-			.addArg(
-				option(
-					flag("-f")
-					,objective("c")
-				)
-			)
-			.addArg(
-				option(
-					flag("-f")
-					,objective("a")
-				)
-			)
-		)
+		.csvFlag()
+		.sort(
+			option(flag("-f"), objective("c")),
+			option(flag("-f"), objective("a")))
 		.file("example.csv")
 		;
 
@@ -114,22 +92,11 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-		.flag(icsv())
-		.flag(ocsv())
-		.verb(
-			new Verb("cut")
-			.addArg(
-				option(
-					flag("-o")
-				)
-			).addArg(
-				option(
-					flag("-f").objective(
-						objective("b,c")
-					)
-				)
-			)
-		)
+		.icsv()
+		.ocsv()
+		.cut(
+			option(flag("-o")),
+			option(flag("-f").objective(objective("b,c"))))
 		.file("example.csv")
 		;
 
@@ -144,14 +111,9 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-		.flag(icsv())
-		.flag(ocsv())
-		.verb(
-			new Verb("put")
-			.addArg(
-				objective("'$[[[3]]] = \"7\"'")
-			)
-		)
+		.icsv()
+		.ocsv()
+		.put(objective("'$[[[3]]] = \"7\"'"))
 		.file("example.csv")
 		;
 
@@ -167,8 +129,8 @@ public class E2Etest {
 
 		Mlr mlr = Mlr.inDir(workingPath)
 			.workingPath(workingPath)
-			.flag(csv())
-			.verb(cat())
+			.csvFlag()
+			.cat()
 			.file("example.csv")
 		;
 
@@ -199,12 +161,10 @@ public class E2Etest {
 
 		Mlr mlr = Mlr.mlr()
 			.workingPath(workingPath)
-			.flag(csv())
-			.verb(
-				sort(
+			.csvFlag()
+			.sort(
 					n("a")
 					,nr("b")
-				)
 			)
 			.file("example.csv")
 		;
@@ -223,8 +183,8 @@ public class E2Etest {
 
 		String stdinCsv = "a,b,c\n4,5,6\n1,2,3\n9,8,7\n";
 		Mlr mlr = Mlr.inDir(workingPath)
-			.flag(csv())
-			.verb(cat())
+			.csvFlag()
+			.cat()
 			.redirectOutputFile(out);
 
 		mlr.run(new InputStreamReader(new ByteArrayInputStream(stdinCsv.getBytes(StandardCharsets.UTF_8)),
@@ -255,10 +215,9 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-			.flag(csv())
-			.verb(
-				head(option(n(), objective("2"))),
-				tac())
+			.csvFlag()
+			.head(2)
+			.tac()
 			.file("example.csv");
 
 		logger.info("mlr=" + mlr.toString());
@@ -272,9 +231,9 @@ public class E2Etest {
 		String workingPath = getClass().getClassLoader().getResource("csv").getFile().toString();
 
 		Mlr mlr = Mlr.inDir(workingPath)
-			.flag(csv())
+			.csvFlag()
 			.mfrom("example.csv", "example.csv")
-			.verb(cat());
+			.cat();
 
 		logger.info("mlr=" + mlr.toString());
 		assertEquals("mlr --csv --mfrom example.csv example.csv -- cat", mlr.toString());
@@ -285,7 +244,7 @@ public class E2Etest {
 
 	@Test
 	public void verbsDelegatesToSameAsVerbStatic() {
-		assertEquals(Verbs.sort().toString(), Verb.sort().toString());
-		assertEquals(Verbs.cat(flag("-n")).toString(), Verb.cat(flag("-n")).toString());
+		assertEquals(net.shed.mlrbinder.verb.Verbs.sort().toString(), Mlr.Verbs.sort().toString());
+		assertEquals(net.shed.mlrbinder.verb.Verbs.cat(flag("-n")).toString(), Mlr.Verbs.cat(flag("-n")).toString());
 	}
 }

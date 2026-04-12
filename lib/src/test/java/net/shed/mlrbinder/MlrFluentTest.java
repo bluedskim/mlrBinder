@@ -1,80 +1,54 @@
 package net.shed.mlrbinder;
 
-import static net.shed.mlrbinder.Flags.csv;
-import static net.shed.mlrbinder.Flags.from;
-import static net.shed.mlrbinder.Flags.icsv;
-import static net.shed.mlrbinder.Flags.opprint;
-import static net.shed.mlrbinder.Objective.objective;
-import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.verb.Option.option;
-import static net.shed.mlrbinder.verb.Verbs.cut;
-import static net.shed.mlrbinder.verb.Verbs.head;
-import static net.shed.mlrbinder.verb.Verbs.stats1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
 /**
- * {@link Mlr} fluent verb / global-flag chain helpers match hand-built argv.
+ * {@link Mlr} recommended style: global-flag chain + verb-named instance methods.
  */
 class MlrFluentTest {
 
 	@Test
-	void icsvOpprintHeadMatchesManual() {
-		String manual = Mlr.inDir("wp")
-				.flag(icsv())
-				.flag(opprint())
-				.verb(head(option(n(), objective("3"))))
-				.file("ex.csv")
-				.toString();
-		String fluent = Mlr.inDir("wp")
+	void icsvOpprintHeadMatchesExpected() {
+		String s = Mlr.inDir("wp")
 				.icsv()
 				.opprint()
 				.head(3)
 				.file("ex.csv")
 				.toString();
-		assertEquals(manual, fluent);
-		assertEquals("mlr --icsv --opprint head -n 3 ex.csv", fluent);
+		assertEquals("mlr --icsv --opprint head -n 3 ex.csv", s);
 	}
 
 	@Test
-	void cutOrderedMatchesManual() {
-		String manual = Mlr.inDir("wp")
-				.flag(icsv())
-				.flag(opprint())
-				.verb(cut(option(CutFlags.o()), option(CutFlags.f("a,b"))))
-				.file("ex.csv")
-				.toString();
-		String fluent = Mlr.inDir("wp")
+	void cutOrderedMatchesExpected() {
+		String s = Mlr.inDir("wp")
 				.icsv()
 				.opprint()
-				.cutOrdered("a,b")
+				.cut(option(CutFlags.o()), option(CutFlags.f("a,b")))
 				.file("ex.csv")
 				.toString();
-		assertEquals(manual, fluent);
+		assertEquals("mlr --icsv --opprint cut -o -f a,b ex.csv", s);
 	}
 
 	@Test
-	void stats1WithGroupMatchesManual() {
-		String manual = Mlr.inDir("wp")
-				.flag(from("ex.csv"))
-				.verb(stats1(
+	void stats1WithGroupMatchesExpected() {
+		String s = Mlr.inDir("wp")
+				.from("ex.csv")
+				.stats1(
 						StatsFlags.aggregations("count"),
 						StatsFlags.field("qty"),
-						StatsFlags.groupBy("shape")))
+						StatsFlags.groupBy("shape"))
 				.toString();
-		String fluent = Mlr.inDir("wp")
-				.from("ex.csv")
-				.stats1("count", "qty", "shape")
-				.toString();
-		assertEquals(manual, fluent);
+		assertEquals("mlr --from ex.csv stats1 -a count -f qty -g shape", s);
 	}
 
 	@Test
-	void sortChainedWithFluentHead() {
+	void sortChainedWithHead() {
 		String s = Mlr.inDir("wp")
-				.flag(csv())
+				.csvFlag()
 				.sort(nr("index"))
 				.head(2)
 				.file("ex.csv")
