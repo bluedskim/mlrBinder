@@ -27,7 +27,8 @@ import net.shed.mlrbinder.verb.Verb;
  * <p>
  * <strong>Recommended style:</strong> chain global I/O flags on {@code Mlr} (e.g. {@link #icsv()}, {@link #from(String)}),
  * then append each Miller verb with the <strong>same-named instance method</strong> (each delegates to
- * {@link Mlr.Verbs}). Use {@link #filterVerb} / {@link #splitVerb} for Miller {@code filter} / {@code split} so they do not
+ * {@link Mlr.Verbs}). Global flags that share a prefix with common Miller options use a {@code *Flag} name for IDE
+ * grouping (e.g. {@link #csvFlag}, {@link #jsonFlag}). Use {@link #filterVerb} / {@link #splitVerb} for Miller {@code filter} / {@code split} so they do not
  * collide with {@link java.util.stream.Stream#filter}. Prefer this over {@link #flag(Flag)} plus {@link #verb(Verb...)}
  * when the fluent surface covers your case; fall back to {@code .verb(Mlr.Verbs.foo(…))} only when needed.
  * </p>
@@ -723,7 +724,11 @@ public final class Mlr {
 		return flag(Flags.ijson());
 	}
 
-	public Mlr json() {
+	/**
+	 * Appends Miller {@code --json} (input and output JSON). Named {@code jsonFlag} so IDE completion groups {@code json*}
+	 * separately from verb helpers {@link #jsonParse} / {@link #jsonStringify}.
+	 */
+	public Mlr jsonFlag() {
 		return flag(Flags.json());
 	}
 

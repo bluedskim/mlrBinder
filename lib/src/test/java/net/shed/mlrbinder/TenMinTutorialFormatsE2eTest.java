@@ -55,7 +55,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void jsonArrayCat() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).json().cat().file("shape.json");
+		Mlr mlr = Mlr.inDir(root.toString()).jsonFlag().cat().file("shape.json");
 		assertEquals(expected("shape_json_cat.txt"), run(mlr));
 	}
 
@@ -63,7 +63,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void jsonLinesCat() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).json().cat().file("shape.jsonl");
+		Mlr mlr = Mlr.inDir(root.toString()).jsonFlag().cat().file("shape.jsonl");
 		assertEquals(expected("shape_jsonl_cat.txt"), run(mlr));
 	}
 

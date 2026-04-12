@@ -84,7 +84,7 @@ mlr --tsv cat shape.tsv
 
 ```java
 Mlr.inDir(workingPath).csvFlag().cat().file("shape.csv").run();
-Mlr.inDir(workingPath).json().cat().file("shape.json").run();
+Mlr.inDir(workingPath).jsonFlag().cat().file("shape.json").run();
 Mlr.inDir(workingPath).idkvp().ocsv().cat().file("shape.dkvp").run();
 Mlr.inDir(workingPath).tsv().cat().file("shape.tsv").run();
 ```
@@ -375,7 +375,7 @@ String runResult2 = Mlr.csv()
 ### `Mlr`: 전역 플래그 체인 + 동사 이름 인스턴스 메서드 (권장)
 
 - **`Mlr.csv()`** — 정적 팩토리: `mlr` + `--csv`로 시작합니다. 이미 `--csv`가 붙은 상태에서 같은 체인을 이어 쓸 때는 **`.csvFlag()`**로 또 `--csv`를 붙일 수 있습니다.
-- **전역 플래그 체인 (권장)**: `.icsv()`, `.opprint()`, **`.csvFlag()`** (`--csv`; `csv`로 자동완성 검색 시 묶이도록 이름 붙임), `.ocsv()`, `.ijson()`, `.json()`, `.idkvp()`, `.tsv()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`) 등은 각각 `flag(Flags…)`와 동일하지만, **체인 형태를 우선** 쓰세요.
+- **전역 플래그 체인 (권장)**: `.icsv()`, `.opprint()`, **`.csvFlag()`** (`--csv`; `csv`로 자동완성 검색 시 묶이도록 이름 붙임), `.ocsv()`, `.ijson()`, **`.jsonFlag()`** (`--json`), `.idkvp()`, `.tsv()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`) 등은 각각 `flag(Flags…)`와 동일하지만, **체인 형태를 우선** 쓰세요.
 - **동사 (권장)**: `Verbs`에 정의된 Miller 동사마다 **`Mlr`에 같은 이름의 인스턴스 메서드**가 있습니다(예: `.uniq()`, `.histogram()`, `.join(…)`). 예외: **`filter`** → **`.filterVerb(…)`**, **`split`** → **`.splitVerb(…)`**. 편의 오버로드: **`.head(n)`** / **`.tail(n)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1("count", "qty")`**, **`.splitBy("shape")`**, **`.putQuiet(…)`**. **`.verb(Mlr.Verbs.foo(…))`** 는 위 패턴으로 표현하기 어려울 때만 보조적으로 쓰면 됩니다.
 
 `cut`의 `-o` / `-x` / `-f`는 **`CutFlags`**와 **`.cutOrdered` / `.cutFields`** 등, 또는 **`.cut(option(…), option(…))`**. `head`/`tail` 개수는 **`.head(4)`** / **`.tail(4)`** 또는 **`HeadTail.n(4)`**. `stats1`의 `-a`/`-f`/`-g`는 **`StatsFlags`**. `put -q`는 **`.putQuiet(…)`**. `split -g`는 **`.splitBy("shape")`**. 여러 동사에 공통인 **`MillerVerbOpts.groupBy("field")`** (`head -g` 등)도 씁니다.

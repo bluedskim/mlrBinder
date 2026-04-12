@@ -354,7 +354,7 @@ class TenMinTutorialE2eTest {
 	void jsonAndNestedConversion() throws Exception {
 		Path root = tenMinRoot();
 		Mlr jsonCat = Mlr.inDir(root.toString())
-				.json()
+				.jsonFlag()
 				.cat()
 				.file("example.json");
 		assertEquals(expected("json_cat.txt"), run(jsonCat));
