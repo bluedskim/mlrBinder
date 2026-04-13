@@ -6,6 +6,8 @@ A library that reduces friction when calling [Miller (`mlr`)](https://miller.rea
 
 This library is developed and tested against **Miller [`mlr` 6.17.0](https://github.com/johnkerl/miller/releases/tag/v6.17.0)**. Install that version on your `PATH` (or confirm behavior yourself if you use a different release).
 
+**Binder-only “sugar” on `Mlr`:** Some `Mlr` methods bundle common Miller verb options into one call (for example `uniqCountBy` → `uniq -c -g …`). These Java names are **not** Miller CLI features; the child process is always standard `mlr`. Each sugar method documents the **Miller CLI equivalent** in its Javadoc, and the `net.shed.mlrbinder` package summary lists them in one table (see generated Javadoc or your IDE’s quick documentation for `Mlr` / the package).
+
 **Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
 
 ## Goals

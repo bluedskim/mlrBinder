@@ -75,9 +75,7 @@ public class E2Etest {
 
 		Mlr mlr = Mlr.inDir(workingPath)
 		.csvFlag()
-		.sort(
-			option(flag("-f"), objective("c")),
-			option(flag("-f"), objective("a")))
+		.sortFields("c", "a")
 		.file("example.csv")
 		;
 
@@ -94,9 +92,7 @@ public class E2Etest {
 		Mlr mlr = Mlr.inDir(workingPath)
 		.icsv()
 		.ocsv()
-		.cut(
-			option(flag("-o")),
-			option(flag("-f").objective(objective("b,c"))))
+		.cutOrdered("b,c")
 		.file("example.csv")
 		;
 
@@ -147,7 +143,7 @@ public class E2Etest {
 		/*
 		Mlr mlr = Mlr.inDir(workingPath)
 			.workingPath(workingPath)
-			.flag(csv())
+			.csvFlag()
 			.verb(
 				sort()
 					.addArg(option(flag("-n"), objective("a")))

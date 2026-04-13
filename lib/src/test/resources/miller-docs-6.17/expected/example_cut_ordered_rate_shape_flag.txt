@@ -1,0 +1,11 @@
+rate,shape,flag
+9.8870,triangle,true
+0.0130,square,true
+2.9010,circle,true
+7.4670,square,false
+8.5910,triangle,false
+9.5310,square,false
+5.8240,triangle,false
+4.2370,circle,true
+8.3350,circle,true
+8.2430,square,false

@@ -1,0 +1,5 @@
+color=yellow,shape=triangle,flag=1,i=56,u=0.632170,v=0.988721,w=0.436498,x=5.798188
+color=red,shape=square,flag=1,i=80,u=0.219668,v=0.001257,w=0.792778,x=2.944117
+color=red,shape=circle,flag=1,i=84,u=0.209017,v=0.290052,w=0.138103,x=5.065034
+color=red,shape=square,flag=0,i=243,u=0.956274,v=0.746720,w=0.775542,x=7.117831
+color=purple,shape=triangle,flag=0,i=257,u=0.435535,v=0.859129,w=0.812290,x=5.753095

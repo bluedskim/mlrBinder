@@ -1,0 +1,5 @@
+Status  Payment_Type count
+paid    cash         2
+pending debit        1
+pending credit       1
+paid    debit        1

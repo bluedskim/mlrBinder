@@ -1,0 +1,4 @@
+n,color,shape,flag,k,index,quantity,rate
+1,yellow,triangle,true,1,11,43.6498,9.8870
+2,yellow,circle,true,8,73,63.9785,4.2370
+3,yellow,circle,true,9,87,63.5058,8.3350

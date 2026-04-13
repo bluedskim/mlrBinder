@@ -12,13 +12,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static net.shed.mlrbinder.Flag.flag;
 import static net.shed.mlrbinder.Flags.c2p;
 import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.f;
-import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
-import static net.shed.mlrbinder.verb.Option.option;
 
 /**
  * End-to-end checks that {@link Mlr} builds argv matching the Miller
@@ -123,25 +120,21 @@ class TenMinTutorialE2eTest {
 		Mlr cutKeep = Mlr.inDir(root.toString())
 				.icsv()
 				.opprint()
-				.cut(option(flag("-f").objective("flag,shape")))
+				.cutFields("flag,shape")
 				.file("example.csv");
 		assertEquals(expected("cut_f.txt"), run(cutKeep));
 
 		Mlr cutOrdered = Mlr.inDir(root.toString())
 				.icsv()
 				.opprint()
-				.cut(
-						option(flag("-o")),
-						option(flag("-f").objective("flag,shape")))
+				.cutOrdered("flag,shape")
 				.file("example.csv");
 		assertEquals(expected("cut_o_f.txt"), run(cutOrdered));
 
 		Mlr cutOmit = Mlr.inDir(root.toString())
 				.icsv()
 				.opprint()
-				.cut(
-						option(flag("-x")),
-						option(flag("-f").objective("flag,shape")))
+				.cutExcept("flag,shape")
 				.file("example.csv");
 		assertEquals(expected("cut_x_f.txt"), run(cutOmit));
 	}
@@ -278,7 +271,7 @@ class TenMinTutorialE2eTest {
 				.from("example.csv")
 				.sort(nr("index"))
 				.head(3)
-				.cut(option(flag("-f").objective("shape,quantity")));
+				.cutFields("shape,quantity");
 		assertEquals(expected("from_chain_cut.txt"), run(fromChainCut));
 	}
 
@@ -290,9 +283,7 @@ class TenMinTutorialE2eTest {
 				.icsv()
 				.opprint()
 				.sort(f("shape"), nr("index"))
-				.head(
-						option(n(), objective("1")),
-						option(flag("-g"), objective("shape")))
+				.headOneGroupedBy("shape")
 				.file("example.csv");
 		assertEquals(expected("head_g_shape.txt"), run(headG));
 
@@ -300,29 +291,21 @@ class TenMinTutorialE2eTest {
 				.icsv()
 				.opprint()
 				.from("example.csv")
-				.stats1(
-						flag("-a").objective("count,min,mean,max"),
-						flag("-f").objective("quantity"),
-						flag("-g").objective("shape"));
+				.stats1("count,min,mean,max", "quantity", "shape");
 		assertEquals(expected("stats1_g_shape.txt"), run(statsShape));
 
 		Mlr statsShapeColor = Mlr.inDir(root.toString())
 				.icsv()
 				.opprint()
 				.from("example.csv")
-				.stats1(
-						flag("-a").objective("count,min,mean,max"),
-						flag("-f").objective("quantity"),
-						flag("-g").objective("shape,color"));
+				.stats1("count,min,mean,max", "quantity", "shape,color");
 		assertEquals(expected("stats1_g_shape_color.txt"), run(statsShapeColor));
 
 		Mlr statsXtab = Mlr.inDir(root.toString())
 				.icsv()
 				.oxtab()
 				.from("example.csv")
-				.stats1(
-						flag("-a").objective("p0,p10,p25,p50,p75,p90,p99,p100"),
-						flag("-f").objective("rate"));
+				.stats1("p0,p10,p25,p50,p75,p90,p99,p100", "rate");
 		assertEquals(expected("stats1_rate_percentiles_xtab.txt"), run(statsXtab));
 	}
 

@@ -1,0 +1,1 @@
+x.a=3,y:b=4,z/c=5,product.all=60

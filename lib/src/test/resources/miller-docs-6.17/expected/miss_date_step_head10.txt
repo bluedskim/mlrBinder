@@ -1,0 +1,10 @@
+n=1,date=2012-03-05,qoh=10055,datestamp=1330905600,datestamp_delta=0
+n=2,date=2012-03-06,qoh=10486,datestamp=1330992000,datestamp_delta=86400
+n=3,date=2012-03-07,qoh=10430,datestamp=1331078400,datestamp_delta=86400
+n=4,date=2012-03-08,qoh=10674,datestamp=1331164800,datestamp_delta=86400
+n=5,date=2012-03-09,qoh=10880,datestamp=1331251200,datestamp_delta=86400
+n=6,date=2012-03-10,qoh=10718,datestamp=1331337600,datestamp_delta=86400
+n=7,date=2012-03-11,qoh=10795,datestamp=1331424000,datestamp_delta=86400
+n=8,date=2012-03-12,qoh=11043,datestamp=1331510400,datestamp_delta=86400
+n=9,date=2012-03-13,qoh=11177,datestamp=1331596800,datestamp_delta=86400
+n=10,date=2012-03-14,qoh=11498,datestamp=1331683200,datestamp_delta=86400

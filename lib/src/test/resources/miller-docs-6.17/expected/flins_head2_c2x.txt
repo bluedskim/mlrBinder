@@ -1,0 +1,37 @@
+policyID           119736
+statecode          FL
+county             CLAY COUNTY
+eq_site_limit      498960
+hu_site_limit      498960
+fl_site_limit      498960
+fr_site_limit      498960
+tiv_2011           498960
+tiv_2012           792148.9
+eq_site_deductible 0
+hu_site_deductible 9979.2
+fl_site_deductible 0
+fr_site_deductible 0
+point_latitude     30.102261
+point_longitude    -81.711777
+line               Residential
+construction       Masonry
+point_granularity  1
+
+policyID           448094
+statecode          FL
+county             CLAY COUNTY
+eq_site_limit      1322376.3
+hu_site_limit      1322376.3
+fl_site_limit      1322376.3
+fr_site_limit      1322376.3
+tiv_2011           1322376.3
+tiv_2012           1438163.57
+eq_site_deductible 0
+hu_site_deductible 0
+fl_site_deductible 0
+fr_site_deductible 0
+point_latitude     30.063936
+point_longitude    -81.707664
+line               Residential
+construction       Masonry
+point_granularity  3

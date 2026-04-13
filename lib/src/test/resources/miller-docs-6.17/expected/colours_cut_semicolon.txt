@@ -1,0 +1,3 @@
+KEY,PL,TO
+masterdata_colourcode_1,Biały,Alb
+masterdata_colourcode_2,Czarny,Negru
