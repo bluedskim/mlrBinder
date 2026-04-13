@@ -51,6 +51,20 @@ jacoco {
 
 def pomScmUrl = 'https://github.com/bluedskim/mlrBinder.git'
 def pomUrl = 'https://github.com/bluedskim/mlrBinder'
+def centralPortalStagingUrl = 'https://ossrh-staging-api.central.sonatype.com'
+def centralSnapshotsUrl = 'https://central.sonatype.com/repository/maven-snapshots/'
+def centralPortalUsername = findProperty('centralPortalUsername') ?:
+	findProperty('sonatypeUsername') ?:
+	findProperty('ossrhUsername') ?:
+	System.getenv('CENTRAL_PORTAL_USERNAME') ?:
+	System.getenv('SONATYPE_USERNAME') ?:
+	System.getenv('OSSRH_USERNAME')
+def centralPortalPassword = findProperty('centralPortalPassword') ?:
+	findProperty('sonatypePassword') ?:
+	findProperty('ossrhPassword') ?:
+	System.getenv('CENTRAL_PORTAL_PASSWORD') ?:
+	System.getenv('SONATYPE_PASSWORD') ?:
+	System.getenv('OSSRH_PASSWORD')
 
 publishing {
 	publications {
@@ -85,13 +99,13 @@ publishing {
 	}
 	repositories {
 		maven {
-			name = 'sonatype'
-			def releasesUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
-			def snapshotsUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+			name = 'sonatypeCentral'
+			def releasesUrl = "${centralPortalStagingUrl}/service/local/staging/deploy/maven2/"
+			def snapshotsUrl = centralSnapshotsUrl
 			url = version.endsWith('SNAPSHOT') ? snapshotsUrl : releasesUrl
 			credentials {
-				username = findProperty('ossrhUsername') ?: System.getenv('OSSRH_USERNAME')
-				password = findProperty('ossrhPassword') ?: System.getenv('OSSRH_PASSWORD')
+				username = centralPortalUsername
+				password = centralPortalPassword
 			}
 		}
 	}
