@@ -467,23 +467,3 @@ Mlr.inDir(workingPath)
 ```
 
 `file(File)` sets `workingPath` automatically when it is still unset: absolute file → parent directory; relative file → `user.dir`. Override anytime with `workDir(String)` or `workingPath(String)`.
-
-## TODO
-
-### v0.01
-
-1. ~~logging~~
-	1. ~~info to debug~~
-1. ~~change to gradle library project~~
-1. ~~add E2E test~~
-
-### v0.02
-
-1. ~~remove isConsecutive from the Verb~~
-1. add static prebuilt object
-	1. Verbs
-	1. Flags
-
-### v0.1
-
-1. ~~execute mlr then connect output stream to isr~~ — stdin/stdout covered by `Mlr#run(InputStreamReader)` and `redirectOutputFile`
