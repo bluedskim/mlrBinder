@@ -1,6 +1,6 @@
 # Releasing to Maven Central
 
-Releases go to **Maven Central** through the [Sonatype Central Portal](https://central.sonatype.com/). OSSRH was shut down in 2025, so this project now uploads with Gradle's built-in `maven-publish` plugin to Sonatype's **OSSRH Staging API compatibility service** and then transfers that staging repository into the Central Portal. The GitHub Action `.github/workflows/publish.yml` runs on tags matching `v*` (for example `v0.1.0`) after `./gradlew :lib:test` succeeds, and it requests **automatic publish** once Sonatype validation passes.
+Releases go to **Maven Central** through the [Sonatype Central Portal](https://central.sonatype.com/). OSSRH was shut down in 2025, so this project now uploads with Gradle's built-in `maven-publish` plugin to Sonatype's **OSSRH Staging API compatibility service** and then transfers that staging repository into the Central Portal. The GitHub Action `.github/workflows/publish.yml` runs on tags matching `v*` (for example `v0.1.0`) after `./gradlew :lib:test` succeeds, and it leaves the deployment in **user-managed** mode so validation can be reviewed in the Portal before publishing.
 
 The **`io.github.bluedskim`** namespace is already verified in Central Portal, so the remaining preparation is just credentials, signing, and the transfer step into the Portal.
 
@@ -33,12 +33,12 @@ export SIGNING_PASSWORD=...
 ./gradlew :lib:publish
 ```
 
-Transfer the uploaded staging repository into the Central Portal and request automatic release:
+Transfer the uploaded staging repository into the Central Portal for validation review:
 
 ```bash
 ./scripts/upload-central-deployment.sh io.github.bluedskim
 ```
 
-That creates a deployment in [Sonatype Central Portal publishing](https://central.sonatype.com/publishing/deployments). By default the script now uses `automatic`, so Sonatype will publish to Maven Central automatically after validation succeeds. If you need a manual hold for a specific release, override it with `CENTRAL_PUBLISHING_TYPE=user_managed`.
+That creates a deployment in [Sonatype Central Portal publishing](https://central.sonatype.com/publishing/deployments). By default the script now uses `user_managed`, so review the validation results there and click publish from the Portal UI when ready. If you ever want to auto-release a specific deployment instead, override it with `CENTRAL_PUBLISHING_TYPE=automatic`.
 
 After a successful deployment is published to Central, bump `version` in the root `build.gradle` for the next release.
