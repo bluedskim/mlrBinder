@@ -61,37 +61,6 @@ dependencies {
 
 - Reports: `lib/build/reports/tests/test/index.html`, coverage: `lib/build/jacocoHtml/index.html` ([Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html))
 
-## Publishing (maintainers)
-
-Releases are published to **Maven Central** via Sonatype OSSRH (`s01.oss.sonatype.org`). The GitHub Action `.github/workflows/publish.yml` runs on tags matching `v*` (for example `v0.1.0`) after tests pass. The `io.github.bluedskim` **groupId must be verified** on [Sonatype](https://central.sonatype.com/) (GitHub namespace) before Central accepts the first artifact.
-
-Repository secrets:
-
-| Secret | Purpose |
-|--------|---------|
-| `OSSRH_USERNAME` | Sonatype user token username |
-| `OSSRH_PASSWORD` | Sonatype user token password |
-| `SIGNING_KEY` | ASCII-armored OpenPGP **private** key (full block including `BEGIN` / `END` lines) |
-| `SIGNING_PASSWORD` | Passphrase for that key |
-
-Local dry run (installs into `~/.m2/repository` only):
-
-```bash
-./gradlew :lib:publishToMavenLocal
-```
-
-Local upload to the OSSRH staging repository (requires the same credentials as above in the environment):
-
-```bash
-export OSSRH_USERNAME=...
-export OSSRH_PASSWORD=...
-export SIGNING_KEY="$(cat path/to-private-key.asc)"
-export SIGNING_PASSWORD=...
-./gradlew :lib:publish
-```
-
-After the first successful deployment, complete release in the [Sonatype Central Portal](https://central.sonatype.com/) (or legacy staging UI if your namespace still uses it), then bump `version` in the root `build.gradle` for the next release.
-
 ## Miller in 10 minutes → Java
 
 How `mlr` invocations from [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) map to this library. **All Java samples below use the recommended style:** start with **`Mlr.inDir(…)`** (and then **`.csv()`** when you need `--csv`), or start from **`Mlr.withCsvPreset()`** (static: `mlr` + `--csv` before you set `workDir` / files). Chain **global flags on `Mlr`**, and use **instance methods named like verbs** (`filter` / `split` → `.filterVerb` / `.splitVerb`). To append another `--csv` on the same chain, call **`.csv()`** again. **Verb options** use `SortFlags` helpers `f` / `n` / `nr`, `import static …Flag.flag` with `flag("-f").objective("…")`, `option` / `objective`, and so on. Chaining several verbs automatically inserts `then` into the `run()` argv.
