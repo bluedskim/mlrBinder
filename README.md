@@ -10,6 +10,36 @@ This library is developed and tested against **Miller [`mlr` 6.17.0](https://git
 
 **Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
 
+## Use from Maven or Gradle
+
+Maven coordinates: **`io.github.bluedskim:mlr-binder:0.1.0`**. Java API package: **`net.shed.mlrbinder`** (unchanged). Requires **Java 11 or newer** at runtime.
+
+**Maven (`pom.xml`):**
+
+```xml
+<dependency>
+  <groupId>io.github.bluedskim</groupId>
+  <artifactId>mlr-binder</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+**Gradle (Kotlin DSL):**
+
+```kotlin
+dependencies {
+    implementation("io.github.bluedskim:mlr-binder:0.1.0")
+}
+```
+
+**Gradle (Groovy):**
+
+```groovy
+dependencies {
+    implementation 'io.github.bluedskim:mlr-binder:0.1.0'
+}
+```
+
 ## Goals
 
 - **How you invoke Miller:** Express Miller behavior as much as possible with **Java methods and objects** instead of concatenating long command strings; assemble with `Flag`, `Verb`, `Option`, and related types.

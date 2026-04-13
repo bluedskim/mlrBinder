@@ -103,7 +103,7 @@ public final class Mlr {
 
 	/**
 	 * constructor, get ProcessBuilder
-	 * @param mlrPath
+	 * @param processBuilder process builder whose environment and directory may be used
 	 */
 	public Mlr(ProcessBuilder processBuilder) {
 		this();
@@ -150,9 +150,9 @@ public final class Mlr {
 	String workingPath;
 
 	/**
-	 * set executable path then return self
-	 * @param mlrPath
-	 * @return
+	 * set working directory then return self
+	 * @param workingPath directory for the child process
+	 * @return this
 	 */
 	public Mlr workingPath(String workingPath) {
 		this.workingPath = workingPath;
@@ -247,7 +247,7 @@ public final class Mlr {
 
 	/**
 	 * add verbs and return this Mlr
-	 * @param flag
+	 * @param verbs verbs to append
 	 * @return this Mlr
 	 */
 	public Mlr verb(Verb... verbs) {

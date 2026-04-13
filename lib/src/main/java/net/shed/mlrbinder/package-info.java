@@ -10,7 +10,7 @@
  * Miller documentation.
  * </p>
  * <p>Consolidated map (see {@code Mlr} Javadoc for details and examples):</p>
- * <table border="1" summary="Mlr sugar methods vs Miller CLI">
+ * <table border="1">
  * <caption>Mlr convenience vs Miller CLI</caption>
  * <tr><th>{@code Mlr} method</th><th>Miller CLI equivalent (verb segment)</th></tr>
  * <tr><td>{@link net.shed.mlrbinder.Mlr#head(int) head(count)}</td><td>{@code head -n <count>}</td></tr>
