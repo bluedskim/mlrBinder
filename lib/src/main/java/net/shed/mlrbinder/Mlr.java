@@ -38,6 +38,13 @@ import net.shed.mlrbinder.verb.Verb;
  * <p>
  * Start builds with {@link #inDir(String)}, {@link #csv()}, or {@link #mlr()} rather than raw constructors when possible.
  * </p>
+ * <p>
+ * <strong>Binder-only convenience (“sugar”):</strong> Some {@code Mlr} methods bundle common Miller
+ * <strong>verb options</strong> into one call. They are <strong>not</strong> Miller CLI features or subcommands; the
+ * runtime is still plain {@code mlr} with standard verbs and flags. Each sugar method’s Javadoc states the
+ * <strong>Miller CLI equivalent</strong> so users can compare and avoid mistaking sugar for upstream Miller syntax.
+ * See the package summary for {@link net.shed.mlrbinder} for a consolidated list.
+ * </p>
  */
 public final class Mlr {
 	/**
@@ -655,38 +662,71 @@ public final class Mlr {
 		return verb(Mlr.Verbs.unsparsify(args));
 	}
 
-	/** Appends {@code head -n count}; shorthand for {@code head(HeadTail.n(count))}. */
+	/**
+	 * Binder-only convenience: same as {@link #head(Arg...)} with a count option.
+	 * <p><b>Miller CLI equivalent:</b> {@code head -n <count>} (after your global flags and before trailing files),
+	 * e.g. {@code mlr --csv head -n 4 data.csv}.
+	 * </p>
+	 */
 	public Mlr head(int count) {
 		return head(HeadTail.n(count));
 	}
 
-	/** Appends {@code head -n 1 -g fields} (comma-separated group-by list when multiple). */
+	/**
+	 * Binder-only convenience: {@code head} with {@code -n 1} and group-by fields.
+	 * <p><b>Miller CLI equivalent:</b> {@code head -n 1 -g <fields>} (comma-separated {@code fields} when multiple),
+	 * e.g. {@code mlr --icsv --opprint sort -f shape -nr index then head -n 1 -g shape file.csv}.
+	 * </p>
+	 */
 	public Mlr headOneGroupedBy(String groupByFields) {
 		return head(HeadTail.n(1), MillerVerbOpts.groupBy(groupByFields));
 	}
 
-	/** Appends {@code tail -n count}; shorthand for {@code tail(HeadTail.n(count))}. */
+	/**
+	 * Binder-only convenience: same as {@link #tail(Arg...)} with a count option.
+	 * <p><b>Miller CLI equivalent:</b> {@code tail -n <count>}, e.g. {@code mlr --csv tail -n 4 data.csv}.
+	 * </p>
+	 */
 	public Mlr tail(int count) {
 		return tail(HeadTail.n(count));
 	}
 
-	/** Appends {@code cut -f fields} (field order follows input). */
+	/**
+	 * Binder-only convenience: {@code cut -f} with a single comma-separated field list.
+	 * <p><b>Miller CLI equivalent:</b> {@code cut -f <fields>} (field order follows input),
+	 * e.g. {@code mlr --icsv --opprint cut -f flag,shape file.csv}.
+	 * </p>
+	 */
 	public Mlr cutFields(String fields) {
 		return cut(Option.option(CutFlags.f(fields)));
 	}
 
-	/** Appends {@code cut -o -f fields} (reorder to match {@code fields}). */
+	/**
+	 * Binder-only convenience: {@code cut -o -f} (reorder output fields).
+	 * <p><b>Miller CLI equivalent:</b> {@code cut -o -f <fields>},
+	 * e.g. {@code mlr --csv cut -o -f rate,shape,flag file.csv}.
+	 * </p>
+	 */
 	public Mlr cutOrdered(String fields) {
 		return cut(Option.option(CutFlags.o()), Option.option(CutFlags.f(fields)));
 	}
 
-	/** Appends {@code cut -x -f fields} (omit listed fields). */
+	/**
+	 * Binder-only convenience: {@code cut -x -f} (omit listed fields).
+	 * <p><b>Miller CLI equivalent:</b> {@code cut -x -f <fields>},
+	 * e.g. {@code mlr --icsv --opprint cut -x -f flag,shape file.csv}.
+	 * </p>
+	 */
 	public Mlr cutExcept(String fields) {
 		return cut(Option.option(CutFlags.x()), Option.option(CutFlags.f(fields)));
 	}
 
 	/**
-	 * Appends {@code stats1} with aggregations, numeric field, and optional group-by (comma-separated if multiple).
+	 * Binder-only convenience: {@code stats1} with stringly {@code -a}, {@code -f}, and {@code -g}.
+	 * <p><b>Miller CLI equivalent:</b>
+	 * {@code stats1 -a <aggregations> -f <field> -g <groupBy>} (comma-separated {@code groupBy} when multiple),
+	 * e.g. {@code mlr --icsv --opprint stats1 -a count,min,mean,max -f quantity -g shape file.csv}.
+	 * </p>
 	 */
 	public Mlr stats1(String aggregations, String field, String groupBy) {
 		return stats1(
@@ -695,42 +735,78 @@ public final class Mlr {
 				StatsFlags.groupBy(groupBy));
 	}
 
-	/** Appends {@code stats1} without {@code -g}. */
+	/**
+	 * Binder-only convenience: {@code stats1} without {@code -g}.
+	 * <p><b>Miller CLI equivalent:</b> {@code stats1 -a <aggregations> -f <field>},
+	 * e.g. {@code mlr --oxtab stats1 -a p25,p75 -f x file.csv}.
+	 * </p>
+	 */
 	public Mlr stats1(String aggregations, String field) {
 		return stats1(StatsFlags.aggregations(aggregations), StatsFlags.field(field));
 	}
 
-	/** Appends {@code split -g field}. */
+	/**
+	 * Binder-only convenience: {@code split} with {@code -g}.
+	 * <p><b>Miller CLI equivalent:</b> {@code split -g <field>}, e.g. {@code mlr --csv split -g shape file.csv}.
+	 * </p>
+	 */
 	public Mlr splitBy(String field) {
 		return splitVerb(SplitFlags.group(field));
 	}
 
-	/** Appends {@code cat -n} (prepend record counter {@code n}). */
+	/**
+	 * Binder-only convenience: {@code cat -n}.
+	 * <p><b>Miller CLI equivalent:</b> {@code cat -n}, e.g. {@code mlr --csv filter '$x>0.5' then cat -n small.dkvp}.
+	 * </p>
+	 */
 	public Mlr catNumbered() {
 		return cat(CatVerbOpts.recordCounter());
 	}
 
-	/** Appends {@code rename -g -r pattern} (global regex rename of field names). */
+	/**
+	 * Binder-only convenience: {@code rename -g -r} for global regex renames on field names.
+	 * <p><b>Miller CLI equivalent:</b> {@code rename -g -r '<pattern>'},
+	 * e.g. {@code mlr --csv rename -g -r ' ,_' spaces.csv}.
+	 * </p>
+	 */
 	public Mlr renameGlobalRegex(String pattern) {
 		return rename(option(Flag.flag("-g")), option(Flag.flag("-r"), objective(pattern)));
 	}
 
-	/** Appends {@code put -f path} (read DSL from a file). */
+	/**
+	 * Binder-only convenience: {@code put -f} (load DSL from a file).
+	 * <p><b>Miller CLI equivalent:</b> {@code put -f <path>}, e.g. {@code mlr --csv put -f script.mlr data.csv}.
+	 * </p>
+	 */
 	public Mlr putFromFile(String path) {
 		return put(option(Flag.flag("-f"), objective(path)));
 	}
 
-	/** Appends {@code put -q -f path}. */
+	/**
+	 * Binder-only convenience: {@code put -q -f} (quiet + script file).
+	 * <p><b>Miller CLI equivalent:</b> {@code put -q -f <path>}, e.g. {@code mlr --itsv --opprint put -q -f maxrows.mlr data.tsv}.
+	 * </p>
+	 */
 	public Mlr putQuietFromFile(String path) {
 		return put(PutFlags.quiet(), option(Flag.flag("-f"), objective(path)));
 	}
 
-	/** Appends {@code count-distinct -f fields} (comma-separated field list). */
+	/**
+	 * Binder-only convenience: {@code count-distinct -f}.
+	 * <p><b>Miller CLI equivalent:</b> {@code count-distinct -f <fields>} (comma-separated list),
+	 * e.g. {@code mlr --c2p count-distinct -f county file.csv}.
+	 * </p>
+	 */
 	public Mlr countDistinctFields(String fields) {
 		return countDistinct(option(Flag.flag("-f"), objective(fields)));
 	}
 
-	/** Appends {@code join -u -j key -f leftFile} (unsorted join; Miller 5.1+ default). */
+	/**
+	 * Binder-only convenience: {@code join -u -j -f} (left file + join key; right from trailing files).
+	 * <p><b>Miller CLI equivalent:</b> {@code join -u -j <key> -f <leftFile> <rightFile…>},
+	 * e.g. {@code mlr --icsvlite --opprint join -u -j ipaddr -f left.csv right.csv}.
+	 * </p>
+	 */
 	public Mlr joinUnsorted(String joinKey, String leftFile) {
 		return join(
 				option(Flag.flag("-u")),
@@ -738,7 +814,13 @@ public final class Mlr {
 				option(Flag.flag("-f"), objective(leftFile)));
 	}
 
-	/** Appends {@code join -j key --ul --ur -f leftFile} then you typically chain more verbs before the right file. */
+	/**
+	 * Binder-only convenience: {@code join} with left/right unpaired rows.
+	 * <p><b>Miller CLI equivalent:</b>
+	 * {@code join -j <key> --ul --ur -f <leftFile> <rightFile…>} (then often {@code unsparsify}, {@code put}, etc.),
+	 * e.g. {@code mlr --csv join -j color --ul --ur -f prevtemp.csv then unsparsify --fill-with 0 currtemp.csv}.
+	 * </p>
+	 */
 	public Mlr joinLeftRightUnpaired(String joinKey, String leftFile) {
 		return join(
 				option(Flag.flag("-j"), objective(joinKey)),
@@ -747,40 +829,72 @@ public final class Mlr {
 				option(Flag.flag("-f"), objective(leftFile)));
 	}
 
-	/** Appends {@code join -f leftFile -j key} (right table comes from trailing file args). */
+	/**
+	 * Binder-only convenience: {@code join -f} then {@code -j} (argument order as in some docs/examples).
+	 * <p><b>Miller CLI equivalent:</b> {@code join -f <leftFile> -j <key> <input…>},
+	 * e.g. {@code mlr --icsv --opprint join -f name-lookup.csv -j id then join -f status-lookup.csv -j id input.csv}.
+	 * </p>
+	 */
 	public Mlr joinFile(String leftFile, String joinKey) {
 		return join(
 				option(Flag.flag("-f"), objective(leftFile)),
 				option(Flag.flag("-j"), objective(joinKey)));
 	}
 
-	/** Appends {@code unsparsify --fill-with value}. */
+	/**
+	 * Binder-only convenience: {@code unsparsify --fill-with}.
+	 * <p><b>Miller CLI equivalent:</b> {@code unsparsify --fill-with <value>},
+	 * e.g. {@code mlr --csv join … then unsparsify --fill-with 0 right.csv}.
+	 * </p>
+	 */
 	public Mlr unsparsifyFillWith(String fill) {
 		return unsparsify(option(Flag.flag("--fill-with"), objective(fill)));
 	}
 
-	/** Appends {@code step -a delta -f field}. */
+	/**
+	 * Binder-only convenience: {@code step} with the {@code delta} stepper on one field.
+	 * <p><b>Miller CLI equivalent:</b> {@code step -a delta -f <field>},
+	 * e.g. {@code mlr --icsv cat -n then put '$ts=strptime($date,\"%Y-%m-%d\")' then step -a delta -f ts}.
+	 * </p>
+	 */
 	public Mlr stepDelta(String field) {
 		return step(StepFlags.deltaOn(field));
 	}
 
-	/** Appends {@code uniq -c -g fields} (comma-separated group-by list). */
+	/**
+	 * Binder-only convenience: {@code uniq -c -g}.
+	 * <p><b>Miller CLI equivalent:</b> {@code uniq -c -g <fields>} (comma-separated list),
+	 * e.g. {@code mlr --opprint uniq -c -g a,b then sort -nr count medium.csv}.
+	 * </p>
+	 */
 	public Mlr uniqCountBy(String fields) {
 		return uniq(option(Flag.flag("-c")), option(Flag.flag("-g"), objective(fields)));
 	}
 
-	/** Appends {@code sample -k n}. */
+	/**
+	 * Binder-only convenience: {@code sample -k}.
+	 * <p><b>Miller CLI equivalent:</b> {@code sample -k <k>}, e.g. {@code mlr --seed 42 --nidx … then sample -k 10 words.txt}.
+	 * </p>
+	 */
 	public Mlr sampleK(int k) {
 		return sample(option(Flag.flag("-k"), objective(Integer.toString(k))));
 	}
 
-	/** Appends {@code filter -S} then the expression (legacy no-op flag; kept for doc parity). */
+	/**
+	 * Binder-only convenience: {@code filter -S} plus an expression (flag is a no-op in Miller 6+; kept for doc parity).
+	 * <p><b>Miller CLI equivalent:</b> {@code filter -S '<expr>'}, e.g. {@code mlr --nidx filter -S 'n=strlen($1);…' file.txt}.
+	 * Prefer plain {@link #filterVerb(Arg...)} when you do not need {@code -S}.
+	 * </p>
+	 */
 	public Mlr filterVerbTyped(Objective expression) {
 		return filterVerb(option(Flag.flag("-S")), expression);
 	}
 
 	/**
-	 * Appends {@code sort} with one or more {@code -f field} keys (lexical ascending), in order.
+	 * Binder-only convenience: {@code sort} with repeated {@code -f} keys (lexical ascending), in order.
+	 * <p><b>Miller CLI equivalent:</b> {@code sort -f <f1> -f <f2> …},
+	 * e.g. {@code mlr --csv sort -f c -f a example.csv}.
+	 * </p>
 	 */
 	public Mlr sortFields(String... fields) {
 		if (fields == null || fields.length == 0) {
@@ -790,7 +904,11 @@ public final class Mlr {
 		return sort(args);
 	}
 
-	/** Appends {@code put -q} then the expression (e.g. tee splits). */
+	/**
+	 * Binder-only convenience: {@code put -q} with an inline expression.
+	 * <p><b>Miller CLI equivalent:</b> {@code put -q '<expr>'}, e.g. {@code mlr --icsv --ojson put -q 'begin{…} end{emit …}' data.csv}.
+	 * </p>
+	 */
 	public Mlr putQuiet(Objective expression) {
 		return put(PutFlags.quiet(), expression);
 	}
