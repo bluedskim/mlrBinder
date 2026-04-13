@@ -1,0 +1,6 @@
+color,previous_count,current_count,count_delta
+red,3472,3467,-5
+orange,694,670,-24
+yellow,0,27,27
+blue,6838,6944,106
+purple,12,0,-12

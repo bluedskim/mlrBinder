@@ -18,8 +18,12 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Install Miller
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq miller
+      - name: Install Miller 6.17.0
+        run: |
+          curl -fsSL -o /tmp/mlr617.tgz https://github.com/johnkerl/miller/releases/download/v6.17.0/miller-6.17.0-linux-amd64.tar.gz
+          tar -C /tmp -xzf /tmp/mlr617.tgz
+          sudo install -m 0755 /tmp/miller-6.17.0-linux-amd64/mlr /usr/local/bin/mlr
+          mlr --version
 
       - name: Run tests
         run: ./gradlew test --no-daemon

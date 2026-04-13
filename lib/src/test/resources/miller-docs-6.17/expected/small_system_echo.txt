@@ -1,0 +1,6 @@
+a   b   i x        y        o
+pan pan 1 0.346791 0.726802 hello world
+eks pan 2 0.758679 0.522151 hello world
+wye wye 3 0.204603 0.338318 hello world
+eks wye 4 0.381399 0.134188 hello world
+wye pan 5 0.573288 0.863624 hello world

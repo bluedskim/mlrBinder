@@ -1,0 +1,4 @@
+type hit_mean
+A1   0.5
+A4   0.5
+A9   0
