@@ -13,6 +13,8 @@ The **`io.github.bluedskim`** namespace is already verified in Central Portal, s
 | `SIGNING_KEY` | ASCII-armored OpenPGP **private** key (full block including `BEGIN` / `END` lines) |
 | `SIGNING_PASSWORD` | Passphrase for that key |
 
+The **public** key that matches `SIGNING_KEY` must be published to a keyserver that [Sonatype Maven Central](https://central.sonatype.org/) can query (for example [keys.openpgp.org](https://keys.openpgp.org/) or Ubuntu’s keyserver). If it is missing, Central reports *Invalid signature* / *Could not find a public key by the key fingerprint* for the `.asc` files. After generating or rotating a key, export the public key and upload it before tagging a release. The publish workflow runs `./scripts/verify-signing-public-key.sh` so a missing public key fails **before** Gradle uploads artifacts.
+
 `OSSRH_USERNAME` / `OSSRH_PASSWORD` are still accepted as a temporary fallback in the Gradle build and workflow, but new configuration should use the `CENTRAL_PORTAL_*` names above.
 
 ## Local commands
