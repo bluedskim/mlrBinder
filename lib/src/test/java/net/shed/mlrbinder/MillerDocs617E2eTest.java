@@ -32,6 +32,11 @@ import org.junit.jupiter.api.condition.EnabledIf;
  * Golden files live under {@code src/test/resources/miller-docs-6.17/expected/}. Regenerate with
  * {@code MLR=/path/to/mlr-6.17.0 ./utils/gen_miller_docs_617_goldens.sh} after changing fixtures or samples.
  * </p>
+ * <p>
+ * Chains follow the recommended style: global I/O on {@link Mlr} (e.g. {@link Mlr#csvFlag()} after
+ * {@link Mlr#inDir(String)} for {@code --csv}; use static {@link Mlr#csv()} when starting from the CSV preset),
+ * then verb-named methods.
+ * </p>
  */
 class MillerDocs617E2eTest {
 
@@ -74,8 +79,8 @@ class MillerDocs617E2eTest {
 		void implicitHeaderCat() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.csv())
-					.flag(Flags.implicitCsvHeader())
+					.csvFlag()
+					.implicitCsvHeader()
 					.cat()
 					.file("headerless.csv");
 			assertEquals(expected("csv_implicit_header_cat"), run(mlr));
@@ -86,8 +91,8 @@ class MillerDocs617E2eTest {
 		void implicitHeaderLabel() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.csv())
-					.flag(Flags.implicitCsvHeader())
+					.csvFlag()
+					.implicitCsvHeader()
 					.cat()
 					.label(objective("name,age,status"))
 					.file("headerless.csv");
@@ -99,9 +104,9 @@ class MillerDocs617E2eTest {
 		void dkvpSubsetHeaderlessCsvOutput() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.idkvp())
-					.flag(Flags.ocsv())
-					.flag(Flags.headerlessCsvOutput())
+					.idkvp()
+					.ocsv()
+					.headerlessCsvOutput()
 					.cat()
 					.file("colored-shapes-head5.dkvp");
 			assertEquals(expected("dkvp_head5_headerless_csv"), run(mlr));
@@ -112,9 +117,9 @@ class MillerDocs617E2eTest {
 		void nidxCutOxTab() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.inidx())
-					.flag(Flags.ifs("comma"))
-					.flag(Flags.oxtab())
+					.inidx()
+					.ifs("comma")
+					.oxtab()
 					.cut(option(flag("-f").objective("1,3")))
 					.file("headerless.csv");
 			assertEquals(expected("nidx_cut_13_headerless"), run(mlr));
@@ -125,8 +130,8 @@ class MillerDocs617E2eTest {
 		void nasHiCat() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.csv())
-					.flag(Flags.hi())
+					.csvFlag()
+					.hi()
 					.cat()
 					.file("nas.csv");
 			assertEquals(expected("nas_hi_cat"), run(mlr));
@@ -137,9 +142,9 @@ class MillerDocs617E2eTest {
 		void nasNidxOcsv() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.inidx())
-					.flag(Flags.ifs("comma"))
-					.flag(Flags.ocsv())
+					.inidx()
+					.ifs("comma")
+					.ocsv()
 					.cat()
 					.file("nas.csv");
 			assertEquals(expected("nas_inidx_ocsv_cat"), run(mlr));
@@ -150,8 +155,8 @@ class MillerDocs617E2eTest {
 		void nasHiLabelChain() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.csv())
-					.flag(Flags.hi())
+					.csvFlag()
+					.hi()
 					.cat()
 					.label(objective("xsn,ysn,x,y,t,a,e29,e31,e32"))
 					.file("nas.csv");
@@ -168,8 +173,8 @@ class MillerDocs617E2eTest {
 					+ "}\n";
 			Mlr mlr = Mlr.inDir(root.toString())
 					.from("ragged.csv")
-					.flag(Flags.fs("comma"))
-					.flag(Flags.nidx())
+					.fs("comma")
+					.nidx()
 					.put(objective(expr));
 			assertEquals(expected("ragged_pad_put"), run(mlr));
 		}
@@ -183,8 +188,8 @@ class MillerDocs617E2eTest {
 		void coloursSemicolonFsCut() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.csv())
-					.flag(Flags.ifs("semicolon"))
+					.csvFlag()
+					.ifs("semicolon")
 					.cut(option(flag("-f").objective("KEY,PL,TO")))
 					.file("colours.csv");
 			assertEquals(expected("colours_cut_semicolon"), run(mlr));
@@ -313,8 +318,8 @@ class MillerDocs617E2eTest {
 					+ "  emit (@count, @sum);\n"
 					+ "}\n";
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.icsv())
-					.flag(Flags.ojson())
+					.icsv()
+					.ojson()
 					.from("short.csv")
 					.put(PutFlags.quiet(), objective(expr));
 			assertEquals(expected("short_sum_put_q"), run(mlr));
@@ -367,8 +372,8 @@ class MillerDocs617E2eTest {
 		void joinUnsortedDefault() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.icsvlite())
-					.flag(Flags.opprint())
+					.icsvlite()
+					.opprint()
 					.join(
 							option(flag("-u")),
 							option(flag("-j"), objective("ipaddr")),
@@ -470,8 +475,8 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
 					.icsv()
-					.flag(Flags.odkvp())
-					.flag(Flags.ofs("pipe"))
+					.odkvp()
+					.ofs("pipe")
 					.cat()
 					.file("commas.csv");
 			assertEquals(expected("commas_icsv_odkvp_ofs_pipe"), run(mlr));
@@ -482,7 +487,7 @@ class MillerDocs617E2eTest {
 		void dkvpCurlyFieldNames() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.dkvp())
+					.dkvp()
 					.put(objective("${product.all} = ${x.a} * ${y:b} * ${z/c}"))
 					.file("dkvp-curly-in.dkvp");
 			assertEquals(expected("dkvp_curly_product"), run(mlr));
@@ -493,7 +498,7 @@ class MillerDocs617E2eTest {
 		void questionMarkGsub() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.oxtab())
+					.oxtab()
 					.put(objective("$c = gsub($a, \"[?]\",\" ...\")"))
 					.file("question.dat");
 			assertEquals(expected("question_gsub_bracket"), run(mlr));
@@ -510,7 +515,7 @@ class MillerDocs617E2eTest {
 					+ "  name = gssub(name, \"\\xed\", \"\\u00ed\");\n"
 					+ "  print name;\n"
 					+ "}\n";
-			Mlr mlr = Mlr.inDir(root.toString()).flag(Flags.noInput()).put(objective(expr));
+			Mlr mlr = Mlr.inDir(root.toString()).noInput().put(objective(expr));
 			assertEquals(expected("latin1_utf8_print"), run(mlr));
 		}
 	}
@@ -554,7 +559,7 @@ class MillerDocs617E2eTest {
 		void flinsHeadC2x() throws Exception {
 			Path root = docRoot();
 			Assumptions.assumeTrue(Files.exists(root.resolve("flins-subset.csv")));
-			Mlr mlr = Mlr.inDir(root.toString()).flag(Flags.c2x()).from("flins-subset.csv").head(2);
+			Mlr mlr = Mlr.inDir(root.toString()).c2x().from("flins-subset.csv").head(2);
 			assertEquals(expected("flins_head2_c2x"), run(mlr));
 		}
 
@@ -564,7 +569,7 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Assumptions.assumeTrue(Files.exists(root.resolve("flins-subset.csv")));
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.c2p())
+					.c2p()
 					.from("flins-subset.csv")
 					.countDistinct(option(flag("-f").objective("county")));
 			assertEquals(expected("flins_count_distinct_county"), run(mlr));
@@ -579,7 +584,7 @@ class MillerDocs617E2eTest {
 		void cacheLinesStatsByType() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.idkvp())
+					.idkvp()
 					.opprint()
 					.stats1(aggregations("mean"), field("hit"), groupBy("type"))
 					.sort(f("type"))
@@ -612,7 +617,7 @@ class MillerDocs617E2eTest {
 		void pprintToJsonFirstRow() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.ipprint())
+					.ipprint()
 					.ojson()
 					.head(1)
 					.file("kubectl-pods-sample.txt");
@@ -627,7 +632,7 @@ class MillerDocs617E2eTest {
 		@DisplayName("https://miller.readthedocs.io/en/6.17.0/dkvp-examples/")
 		void dkvpCatOneRecord() throws Exception {
 			Path root = docRoot();
-			Mlr mlr = Mlr.inDir(root.toString()).flag(Flags.dkvp()).cat().file("stdin-dkvp.dkvp");
+			Mlr mlr = Mlr.inDir(root.toString()).dkvp().cat().file("stdin-dkvp.dkvp");
 			assertEquals(expected("dkvp_stdin_one_line"), run(mlr));
 		}
 	}
@@ -640,7 +645,7 @@ class MillerDocs617E2eTest {
 		void interquartileRange() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.oxtab())
+					.oxtab()
 					.stats1(aggregations("p25,p75"), field("x"))
 					.put(objective("$x_iqr = $x_p75 - $x_p25"))
 					.file("medium-subset.csv");
@@ -656,8 +661,8 @@ class MillerDocs617E2eTest {
 		void sampleWordsWithSeed() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.seed("42"))
-					.flag(Flags.nidx())
+					.seed("42")
+					.nidx()
 					.from("english-words-sample.txt")
 					.filterVerb(option(flag("-S")), objective("n=strlen($1);4<=n&&n<=8"))
 					.sample(option(flag("-k").objective("10")));
@@ -673,7 +678,7 @@ class MillerDocs617E2eTest {
 		void maxrowsTsvPutScript() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.itsv())
+					.itsv()
 					.opprint()
 					.put(PutFlags.quiet(), option(flag("-f").objective("maxrows.mlr")))
 					.file("maxrows.tsv");
@@ -701,7 +706,7 @@ class MillerDocs617E2eTest {
 		void sieveOfEratosthenes() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.flag(Flags.noInput())
+					.noInput()
 					.put(PutFlags.quiet(), option(flag("-f").objective("sieve.mlr")));
 			assertEquals(expected("sieve_n_put"), run(mlr));
 		}

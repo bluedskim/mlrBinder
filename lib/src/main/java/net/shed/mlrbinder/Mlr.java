@@ -744,6 +744,86 @@ public final class Mlr {
 		return flag(Flags.c2p());
 	}
 
+	/** Appends {@code --c2x}. */
+	public Mlr c2x() {
+		return flag(Flags.c2x());
+	}
+
+	/** Appends {@code --dkvp} (input and output DKVP). */
+	public Mlr dkvp() {
+		return flag(Flags.dkvp());
+	}
+
+	/** Appends {@code --odkvp}. */
+	public Mlr odkvp() {
+		return flag(Flags.odkvp());
+	}
+
+	/** Appends {@code --ofs} with a Miller field-separator token (e.g. {@code pipe}, {@code tab}). */
+	public Mlr ofs(String value) {
+		return flag(Flags.ofs(value));
+	}
+
+	/** Appends {@code --ifs} with a Miller field-separator token (e.g. {@code comma}, {@code semicolon}). */
+	public Mlr ifs(String value) {
+		return flag(Flags.ifs(value));
+	}
+
+	/** Appends {@code --fs} with a Miller field-separator token. */
+	public Mlr fs(String value) {
+		return flag(Flags.fs(value));
+	}
+
+	/** Appends {@code --implicit-csv-header}. */
+	public Mlr implicitCsvHeader() {
+		return flag(Flags.implicitCsvHeader());
+	}
+
+	/** Appends Miller {@code --hi} (implicit CSV header shorthand). */
+	public Mlr hi() {
+		return flag(Flags.hi());
+	}
+
+	/** Appends {@code --inidx}. */
+	public Mlr inidx() {
+		return flag(Flags.inidx());
+	}
+
+	/** Appends {@code --nidx}. */
+	public Mlr nidx() {
+		return flag(Flags.nidx());
+	}
+
+	/** Appends {@code --headerless-csv-output}. */
+	public Mlr headerlessCsvOutput() {
+		return flag(Flags.headerlessCsvOutput());
+	}
+
+	/** Appends {@code --icsvlite}. */
+	public Mlr icsvlite() {
+		return flag(Flags.icsvlite());
+	}
+
+	/** Appends {@code --itsv}. */
+	public Mlr itsv() {
+		return flag(Flags.itsv());
+	}
+
+	/** Appends {@code --ipprint}. */
+	public Mlr ipprint() {
+		return flag(Flags.ipprint());
+	}
+
+	/** Appends {@code --seed} with a reproducible RNG seed (e.g. for {@code sample}). */
+	public Mlr seed(String value) {
+		return flag(Flags.seed(value));
+	}
+
+	/** Appends Miller {@code -n} (no input records; DSL-only programs). */
+	public Mlr noInput() {
+		return flag(Flags.noInput());
+	}
+
 	/**
 	 * Appends {@code --csv} when chaining after {@link #inDir(String)} (named {@code csvFlag} so IDE completion lists it
 	 * with other {@code csv*} helpers; static entry with CSV preset remains {@link #csv()}).
