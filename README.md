@@ -7,7 +7,7 @@
 - **Less string soup:** Build invocations with `Mlr` chains, `Flag`, `Verb`, and `Option` instead of concatenating commands you cannot safely rename or review in the IDE.
 - **Catch mistakes earlier:** Method names and types encode Miller’s structure; only Miller DSL snippets (for example `put` / `filter` expressions) are still validated when `mlr` runs.
 - **Fast integration:** One Maven or Gradle dependency, `mlr` on `PATH` (or a path you configure), then `Mlr.inDir(...).csv().sort(...).file(...).run()`—no native JNI layer or extra services.
-- **Maven Central:** Published as **`io.github.bluedskim:mlr-binder`** so you can depend on it like any other library.
+- **Maven Central:** Published as **`io.github.bluedskim:mlr-binder`** (coordinates match [https://repo1.maven.org/maven2/io/github/bluedskim/mlr-binder/0.2/](https://repo1.maven.org/maven2/io/github/bluedskim/mlr-binder/0.2/)).
 
 ## Install
 
@@ -19,7 +19,7 @@ Maven (`pom.xml`):
 <dependency>
   <groupId>io.github.bluedskim</groupId>
   <artifactId>mlr-binder</artifactId>
-  <version>0.1.0</version>
+  <version>0.2</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Gradle (Kotlin DSL):
 
 ```kotlin
 dependencies {
-    implementation("io.github.bluedskim:mlr-binder:0.1.0")
+    implementation("io.github.bluedskim:mlr-binder:0.2")
 }
 ```
 
@@ -35,7 +35,7 @@ Gradle (Groovy):
 
 ```groovy
 dependencies {
-    implementation 'io.github.bluedskim:mlr-binder:0.1.0'
+    implementation 'io.github.bluedskim:mlr-binder:0.2'
 }
 ```
 
