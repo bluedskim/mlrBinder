@@ -1,6 +1,52 @@
-# Miller Java Binder
+# mlr-binder
 
-A library that reduces friction when calling [Miller (`mlr`)](https://miller.readthedocs.io/) directly from Java.
+**Turn [Miller](https://miller.readthedocs.io/) into a fluent Java API**—shape CSV, JSON, TSV, and DKVP in batch jobs, services, and tests without hand-built shell strings or copy-pasted argv lists. **Miller Java Binder** wraps the real `mlr` process so you keep upstream Miller semantics while your JVM code stays readable and refactor-friendly.
+
+## Why?
+
+- **Less string soup:** Build invocations with `Mlr` chains, `Flag`, `Verb`, and `Option` instead of concatenating commands you cannot safely rename or review in the IDE.
+- **Catch mistakes earlier:** Method names and types encode Miller’s structure; only Miller DSL snippets (for example `put` / `filter` expressions) are still validated when `mlr` runs.
+- **Fast integration:** One Maven or Gradle dependency, `mlr` on `PATH` (or a path you configure), then `Mlr.inDir(...).csv().sort(...).file(...).run()`—no native JNI layer or extra services.
+- **Maven Central:** Published as **`io.github.bluedskim:mlr-binder`** (coordinates match [https://repo1.maven.org/maven2/io/github/bluedskim/mlr-binder/0.2/](https://repo1.maven.org/maven2/io/github/bluedskim/mlr-binder/0.2/)).
+
+## Install
+
+**Requires Java 11+.** Package: **`net.shed.mlrbinder`**.
+
+Maven (`pom.xml`):
+
+```xml
+<dependency>
+  <groupId>io.github.bluedskim</groupId>
+  <artifactId>mlr-binder</artifactId>
+  <version>0.2</version>
+</dependency>
+```
+
+Gradle (Kotlin DSL):
+
+```kotlin
+dependencies {
+    implementation("io.github.bluedskim:mlr-binder:0.2")
+}
+```
+
+Gradle (Groovy):
+
+```groovy
+dependencies {
+    implementation 'io.github.bluedskim:mlr-binder:0.2'
+}
+```
+
+## Use cases
+
+- **Data prep and ETL:** Sort, cut, join, reshape, and aggregate large delimited or JSON files inside JVM pipelines while Miller stays the engine.
+- **Backend and batch jobs:** Run repeatable `mlr` workflows from schedulers or workers with working-directory and file helpers instead of brittle `Runtime.exec` strings.
+- **Quality gates and fixtures:** Mirror [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)-style flows in tests (see the tutorial mapping section below) to lock behavior to known Miller releases.
+- **Polyglot teams:** Let analysts keep Miller expertise; let application teams call the same verbs from Java with a single shared dependency.
+
+---
 
 ## Supported Miller (`mlr`) version
 
@@ -9,36 +55,6 @@ This library is developed and tested against **Miller [`mlr` 6.17.0](https://git
 **Binder-only “sugar” on `Mlr`:** Some `Mlr` methods bundle common Miller verb options into one call (for example `uniqCountBy` → `uniq -c -g …`). These Java names are **not** Miller CLI features; the child process is always standard `mlr`. Each sugar method documents the **Miller CLI equivalent** in its Javadoc, and the `net.shed.mlrbinder` package summary lists them in one table (see generated Javadoc or your IDE’s quick documentation for `Mlr` / the package).
 
 **Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
-
-## Use from Maven or Gradle
-
-Maven coordinates: **`io.github.bluedskim:mlr-binder:0.1.0`**. Java API package: **`net.shed.mlrbinder`** (unchanged). Requires **Java 11 or newer** at runtime.
-
-**Maven (`pom.xml`):**
-
-```xml
-<dependency>
-  <groupId>io.github.bluedskim</groupId>
-  <artifactId>mlr-binder</artifactId>
-  <version>0.1.0</version>
-</dependency>
-```
-
-**Gradle (Kotlin DSL):**
-
-```kotlin
-dependencies {
-    implementation("io.github.bluedskim:mlr-binder:0.1.0")
-}
-```
-
-**Gradle (Groovy):**
-
-```groovy
-dependencies {
-    implementation 'io.github.bluedskim:mlr-binder:0.1.0'
-}
-```
 
 ## Goals
 
@@ -451,23 +467,3 @@ Mlr.inDir(workingPath)
 ```
 
 `file(File)` sets `workingPath` automatically when it is still unset: absolute file → parent directory; relative file → `user.dir`. Override anytime with `workDir(String)` or `workingPath(String)`.
-
-## TODO
-
-### v0.01
-
-1. ~~logging~~
-	1. ~~info to debug~~
-1. ~~change to gradle library project~~
-1. ~~add E2E test~~
-
-### v0.02
-
-1. ~~remove isConsecutive from the Verb~~
-1. add static prebuilt object
-	1. Verbs
-	1. Flags
-
-### v0.1
-
-1. ~~execute mlr then connect output stream to isr~~ — stdin/stdout covered by `Mlr#run(InputStreamReader)` and `redirectOutputFile`
