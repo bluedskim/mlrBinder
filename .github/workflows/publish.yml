@@ -30,6 +30,11 @@ jobs:
       - name: Run tests
         run: ./gradlew :lib:test --no-daemon
 
+      - name: Verify signing public key is on a Central-supported keyserver
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: ./scripts/verify-signing-public-key.sh
+
       - name: Publish artifacts to Sonatype Central staging API
         env:
           CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME != '' && secrets.CENTRAL_PORTAL_USERNAME || secrets.OSSRH_USERNAME }}
