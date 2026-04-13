@@ -33,7 +33,7 @@ This library is developed and tested against **Miller [`mlr` 6.17.0](https://git
 
 ## Miller in 10 minutes → Java
 
-How `mlr` invocations from [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) map to this library. **All Java samples below use the recommended style:** start with **`Mlr.inDir(…)`** or **`Mlr.csv()`**, chain **global flags on `Mlr`**, and use **instance methods named like verbs** (`filter` / `split` → `.filterVerb` / `.splitVerb`). To add `--csv` only, use **`Mlr.inDir(…).csvFlag()`** (`Mlr.csv()` already applies the `mlr --csv` preset, so the name avoids clashing with the static factory). **Verb options** use `SortFlags` helpers `f` / `n` / `nr`, `import static …Flag.flag` with `flag("-f").objective("…")`, `option` / `objective`, and so on. Chaining several verbs automatically inserts `then` into the `run()` argv.
+How `mlr` invocations from [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) map to this library. **All Java samples below use the recommended style:** start with **`Mlr.inDir(…)`** (and then **`.csv()`** when you need `--csv`), or start from **`Mlr.withCsvPreset()`** (static: `mlr` + `--csv` before you set `workDir` / files). Chain **global flags on `Mlr`**, and use **instance methods named like verbs** (`filter` / `split` → `.filterVerb` / `.splitVerb`). To append another `--csv` on the same chain, call **`.csv()`** again. **Verb options** use `SortFlags` helpers `f` / `n` / `nr`, `import static …Flag.flag` with `flag("-f").objective("…")`, `option` / `objective`, and so on. Chaining several verbs automatically inserts `then` into the `run()` argv.
 
 The Java snippets below assume the following imports in common (pick only what you need in real code):
 
@@ -58,7 +58,7 @@ mlr --csv cat example.csv
 
 ```java
 Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.cat()
 	.file("example.csv")
 	.run();
@@ -89,7 +89,7 @@ mlr --tsv cat shape.tsv
 ```
 
 ```java
-Mlr.inDir(workingPath).csvFlag().cat().file("shape.csv").run();
+Mlr.inDir(workingPath).csv().cat().file("shape.csv").run();
 Mlr.inDir(workingPath).jsonFlag().cat().file("shape.json").run();
 Mlr.inDir(workingPath).idkvp().ocsv().cat().file("shape.dkvp").run();
 Mlr.inDir(workingPath).tsv().cat().file("shape.tsv").run();
@@ -103,7 +103,7 @@ mlr --csv head -n 4 example.csv
 
 ```java
 Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.head(4)
 	.file("example.csv")
 	.run();
@@ -115,7 +115,7 @@ mlr --csv tail -n 4 example.csv
 
 ```java
 Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.tail(4)
 	.file("example.csv")
 	.run();
@@ -186,7 +186,7 @@ mlr --csv cat spaces.csv
 ```
 
 ```java
-Mlr.csv()
+Mlr.withCsvPreset()
 	.workDir(workingPath)
 	.cat()
 	.file("spaces.csv")
@@ -225,7 +225,7 @@ mlr --csv cat data/a.csv data/b.csv
 
 ```java
 Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.cat()
 	.file("data/a.csv")
 	.file("data/b.csv")
@@ -261,7 +261,7 @@ import java.nio.file.Path;
 Path tmp = Files.createTempDirectory("mlr-pipe");
 Path sorted = tmp.resolve("sorted.csv");
 Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.sort(nr("index"))
 	.file("example.csv")
 	.redirectOutputFile(sorted.toFile())
@@ -299,7 +299,7 @@ mlr --csv --mfrom a.csv b.csv -- cat
 
 ```java
 Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.mfrom("a.csv", "b.csv")
 	.cat()
 	.run();
@@ -347,7 +347,7 @@ mlr -I --csv sort -f shape newfile.txt
 ```java
 Mlr.inDir(tmpDir)
 	.inPlace()
-	.csvFlag()
+	.csv()
 	.sort(f("shape"))
 	.file("newfile.txt")
 	.run();
@@ -365,13 +365,13 @@ import net.shed.mlrbinder.Mlr;
 
 // Recommended: global-flag chain + verb-named methods
 String runResult = Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.sort(n("a"), nr("b"))
 	.file("example.csv")
 	.run();
 
-// When starting from the CSV preset, use static Mlr.csv()
-String runResult2 = Mlr.csv()
+// When starting from the CSV preset, use static Mlr.withCsvPreset()
+String runResult2 = Mlr.withCsvPreset()
 	.workDir(workingPath)
 	.sort(n("a"), nr("b"))
 	.file("example.csv")
@@ -380,8 +380,8 @@ String runResult2 = Mlr.csv()
 
 ### `Mlr`: global-flag chain + verb-named instance methods (recommended)
 
-- **`Mlr.csv()`** — static factory: starts with `mlr` + `--csv`. If `--csv` is already on the chain and you need another, use **`.csvFlag()`**.
-- **Global-flag chain (recommended):** `.icsv()`, `.opprint()`, **`.csvFlag()`** (`--csv`; named so `csv` autocomplete groups sensibly), `.ocsv()`, `.ijson()`, **`.jsonFlag()`** (`--json`), `.idkvp()`, `.tsv()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`), and so on mirror `flag(Flags…)` but **prefer the chain form**.
+- **`Mlr.withCsvPreset()`** — static entry: `mlr` + `--csv` (no working directory yet; then `.workDir(…)` / `.file(…)`). For a second `--csv` on the same chain, call **`.csv()`** again.
+- **Global-flag chain (recommended):** `.icsv()`, `.opprint()`, **`.csv()`** (appends `--csv`), `.ocsv()`, `.ijson()`, **`.jsonFlag()`** (`--json`), `.idkvp()`, `.tsv()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`), and so on mirror `flag(Flags…)` but **prefer the chain form**.
 - **Verbs (recommended):** For each verb in `Verbs`, **`Mlr` exposes a same-named instance method** (for example `.uniq()`, `.histogram()`, `.join(…)`). Exceptions: **`filter`** → **`.filterVerb(…)`**, **`split`** → **`.splitVerb(…)`**. Convenience overloads: **`.head(n)`** / **`.tail(n)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1("count", "qty")`**, **`.splitBy("shape")`**, **`.putQuiet(…)`**. Use **`.verb(Mlr.Verbs.foo(…))`** only when the patterns above are awkward.
 
 For `cut`’s `-o` / `-x` / `-f`, use **`CutFlags`** and **`.cutOrdered` / `.cutFields`**, or **`.cut(option(…), option(…))`**. `head`/`tail` counts: **`.head(4)`** / **`.tail(4)`** or **`HeadTail.n(4)`**. `stats1`’s `-a`/`-f`/`-g`: **`StatsFlags`**. `put -q`: **`.putQuiet(…)`**. `split -g`: **`.splitBy("shape")`**. Shared grouping: **`MillerVerbOpts.groupBy("field")`** (for example `head -g`).
@@ -392,7 +392,7 @@ For **`SortFlags`**, keep using **`n("field")` / `nr("field")` / `f("field")`** 
 import static net.shed.mlrbinder.SortFlags.n;
 import static net.shed.mlrbinder.SortFlags.nr;
 
-String runResult = Mlr.csv()
+String runResult = Mlr.withCsvPreset()
 	.workDir(workingPath)
 	.sort(n("a"), nr("b"))
 	.file(new File("example.csv"))
@@ -414,7 +414,7 @@ Miller `filter` / `split` verbs are invoked on the chain as **`.filterVerb(…)`
 import static net.shed.mlrbinder.Objective.objective;
 
 Mlr.inDir(workingPath)
-	.csvFlag()
+	.csv()
 	.filterVerb(objective("$index > 1"))
 	.file("example.csv")
 	.run();

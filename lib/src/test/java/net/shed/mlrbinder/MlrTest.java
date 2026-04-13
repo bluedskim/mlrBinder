@@ -301,9 +301,9 @@ class MlrTest {
 	}
 
 	@Test
-	@DisplayName("fluent csv().sort(n,nr).file matches manual assembly")
+	@DisplayName("fluent withCsvPreset().sort(n,nr).file matches manual assembly")
 	void fluentCsvSortWithSortFlags() {
-		Mlr mlr = Mlr.csv()
+		Mlr mlr = Mlr.withCsvPreset()
 				.workDir("workingPath")
 				.sort(n("a"), nr("b"))
 				.file("example.csv");

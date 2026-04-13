@@ -57,7 +57,7 @@ class TenMinTutorialE2eTest {
 	void catCsv() throws Exception {
 		Path root = tenMinRoot();
 		Mlr mlr = Mlr.inDir(root.toString())
-				.csvFlag()
+				.csv()
 				.cat()
 				.file("example.csv");
 		assertEquals(expected("cat_csv.txt"), run(mlr));
@@ -80,13 +80,13 @@ class TenMinTutorialE2eTest {
 	void headAndTail() throws Exception {
 		Path root = tenMinRoot();
 		Mlr head = Mlr.inDir(root.toString())
-				.csvFlag()
+				.csv()
 				.head(4)
 				.file("example.csv");
 		assertEquals(expected("head_n4.txt"), run(head));
 
 		Mlr tail = Mlr.inDir(root.toString())
-				.csvFlag()
+				.csv()
 				.tail(4)
 				.file("example.csv");
 		assertEquals(expected("tail_n4.txt"), run(tail));
@@ -198,7 +198,7 @@ class TenMinTutorialE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialE2eTest#mlrOnPath")
 	void spacesFieldNames() throws Exception {
 		Path root = tenMinRoot();
-		Mlr spacesCat = Mlr.csv()
+		Mlr spacesCat = Mlr.withCsvPreset()
 				.workDir(root.toString())
 				.cat()
 				.file("spaces.csv");
@@ -222,7 +222,7 @@ class TenMinTutorialE2eTest {
 	void multipleInputFiles() throws Exception {
 		Path root = tenMinRoot();
 		Mlr mlr = Mlr.inDir(root.toString())
-				.csvFlag()
+				.csv()
 				.cat()
 				.file("data/a.csv")
 				.file("data/b.csv");
@@ -245,7 +245,7 @@ class TenMinTutorialE2eTest {
 		Path pipeTmp = Files.createTempDirectory("mlr-10min-pipe");
 		Path sortedCsv = pipeTmp.resolve("sorted.csv");
 		Mlr.inDir(root.toString())
-				.csvFlag()
+				.csv()
 				.sort(nr("index"))
 				.file("example.csv")
 				.redirectOutputFile(sortedCsv.toFile())
@@ -411,7 +411,7 @@ class TenMinTutorialE2eTest {
 		Files.copy(root.resolve("example.csv"), nf);
 		Mlr.inDir(tmp.toString())
 				.inPlace()
-				.csvFlag()
+				.csv()
 				.sort(f("shape"))
 				.file("newfile.txt")
 				.run();
@@ -425,7 +425,7 @@ class TenMinTutorialE2eTest {
 		Path tmp = Files.createTempDirectory("mlr-10min-split");
 		Files.copy(root.resolve("example.csv"), tmp.resolve("example.csv"));
 		Mlr.inDir(tmp.toString())
-				.csvFlag()
+				.csv()
 				.from("example.csv")
 				.splitBy("shape")
 				.run();
@@ -444,7 +444,7 @@ class TenMinTutorialE2eTest {
 		Path tmp = Files.createTempDirectory("mlr-10min-tee");
 		Files.copy(root.resolve("example.csv"), tmp.resolve("example.csv"));
 		Mlr.inDir(tmp.toString())
-				.csvFlag()
+				.csv()
 				.from("example.csv")
 				.putQuiet(objective("tee > $shape.\".csv\", $*"))
 				.run();

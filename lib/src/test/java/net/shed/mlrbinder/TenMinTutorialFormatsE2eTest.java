@@ -47,7 +47,7 @@ class TenMinTutorialFormatsE2eTest {
 	@EnabledIf("net.shed.mlrbinder.TenMinTutorialFormatsE2eTest#mlrOnPath")
 	void csvCat() throws Exception {
 		Path root = formatsRoot();
-		Mlr mlr = Mlr.inDir(root.toString()).csvFlag().cat().file("shape.csv");
+		Mlr mlr = Mlr.inDir(root.toString()).csv().cat().file("shape.csv");
 		assertEquals(expected("shape_csv_cat.txt"), run(mlr));
 	}
 
