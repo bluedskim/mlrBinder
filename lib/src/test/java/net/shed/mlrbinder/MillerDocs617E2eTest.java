@@ -1,13 +1,11 @@
 package net.shed.mlrbinder;
 
 import static net.shed.mlrbinder.CutFlags.f;
-import static net.shed.mlrbinder.Flag.flag;
 import static net.shed.mlrbinder.Objective.objective;
 import static net.shed.mlrbinder.SortFlags.nr;
 import static net.shed.mlrbinder.StatsFlags.aggregations;
 import static net.shed.mlrbinder.StatsFlags.field;
 import static net.shed.mlrbinder.StatsFlags.groupBy;
-import static net.shed.mlrbinder.verb.Option.option;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -120,7 +118,7 @@ class MillerDocs617E2eTest {
 					.inidx()
 					.ifs("comma")
 					.oxtab()
-					.cut(option(flag("-f").objective("1,3")))
+					.cutFields("1,3")
 					.file("headerless.csv");
 			assertEquals(expected("nidx_cut_13_headerless"), run(mlr));
 		}
@@ -190,7 +188,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.csvFlag()
 					.ifs("semicolon")
-					.cut(option(flag("-f").objective("KEY,PL,TO")))
+					.cutFields("KEY,PL,TO")
 					.file("colours.csv");
 			assertEquals(expected("colours_cut_semicolon"), run(mlr));
 		}
@@ -213,7 +211,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.csvFlag()
 					.filterVerb(objective("$color == \"yellow\""))
-					.cat(option(flag("-n")))
+					.catNumbered()
 					.file("example.csv");
 			assertEquals(expected("example_filter_yellow_cat_n"), run(mlr));
 		}
@@ -247,7 +245,7 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
 					.csvFlag()
-					.rename(option(flag("-g")), option(flag("-r"), objective(" ,_")))
+					.renameGlobalRegex(" ,_")
 					.file("spaces.csv");
 			assertEquals(expected("spaces_rename_g_r"), run(mlr));
 		}
@@ -275,7 +273,7 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
 					.csvFlag()
-					.put(option(flag("-f").objective("sar.mlr")))
+					.putFromFile("sar.mlr")
 					.file("sar.csv");
 			assertEquals(expected("sar_gsub_all_fields"), run(mlr));
 		}
@@ -321,7 +319,7 @@ class MillerDocs617E2eTest {
 					.icsv()
 					.ojson()
 					.from("short.csv")
-					.put(PutFlags.quiet(), objective(expr));
+					.putQuiet(objective(expr));
 			assertEquals(expected("short_sum_put_q"), run(mlr));
 		}
 	}
@@ -336,7 +334,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.from("then-example.csv")
 					.c2p()
-					.countDistinct(option(flag("-f").objective("Status,Payment_Type")));
+					.countDistinctFields("Status,Payment_Type");
 			assertEquals(expected("then_count_distinct"), run(mlr));
 		}
 
@@ -347,7 +345,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.from("then-example.csv")
 					.c2p()
-					.countDistinct(option(flag("-f").objective("Status,Payment_Type")))
+					.countDistinctFields("Status,Payment_Type")
 					.sort(nr("count"));
 			assertEquals(expected("then_count_distinct_sort"), run(mlr));
 		}
@@ -358,7 +356,7 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
 					.filterVerb(objective("$x > 0.5"))
-					.cat(option(flag("-n")))
+					.catNumbered()
 					.file("small");
 			assertEquals(expected("small_filter_then_cat_n"), run(mlr));
 		}
@@ -374,10 +372,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.icsvlite()
 					.opprint()
-					.join(
-							option(flag("-u")),
-							option(flag("-j"), objective("ipaddr")),
-							option(flag("-f").objective("join-u-left.csv")))
+					.joinUnsorted("ipaddr", "join-u-left.csv")
 					.file("join-u-right.csv");
 			assertEquals(expected("join_u_ipaddr"), run(mlr));
 		}
@@ -388,12 +383,8 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
 					.csvFlag()
-					.join(
-							option(flag("-j"), objective("color")),
-							option(flag("--ul")),
-							option(flag("--ur")),
-							option(flag("-f").objective("prevtemp.csv")))
-					.unsparsify(option(flag("--fill-with"), objective("0")))
+					.joinLeftRightUnpaired("color", "prevtemp.csv")
+					.unsparsifyFillWith("0")
 					.put(objective("$count_delta = int($current_count) - int($previous_count)"))
 					.file("currtemp.csv");
 			assertEquals(expected("join_color_ul_unsparsify"), run(mlr));
@@ -406,12 +397,8 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.icsv()
 					.opprint()
-					.join(
-							option(flag("-f").objective("multi-join/name-lookup.csv")),
-							option(flag("-j"), objective("id")))
-					.join(
-							option(flag("-f").objective("multi-join/status-lookup.csv")),
-							option(flag("-j"), objective("id")))
+					.joinFile("multi-join/name-lookup.csv", "id")
+					.joinFile("multi-join/status-lookup.csv", "id")
 					.file("multi-join/input.csv");
 			assertEquals(expected("multi_join_chain"), run(mlr));
 		}
@@ -436,9 +423,9 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.from("miss-date.csv")
 					.icsv()
-					.cat(option(flag("-n")))
+					.catNumbered()
 					.put(objective("$datestamp = strptime($date, \"%Y-%m-%d\")"))
-					.step(option(flag("-a").objective("delta")), option(flag("-f").objective("datestamp")))
+					.stepDelta("datestamp")
 					.head(10);
 			assertEquals(expected("miss_date_step_head10"), run(mlr));
 		}
@@ -450,9 +437,9 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.from("miss-date.csv")
 					.icsv()
-					.cat(option(flag("-n")))
+					.catNumbered()
 					.put(objective("$datestamp = strptime($date, \"%Y-%m-%d\")"))
-					.step(option(flag("-a").objective("delta")), option(flag("-f").objective("datestamp")))
+					.stepDelta("datestamp")
 					.filterVerb(objective("$datestamp_delta != 86400 && $n != 1"));
 			assertEquals(expected("miss_date_gaps_filter"), run(mlr));
 		}
@@ -571,7 +558,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.c2p()
 					.from("flins-subset.csv")
-					.countDistinct(option(flag("-f").objective("county")));
+					.countDistinctFields("county");
 			assertEquals(expected("flins_count_distinct_county"), run(mlr));
 		}
 	}
@@ -602,7 +589,7 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
 					.opprint()
-					.uniq(option(flag("-c")), option(flag("-g"), objective("a,b")))
+					.uniqCountBy("a,b")
 					.sort(nr("count"))
 					.file("medium-subset.csv");
 			assertEquals(expected("medium_uniq_c_ab"), run(mlr));
@@ -664,8 +651,8 @@ class MillerDocs617E2eTest {
 					.seed("42")
 					.nidx()
 					.from("english-words-sample.txt")
-					.filterVerb(option(flag("-S")), objective("n=strlen($1);4<=n&&n<=8"))
-					.sample(option(flag("-k").objective("10")));
+					.filterVerbTyped(objective("n=strlen($1);4<=n&&n<=8"))
+					.sampleK(10);
 			assertEquals(expected("random_sample_seed42"), run(mlr));
 		}
 	}
@@ -680,7 +667,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.itsv()
 					.opprint()
-					.put(PutFlags.quiet(), option(flag("-f").objective("maxrows.mlr")))
+					.putQuietFromFile("maxrows.mlr")
 					.file("maxrows.tsv");
 			assertEquals(expected("maxrows_put_q"), run(mlr));
 		}
@@ -692,7 +679,7 @@ class MillerDocs617E2eTest {
 			Mlr mlr = Mlr.inDir(root.toString())
 					.ijson()
 					.opprint()
-					.put(PutFlags.quiet(), option(flag("-f").objective("feature-count.mlr")))
+					.putQuietFromFile("feature-count.mlr")
 					.file("features.json");
 			assertEquals(expected("features_json_put_q"), run(mlr));
 		}
@@ -707,7 +694,7 @@ class MillerDocs617E2eTest {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
 					.noInput()
-					.put(PutFlags.quiet(), option(flag("-f").objective("sieve.mlr")));
+					.putQuietFromFile("sieve.mlr");
 			assertEquals(expected("sieve_n_put"), run(mlr));
 		}
 	}

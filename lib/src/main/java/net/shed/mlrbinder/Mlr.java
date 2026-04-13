@@ -16,6 +16,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import static net.shed.mlrbinder.Objective.objective;
+import static net.shed.mlrbinder.verb.Option.option;
+
 import net.shed.mlrbinder.Arg;
 import net.shed.mlrbinder.Objective;
 import net.shed.mlrbinder.verb.Option;
@@ -657,6 +660,11 @@ public final class Mlr {
 		return head(HeadTail.n(count));
 	}
 
+	/** Appends {@code head -n 1 -g fields} (comma-separated group-by list when multiple). */
+	public Mlr headOneGroupedBy(String groupByFields) {
+		return head(HeadTail.n(1), MillerVerbOpts.groupBy(groupByFields));
+	}
+
 	/** Appends {@code tail -n count}; shorthand for {@code tail(HeadTail.n(count))}. */
 	public Mlr tail(int count) {
 		return tail(HeadTail.n(count));
@@ -695,6 +703,91 @@ public final class Mlr {
 	/** Appends {@code split -g field}. */
 	public Mlr splitBy(String field) {
 		return splitVerb(SplitFlags.group(field));
+	}
+
+	/** Appends {@code cat -n} (prepend record counter {@code n}). */
+	public Mlr catNumbered() {
+		return cat(CatVerbOpts.recordCounter());
+	}
+
+	/** Appends {@code rename -g -r pattern} (global regex rename of field names). */
+	public Mlr renameGlobalRegex(String pattern) {
+		return rename(option(Flag.flag("-g")), option(Flag.flag("-r"), objective(pattern)));
+	}
+
+	/** Appends {@code put -f path} (read DSL from a file). */
+	public Mlr putFromFile(String path) {
+		return put(option(Flag.flag("-f"), objective(path)));
+	}
+
+	/** Appends {@code put -q -f path}. */
+	public Mlr putQuietFromFile(String path) {
+		return put(PutFlags.quiet(), option(Flag.flag("-f"), objective(path)));
+	}
+
+	/** Appends {@code count-distinct -f fields} (comma-separated field list). */
+	public Mlr countDistinctFields(String fields) {
+		return countDistinct(option(Flag.flag("-f"), objective(fields)));
+	}
+
+	/** Appends {@code join -u -j key -f leftFile} (unsorted join; Miller 5.1+ default). */
+	public Mlr joinUnsorted(String joinKey, String leftFile) {
+		return join(
+				option(Flag.flag("-u")),
+				option(Flag.flag("-j"), objective(joinKey)),
+				option(Flag.flag("-f"), objective(leftFile)));
+	}
+
+	/** Appends {@code join -j key --ul --ur -f leftFile} then you typically chain more verbs before the right file. */
+	public Mlr joinLeftRightUnpaired(String joinKey, String leftFile) {
+		return join(
+				option(Flag.flag("-j"), objective(joinKey)),
+				option(Flag.flag("--ul")),
+				option(Flag.flag("--ur")),
+				option(Flag.flag("-f"), objective(leftFile)));
+	}
+
+	/** Appends {@code join -f leftFile -j key} (right table comes from trailing file args). */
+	public Mlr joinFile(String leftFile, String joinKey) {
+		return join(
+				option(Flag.flag("-f"), objective(leftFile)),
+				option(Flag.flag("-j"), objective(joinKey)));
+	}
+
+	/** Appends {@code unsparsify --fill-with value}. */
+	public Mlr unsparsifyFillWith(String fill) {
+		return unsparsify(option(Flag.flag("--fill-with"), objective(fill)));
+	}
+
+	/** Appends {@code step -a delta -f field}. */
+	public Mlr stepDelta(String field) {
+		return step(StepFlags.deltaOn(field));
+	}
+
+	/** Appends {@code uniq -c -g fields} (comma-separated group-by list). */
+	public Mlr uniqCountBy(String fields) {
+		return uniq(option(Flag.flag("-c")), option(Flag.flag("-g"), objective(fields)));
+	}
+
+	/** Appends {@code sample -k n}. */
+	public Mlr sampleK(int k) {
+		return sample(option(Flag.flag("-k"), objective(Integer.toString(k))));
+	}
+
+	/** Appends {@code filter -S} then the expression (legacy no-op flag; kept for doc parity). */
+	public Mlr filterVerbTyped(Objective expression) {
+		return filterVerb(option(Flag.flag("-S")), expression);
+	}
+
+	/**
+	 * Appends {@code sort} with one or more {@code -f field} keys (lexical ascending), in order.
+	 */
+	public Mlr sortFields(String... fields) {
+		if (fields == null || fields.length == 0) {
+			throw new IllegalArgumentException("fields must not be empty");
+		}
+		Arg[] args = Arrays.stream(fields).map(SortFlags::f).toArray(Arg[]::new);
+		return sort(args);
 	}
 
 	/** Appends {@code put -q} then the expression (e.g. tee splits). */

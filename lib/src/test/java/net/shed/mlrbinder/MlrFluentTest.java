@@ -1,7 +1,6 @@
 package net.shed.mlrbinder;
 
 import static net.shed.mlrbinder.SortFlags.nr;
-import static net.shed.mlrbinder.verb.Option.option;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ class MlrFluentTest {
 		String s = Mlr.inDir("wp")
 				.icsv()
 				.opprint()
-				.cut(option(CutFlags.o()), option(CutFlags.f("a,b")))
+				.cutOrdered("a,b")
 				.file("ex.csv")
 				.toString();
 		assertEquals("mlr --icsv --opprint cut -o -f a,b ex.csv", s);
@@ -37,10 +36,7 @@ class MlrFluentTest {
 	void stats1WithGroupMatchesExpected() {
 		String s = Mlr.inDir("wp")
 				.from("ex.csv")
-				.stats1(
-						StatsFlags.aggregations("count"),
-						StatsFlags.field("qty"),
-						StatsFlags.groupBy("shape"))
+				.stats1("count", "qty", "shape")
 				.toString();
 		assertEquals("mlr --from ex.csv stats1 -a count -f qty -g shape", s);
 	}
