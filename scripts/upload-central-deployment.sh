@@ -2,7 +2,7 @@
 set -euo pipefail
 
 requested_namespace="${1:-${CENTRAL_NAMESPACE:-}}"
-publishing_type="${CENTRAL_PUBLISHING_TYPE:-user_managed}"
+publishing_type="${CENTRAL_PUBLISHING_TYPE:-automatic}"
 staging_api_base_url="${CENTRAL_STAGING_API_BASE_URL:-https://ossrh-staging-api.central.sonatype.com}"
 
 central_portal_username="${CENTRAL_PORTAL_USERNAME:-${SONATYPE_USERNAME:-${OSSRH_USERNAME:-}}}"
