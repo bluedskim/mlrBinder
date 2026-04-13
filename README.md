@@ -2,6 +2,10 @@
 
 A library that reduces friction when calling [Miller (`mlr`)](https://miller.readthedocs.io/) directly from Java.
 
+## Supported Miller (`mlr`) version
+
+This library is developed and tested against **Miller [`mlr` 6.17.0](https://github.com/johnkerl/miller/releases/tag/v6.17.0)**. Install that version on your `PATH` (or confirm behavior yourself if you use a different release).
+
 **Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
 
 ## Goals
