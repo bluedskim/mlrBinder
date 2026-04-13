@@ -32,7 +32,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
  * </p>
  * <p>
  * Chains follow the recommended style: global I/O on {@link Mlr} (e.g. {@link Mlr#csv()} after
- * {@link Mlr#inDir(String)} for {@code --csv}; use {@link Mlr#withCsvPreset()} or {@link Mlr#startCsv()} when starting from the CSV preset),
+ * {@link Mlr#inDir(String)} for {@code --csv}; use {@link Mlr#withCsvPreset()} when starting from the CSV preset),
  * then verb-named methods.
  * </p>
  */

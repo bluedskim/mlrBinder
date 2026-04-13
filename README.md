@@ -33,7 +33,7 @@ This library is developed and tested against **Miller [`mlr` 6.17.0](https://git
 
 ## Miller in 10 minutes → Java
 
-How `mlr` invocations from [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) map to this library. **All Java samples below use the recommended style:** start with **`Mlr.inDir(…)`** (and then **`.csv()`** when you need `--csv`), or start from **`Mlr.withCsvPreset()`** / **`Mlr.startCsv()`** (static: `mlr` + `--csv` before you set `workDir` / files). Chain **global flags on `Mlr`**, and use **instance methods named like verbs** (`filter` / `split` → `.filterVerb` / `.splitVerb`). To append another `--csv` on the same chain, call **`.csv()`** again. **Verb options** use `SortFlags` helpers `f` / `n` / `nr`, `import static …Flag.flag` with `flag("-f").objective("…")`, `option` / `objective`, and so on. Chaining several verbs automatically inserts `then` into the `run()` argv.
+How `mlr` invocations from [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/) map to this library. **All Java samples below use the recommended style:** start with **`Mlr.inDir(…)`** (and then **`.csv()`** when you need `--csv`), or start from **`Mlr.withCsvPreset()`** (static: `mlr` + `--csv` before you set `workDir` / files). Chain **global flags on `Mlr`**, and use **instance methods named like verbs** (`filter` / `split` → `.filterVerb` / `.splitVerb`). To append another `--csv` on the same chain, call **`.csv()`** again. **Verb options** use `SortFlags` helpers `f` / `n` / `nr`, `import static …Flag.flag` with `flag("-f").objective("…")`, `option` / `objective`, and so on. Chaining several verbs automatically inserts `then` into the `run()` argv.
 
 The Java snippets below assume the following imports in common (pick only what you need in real code):
 
@@ -380,7 +380,7 @@ String runResult2 = Mlr.withCsvPreset()
 
 ### `Mlr`: global-flag chain + verb-named instance methods (recommended)
 
-- **`Mlr.withCsvPreset()`** / **`Mlr.startCsv()`** — static entry: `mlr` + `--csv` (no working directory yet; then `.workDir(…)` / `.file(…)`). For a second `--csv` on the same chain, call **`.csv()`** again.
+- **`Mlr.withCsvPreset()`** — static entry: `mlr` + `--csv` (no working directory yet; then `.workDir(…)` / `.file(…)`). For a second `--csv` on the same chain, call **`.csv()`** again.
 - **Global-flag chain (recommended):** `.icsv()`, `.opprint()`, **`.csv()`** (appends `--csv`), `.ocsv()`, `.ijson()`, **`.jsonFlag()`** (`--json`), `.idkvp()`, `.tsv()`, `.oxtab()`, `.ixtab()`, `.c2p()`, `.from("path")`, **`.inPlace()`** (`-I`), and so on mirror `flag(Flags…)` but **prefer the chain form**.
 - **Verbs (recommended):** For each verb in `Verbs`, **`Mlr` exposes a same-named instance method** (for example `.uniq()`, `.histogram()`, `.join(…)`). Exceptions: **`filter`** → **`.filterVerb(…)`**, **`split`** → **`.splitVerb(…)`**. Convenience overloads: **`.head(n)`** / **`.tail(n)`**, **`.cutFields` / `.cutOrdered` / `.cutExcept`**, **`.stats1("count", "qty")`**, **`.splitBy("shape")`**, **`.putQuiet(…)`**. Use **`.verb(Mlr.Verbs.foo(…))`** only when the patterns above are awkward.
 

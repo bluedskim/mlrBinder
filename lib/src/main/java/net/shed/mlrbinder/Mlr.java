@@ -36,8 +36,7 @@ import net.shed.mlrbinder.verb.Verb;
  * when the fluent surface covers your case; fall back to {@code .verb(Mlr.Verbs.foo(…))} only when needed.
  * </p>
  * <p>
- * Start builds with {@link #inDir(String)}, {@link #withCsvPreset()}, {@link #startCsv()}, or {@link #mlr()} rather than
- * raw constructors when possible.
+ * Start builds with {@link #inDir(String)}, {@link #withCsvPreset()}, or {@link #mlr()} rather than raw constructors when possible.
  * </p>
  * <p>
  * <strong>Binder-only convenience (“sugar”):</strong> Some {@code Mlr} methods bundle common Miller
@@ -290,7 +289,7 @@ public final class Mlr {
 	}
 
 	/**
-	 * Fluent entry: {@code mlr} on {@code PATH} with {@code --csv} (same as {@link #startCsv()}).
+	 * Fluent entry: {@code mlr} on {@code PATH} with {@code --csv}.
 	 * <p>
 	 * This is a <strong>static preset</strong>, not an instance chain method; for adding {@code --csv} after
 	 * {@link #inDir(String)} etc., use {@link #csv()} on the instance.
@@ -298,13 +297,6 @@ public final class Mlr {
 	 */
 	public static Mlr withCsvPreset() {
 		return mlr().flag(Flags.csv());
-	}
-
-	/**
-	 * Alias for {@link #withCsvPreset()} (reads naturally as “start a CSV-mode chain”).
-	 */
-	public static Mlr startCsv() {
-		return withCsvPreset();
 	}
 
 	/**
@@ -1051,8 +1043,7 @@ public final class Mlr {
 	 * Appends Miller {@code --csv} on an existing chain (e.g. after {@link #inDir(String)}).
 	 * <p>
 	 * For a second {@code --csv} on the same chain, call {@link #csv()} again (Miller allows repeated globals where
-	 * applicable). For starting from {@code mlr} + {@code --csv} without a directory yet, use {@link #withCsvPreset()}
-	 * or {@link #startCsv()}.
+	 * applicable). For starting from {@code mlr} + {@code --csv} without a directory yet, use {@link #withCsvPreset()}.
 	 * </p>
 	 */
 	public Mlr csv() {
