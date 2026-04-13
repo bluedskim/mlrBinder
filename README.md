@@ -1,20 +1,19 @@
-# Miller Java Binder
+# mlr-binder
 
-A library that reduces friction when calling [Miller (`mlr`)](https://miller.readthedocs.io/) directly from Java.
+**Turn [Miller](https://miller.readthedocs.io/) into a fluent Java API**—shape CSV, JSON, TSV, and DKVP in batch jobs, services, and tests without hand-built shell strings or copy-pasted argv lists. **Miller Java Binder** wraps the real `mlr` process so you keep upstream Miller semantics while your JVM code stays readable and refactor-friendly.
 
-## Supported Miller (`mlr`) version
+## Why?
 
-This library is developed and tested against **Miller [`mlr` 6.17.0](https://github.com/johnkerl/miller/releases/tag/v6.17.0)**. Install that version on your `PATH` (or confirm behavior yourself if you use a different release).
+- **Less string soup:** Build invocations with `Mlr` chains, `Flag`, `Verb`, and `Option` instead of concatenating commands you cannot safely rename or review in the IDE.
+- **Catch mistakes earlier:** Method names and types encode Miller’s structure; only Miller DSL snippets (for example `put` / `filter` expressions) are still validated when `mlr` runs.
+- **Fast integration:** One Maven or Gradle dependency, `mlr` on `PATH` (or a path you configure), then `Mlr.inDir(...).csv().sort(...).file(...).run()`—no native JNI layer or extra services.
+- **Maven Central:** Published as **`io.github.bluedskim:mlr-binder`** so you can depend on it like any other library.
 
-**Binder-only “sugar” on `Mlr`:** Some `Mlr` methods bundle common Miller verb options into one call (for example `uniqCountBy` → `uniq -c -g …`). These Java names are **not** Miller CLI features; the child process is always standard `mlr`. Each sugar method documents the **Miller CLI equivalent** in its Javadoc, and the `net.shed.mlrbinder` package summary lists them in one table (see generated Javadoc or your IDE’s quick documentation for `Mlr` / the package).
+## Install
 
-**Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
+**Requires Java 11+.** Package: **`net.shed.mlrbinder`**.
 
-## Use from Maven or Gradle
-
-Maven coordinates: **`io.github.bluedskim:mlr-binder:0.1.0`**. Java API package: **`net.shed.mlrbinder`** (unchanged). Requires **Java 11 or newer** at runtime.
-
-**Maven (`pom.xml`):**
+Maven (`pom.xml`):
 
 ```xml
 <dependency>
@@ -24,7 +23,7 @@ Maven coordinates: **`io.github.bluedskim:mlr-binder:0.1.0`**. Java API package:
 </dependency>
 ```
 
-**Gradle (Kotlin DSL):**
+Gradle (Kotlin DSL):
 
 ```kotlin
 dependencies {
@@ -32,13 +31,30 @@ dependencies {
 }
 ```
 
-**Gradle (Groovy):**
+Gradle (Groovy):
 
 ```groovy
 dependencies {
     implementation 'io.github.bluedskim:mlr-binder:0.1.0'
 }
 ```
+
+## Use cases
+
+- **Data prep and ETL:** Sort, cut, join, reshape, and aggregate large delimited or JSON files inside JVM pipelines while Miller stays the engine.
+- **Backend and batch jobs:** Run repeatable `mlr` workflows from schedulers or workers with working-directory and file helpers instead of brittle `Runtime.exec` strings.
+- **Quality gates and fixtures:** Mirror [Miller in 10 minutes](https://miller.readthedocs.io/en/latest/10min/)-style flows in tests (see the tutorial mapping section below) to lock behavior to known Miller releases.
+- **Polyglot teams:** Let analysts keep Miller expertise; let application teams call the same verbs from Java with a single shared dependency.
+
+---
+
+## Supported Miller (`mlr`) version
+
+This library is developed and tested against **Miller [`mlr` 6.17.0](https://github.com/johnkerl/miller/releases/tag/v6.17.0)**. Install that version on your `PATH` (or confirm behavior yourself if you use a different release).
+
+**Binder-only “sugar” on `Mlr`:** Some `Mlr` methods bundle common Miller verb options into one call (for example `uniqCountBy` → `uniq -c -g …`). These Java names are **not** Miller CLI features; the child process is always standard `mlr`. Each sugar method documents the **Miller CLI equivalent** in its Javadoc, and the `net.shed.mlrbinder` package summary lists them in one table (see generated Javadoc or your IDE’s quick documentation for `Mlr` / the package).
+
+**Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
 
 ## Goals
 
