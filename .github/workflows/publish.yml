@@ -1,0 +1,39 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Miller 6.17.0
+        run: |
+          curl -fsSL -o /tmp/mlr617.tgz https://github.com/johnkerl/miller/releases/download/v6.17.0/miller-6.17.0-linux-amd64.tar.gz
+          tar -C /tmp -xzf /tmp/mlr617.tgz
+          sudo install -m 0755 /tmp/miller-6.17.0-linux-amd64/mlr /usr/local/bin/mlr
+          mlr --version
+
+      - name: Run tests
+        run: ./gradlew :lib:test --no-daemon
+
+      - name: Publish to Sonatype OSSRH
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: ./gradlew :lib:publish --no-daemon

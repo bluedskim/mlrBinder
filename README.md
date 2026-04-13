@@ -10,6 +10,36 @@ This library is developed and tested against **Miller [`mlr` 6.17.0](https://git
 
 **Recommended style:** Prefer a single `Mlr` chain: use **`Mlr`’s global-flag chain methods** (`.icsv()`, `.from("…")`, and so on) for global flags, and **instance methods named like Miller verbs** (`.sort(…)`, `.cat()`, and so on; only `filter` / `split` use `.filterVerb()` / `.splitVerb()`). Use the `flag(Flags…)` + `verb(Mlr.Verbs…)` combination only when you need it.
 
+## Use from Maven or Gradle
+
+Maven coordinates: **`io.github.bluedskim:mlr-binder:0.1.0`**. Java API package: **`net.shed.mlrbinder`** (unchanged). Requires **Java 11 or newer** at runtime.
+
+**Maven (`pom.xml`):**
+
+```xml
+<dependency>
+  <groupId>io.github.bluedskim</groupId>
+  <artifactId>mlr-binder</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+**Gradle (Kotlin DSL):**
+
+```kotlin
+dependencies {
+    implementation("io.github.bluedskim:mlr-binder:0.1.0")
+}
+```
+
+**Gradle (Groovy):**
+
+```groovy
+dependencies {
+    implementation 'io.github.bluedskim:mlr-binder:0.1.0'
+}
+```
+
 ## Goals
 
 - **How you invoke Miller:** Express Miller behavior as much as possible with **Java methods and objects** instead of concatenating long command strings; assemble with `Flag`, `Verb`, `Option`, and related types.
@@ -30,6 +60,37 @@ This library is developed and tested against **Miller [`mlr` 6.17.0](https://git
 ```
 
 - Reports: `lib/build/reports/tests/test/index.html`, coverage: `lib/build/jacocoHtml/index.html` ([Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html))
+
+## Publishing (maintainers)
+
+Releases are published to **Maven Central** via Sonatype OSSRH (`s01.oss.sonatype.org`). The GitHub Action `.github/workflows/publish.yml` runs on tags matching `v*` (for example `v0.1.0`) after tests pass. The `io.github.bluedskim` **groupId must be verified** on [Sonatype](https://central.sonatype.com/) (GitHub namespace) before Central accepts the first artifact.
+
+Repository secrets:
+
+| Secret | Purpose |
+|--------|---------|
+| `OSSRH_USERNAME` | Sonatype user token username |
+| `OSSRH_PASSWORD` | Sonatype user token password |
+| `SIGNING_KEY` | ASCII-armored OpenPGP **private** key (full block including `BEGIN` / `END` lines) |
+| `SIGNING_PASSWORD` | Passphrase for that key |
+
+Local dry run (installs into `~/.m2/repository` only):
+
+```bash
+./gradlew :lib:publishToMavenLocal
+```
+
+Local upload to the OSSRH staging repository (requires the same credentials as above in the environment):
+
+```bash
+export OSSRH_USERNAME=...
+export OSSRH_PASSWORD=...
+export SIGNING_KEY="$(cat path/to-private-key.asc)"
+export SIGNING_PASSWORD=...
+./gradlew :lib:publish
+```
+
+After the first successful deployment, complete release in the [Sonatype Central Portal](https://central.sonatype.com/) (or legacy staging UI if your namespace still uses it), then bump `version` in the root `build.gradle` for the next release.
 
 ## Miller in 10 minutes → Java
 
