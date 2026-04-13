@@ -31,12 +31,13 @@ import net.shed.mlrbinder.verb.Verb;
  * <strong>Recommended style:</strong> chain global I/O flags on {@code Mlr} (e.g. {@link #icsv()}, {@link #from(String)}),
  * then append each Miller verb with the <strong>same-named instance method</strong> (each delegates to
  * {@link Mlr.Verbs}). Global flags that share a prefix with common Miller options use a {@code *Flag} name for IDE
- * grouping (e.g. {@link #csvFlag}, {@link #jsonFlag}). Use {@link #filterVerb} / {@link #splitVerb} for Miller {@code filter} / {@code split} so they do not
+ * grouping (e.g. {@link #csv}, {@link #jsonFlag}). Use {@link #filterVerb} / {@link #splitVerb} for Miller {@code filter} / {@code split} so they do not
  * collide with {@link java.util.stream.Stream#filter}. Prefer this over {@link #flag(Flag)} plus {@link #verb(Verb...)}
  * when the fluent surface covers your case; fall back to {@code .verb(Mlr.Verbs.foo(…))} only when needed.
  * </p>
  * <p>
- * Start builds with {@link #inDir(String)}, {@link #csv()}, or {@link #mlr()} rather than raw constructors when possible.
+ * Start builds with {@link #inDir(String)}, {@link #withCsvPreset()}, {@link #startCsv()}, or {@link #mlr()} rather than
+ * raw constructors when possible.
  * </p>
  * <p>
  * <strong>Binder-only convenience (“sugar”):</strong> Some {@code Mlr} methods bundle common Miller
@@ -289,10 +290,21 @@ public final class Mlr {
 	}
 
 	/**
-	 * Fluent entry: {@code mlr} on {@code PATH}, {@code --csv}, empty verbs/files until chained.
+	 * Fluent entry: {@code mlr} on {@code PATH} with {@code --csv} (same as {@link #startCsv()}).
+	 * <p>
+	 * This is a <strong>static preset</strong>, not an instance chain method; for adding {@code --csv} after
+	 * {@link #inDir(String)} etc., use {@link #csv()} on the instance.
+	 * </p>
 	 */
-	public static Mlr csv() {
+	public static Mlr withCsvPreset() {
 		return mlr().flag(Flags.csv());
+	}
+
+	/**
+	 * Alias for {@link #withCsvPreset()} (reads naturally as “start a CSV-mode chain”).
+	 */
+	public static Mlr startCsv() {
+		return withCsvPreset();
 	}
 
 	/**
@@ -1036,10 +1048,14 @@ public final class Mlr {
 	}
 
 	/**
-	 * Appends {@code --csv} when chaining after {@link #inDir(String)} (named {@code csvFlag} so IDE completion lists it
-	 * with other {@code csv*} helpers; static entry with CSV preset remains {@link #csv()}).
+	 * Appends Miller {@code --csv} on an existing chain (e.g. after {@link #inDir(String)}).
+	 * <p>
+	 * For a second {@code --csv} on the same chain, call {@link #csv()} again (Miller allows repeated globals where
+	 * applicable). For starting from {@code mlr} + {@code --csv} without a directory yet, use {@link #withCsvPreset()}
+	 * or {@link #startCsv()}.
+	 * </p>
 	 */
-	public Mlr csvFlag() {
+	public Mlr csv() {
 		return flag(Flags.csv());
 	}
 

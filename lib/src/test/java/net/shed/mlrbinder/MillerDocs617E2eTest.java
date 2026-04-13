@@ -31,8 +31,8 @@ import org.junit.jupiter.api.condition.EnabledIf;
  * {@code MLR=/path/to/mlr-6.17.0 ./utils/gen_miller_docs_617_goldens.sh} after changing fixtures or samples.
  * </p>
  * <p>
- * Chains follow the recommended style: global I/O on {@link Mlr} (e.g. {@link Mlr#csvFlag()} after
- * {@link Mlr#inDir(String)} for {@code --csv}; use static {@link Mlr#csv()} when starting from the CSV preset),
+ * Chains follow the recommended style: global I/O on {@link Mlr} (e.g. {@link Mlr#csv()} after
+ * {@link Mlr#inDir(String)} for {@code --csv}; use {@link Mlr#withCsvPreset()} or {@link Mlr#startCsv()} when starting from the CSV preset),
  * then verb-named methods.
  * </p>
  */
@@ -77,7 +77,7 @@ class MillerDocs617E2eTest {
 		void implicitHeaderCat() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.implicitCsvHeader()
 					.cat()
 					.file("headerless.csv");
@@ -89,7 +89,7 @@ class MillerDocs617E2eTest {
 		void implicitHeaderLabel() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.implicitCsvHeader()
 					.cat()
 					.label(objective("name,age,status"))
@@ -128,7 +128,7 @@ class MillerDocs617E2eTest {
 		void nasHiCat() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.hi()
 					.cat()
 					.file("nas.csv");
@@ -153,7 +153,7 @@ class MillerDocs617E2eTest {
 		void nasHiLabelChain() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.hi()
 					.cat()
 					.label(objective("xsn,ysn,x,y,t,a,e29,e31,e32"))
@@ -186,7 +186,7 @@ class MillerDocs617E2eTest {
 		void coloursSemicolonFsCut() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.ifs("semicolon")
 					.cutFields("KEY,PL,TO")
 					.file("colours.csv");
@@ -198,7 +198,7 @@ class MillerDocs617E2eTest {
 		void cutOrderedFields() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.cutOrdered("rate,shape,flag")
 					.file("example.csv");
 			assertEquals(expected("example_cut_ordered_rate_shape_flag"), run(mlr));
@@ -209,7 +209,7 @@ class MillerDocs617E2eTest {
 		void filterYellowThenCatN() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.filterVerb(objective("$color == \"yellow\""))
 					.catNumbered()
 					.file("example.csv");
@@ -244,7 +244,7 @@ class MillerDocs617E2eTest {
 		void bulkRenameSpaces() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.renameGlobalRegex(" ,_")
 					.file("spaces.csv");
 			assertEquals(expected("spaces_rename_g_r"), run(mlr));
@@ -261,7 +261,7 @@ class MillerDocs617E2eTest {
 					+ "  $[newkey] = value;\n"
 					+ "}\n";
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.from("header-lf.csv")
 					.put(objective(expr));
 			assertEquals(expected("header_lf_normalize"), run(mlr));
@@ -272,7 +272,7 @@ class MillerDocs617E2eTest {
 		void sarPutFromFile() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.putFromFile("sar.mlr")
 					.file("sar.csv");
 			assertEquals(expected("sar_gsub_all_fields"), run(mlr));
@@ -382,7 +382,7 @@ class MillerDocs617E2eTest {
 		void joinLeftUnpairedUnsparsify() throws Exception {
 			Path root = docRoot();
 			Mlr mlr = Mlr.inDir(root.toString())
-					.csvFlag()
+					.csv()
 					.joinLeftRightUnpaired("color", "prevtemp.csv")
 					.unsparsifyFillWith("0")
 					.put(objective("$count_delta = int($current_count) - int($previous_count)"))
@@ -412,7 +412,7 @@ class MillerDocs617E2eTest {
 		void filterByDateStrptime() throws Exception {
 			Path root = docRoot();
 			String expr = "strptime($date, \"%Y-%m-%d\") > strptime(\"2018-03-03\", \"%Y-%m-%d\")";
-			Mlr mlr = Mlr.inDir(root.toString()).csvFlag().filterVerb(objective(expr)).file("dates.csv");
+			Mlr mlr = Mlr.inDir(root.toString()).csv().filterVerb(objective(expr)).file("dates.csv");
 			assertEquals(expected("dates_filter_strptime"), run(mlr));
 		}
 
