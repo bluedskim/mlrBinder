@@ -30,10 +30,17 @@ jobs:
       - name: Run tests
         run: ./gradlew :lib:test --no-daemon
 
-      - name: Publish to Sonatype OSSRH
+      - name: Publish artifacts to Sonatype Central staging API
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME != '' && secrets.CENTRAL_PORTAL_USERNAME || secrets.OSSRH_USERNAME }}
+          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD != '' && secrets.CENTRAL_PORTAL_PASSWORD || secrets.OSSRH_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: ./gradlew :lib:publish --no-daemon
+
+      - name: Transfer staging deployment to Sonatype Central Portal
+        env:
+          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME != '' && secrets.CENTRAL_PORTAL_USERNAME || secrets.OSSRH_USERNAME }}
+          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD != '' && secrets.CENTRAL_PORTAL_PASSWORD || secrets.OSSRH_PASSWORD }}
+          CENTRAL_PUBLISHING_TYPE: user_managed
+        run: ./scripts/upload-central-deployment.sh io.github.bluedskim
