@@ -32,6 +32,9 @@ tasks.named('test') {
 
 tasks.withType(Javadoc).configureEach {
 	options.encoding = 'UTF-8'
+	// Generated flag factories (e.g. Flags.java) intentionally omit per-method @param/@return;
+	// keep HTML and accessibility checks while silencing missing-tag noise from doclint.
+	options.addStringOption('Xdoclint:all,-missing', '-quiet')
 }
 
 test {
